@@ -16,6 +16,17 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@src/*": ["src/*"],
+      "@common/*": ["src/common/*"],
+      "@media/*": ["src/media/*"],
+      "@mail/*": ["src/mail/*"],
+      "@auth/*": ["src/auth/*"],
+      "@customer/*": ["src/customer/*"],
+      "@seeds/*": ["src/seeds/*"],
+      "@i18n/*": ["src/i18n/*"],
+      "@booking/*": ["src/booking/*"],
+    }
   }
 }
