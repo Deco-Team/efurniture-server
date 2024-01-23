@@ -8,6 +8,7 @@ import { AppExceptionFilter } from '@common/exceptions/app-exception.filter'
 import { AppValidationPipe } from '@common/pipes/app-validate.pipe'
 
 async function bootstrap() {
+  console.log(process.env.MONGODB_CONNECTION_STRING, process.env.JWT_ACCESS_EXPIRATION)
   const app = await NestFactory.create(AppModule)
   const logger = app.get(AppLogger)
   app.useLogger(logger)
