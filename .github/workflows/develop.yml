@@ -8,14 +8,6 @@ jobs:
   build:
     runs-on: self-hosted
     environment: develop
-    env: 
-      NODE_ENV: ${{ vars.NODE_ENV }}
-      PORT: ${{ vars.PORT }}
-      MONGODB_CONNECTION_STRING: ${{ secrets.MONGODB_CONNECTION_STRING }}
-      JWT_ACCESS_SECRET: ${{ vars.JWT_ACCESS_SECRET }}
-      JWT_ACCESS_EXPIRATION: ${{ vars.JWT_ACCESS_EXPIRATION }}
-      JWT_REFRESH_SECRET: ${{ vars.JWT_REFRESH_SECRET }}
-      JWT_REFRESH_EXPIRATION: ${{ vars.JWT_REFRESH_EXPIRATION }}
     strategy:
       matrix:
         node-version: [20.x]
@@ -33,5 +25,14 @@ jobs:
       run: npm run build
     - name: Check pm2 list
       run: pm2 list
+    - name: 'Create env file'
+      run: |
+        echo "${{ vars.NODE_ENV }}" > .env
+        echo "${{ vars.PORT }}" > .env
+        echo "${{ secrets.MONGODB_CONNECTION_STRING }}" > .env
+        echo "${{ vars.JWT_ACCESS_SECRET }}" > .env
+        echo "${{ vars.JWT_ACCESS_EXPIRATION }}" > .env
+        echo "${{ vars.JWT_REFRESH_SECRET }}" > .env
+        echo "${{ vars.JWT_REFRESH_EXPIRATION }}" > .env
     - name: Deploy
       run: pm2 restart efurniture-api
