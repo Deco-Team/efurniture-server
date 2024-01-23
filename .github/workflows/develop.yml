@@ -23,8 +23,6 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build
-    - name: Check pm2 list
-      run: pm2 list
     - name: 'Create env file'
       run: |
         touch .env
@@ -35,5 +33,6 @@ jobs:
         echo JWT_ACCESS_EXPIRATION=${{ vars.JWT_ACCESS_EXPIRATION }} >> .env
         echo JWT_REFRESH_SECRET=${{ vars.JWT_REFRESH_SECRET }} >> .env
         echo JWT_REFRESH_EXPIRATION=${{ vars.JWT_REFRESH_EXPIRATION }} >> .env
+        echo CORS_VALID_ORIGINS=${{ vars.CORS_VALID_ORIGINS }} >> .env
     - name: Deploy
       run: pm2 restart efurniture-api
