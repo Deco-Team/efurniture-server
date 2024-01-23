@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, ClientSession } from 'mongoose';
+import { Injectable } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/mongoose'
+import { Connection, ClientSession } from 'mongoose'
 
 @Injectable()
 export class HelperService {
@@ -8,13 +8,13 @@ export class HelperService {
 
   async executeCommandsInTransaction(
     fn: (session: ClientSession, data?: Record<string, any>) => Promise<any>,
-    data?: Record<string, any>,
+    data?: Record<string, any>
   ): Promise<any> {
-    let result: any;
-    const session = await this.connection.startSession();
+    let result: any
+    const session = await this.connection.startSession()
     await session.withTransaction(async () => {
-      result = await fn(session, data);
-    });
-    return result;
+      result = await fn(session, data)
+    })
+    return result
   }
 }

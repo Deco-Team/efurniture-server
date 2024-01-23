@@ -1,21 +1,15 @@
-import { Module } from '@nestjs/common';
-import {
-  AcceptLanguageResolver,
-  QueryResolver,
-  HeaderResolver,
-  CookieResolver,
-  I18nModule,
-} from 'nestjs-i18n';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
-import { RouterModule } from '@nestjs/core';
+import { Module } from '@nestjs/common'
+import { AcceptLanguageResolver, QueryResolver, HeaderResolver, CookieResolver, I18nModule } from 'nestjs-i18n'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { MongooseModule } from '@nestjs/mongoose'
+import { RouterModule } from '@nestjs/core'
 
-import { AppController } from '@src/app.controller';
-import { AppService } from '@src/app.service';
-import { join } from 'path';
-import configuration from '@src/config';
-import { CommonModule } from '@common/common.module';
-import { CustomerModule } from '@customer/customer.module';
+import { AppController } from '@src/app.controller'
+import { AppService } from '@src/app.service'
+import { join } from 'path'
+import configuration from '@src/config'
+import { CommonModule } from '@common/common.module'
+import { CustomerModule } from '@customer/customer.module'
 
 @Module({
   imports: [
@@ -25,37 +19,37 @@ import { CustomerModule } from '@customer/customer.module';
         loaderOptions: {
           path: join(__dirname, '/i18n/'),
           includeSubfolders: true,
-          watch: true,
-        },
+          watch: true
+        }
       }),
       resolvers: [
         new QueryResolver(['lang', 'l']),
         new HeaderResolver(['Accept-Language']),
         new CookieResolver(),
-        AcceptLanguageResolver,
+        AcceptLanguageResolver
       ],
-      inject: [ConfigService],
+      inject: [ConfigService]
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
+      load: [configuration]
     }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('mongodbUrl'),
-      }),
+        uri: configService.get<string>('mongodbUrl')
+      })
     }),
     RouterModule.register([
       {
         path: 'customer',
-        module: CustomerModule,
-      },
+        module: CustomerModule
+      }
     ]),
     CommonModule,
-    CustomerModule,
+    CustomerModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}

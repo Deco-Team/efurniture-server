@@ -1,24 +1,10 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
+import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { CustomerService } from '@customer/services/customer.service';
-import { CreateCustomerDto } from '@customer/dto/customer.dto';
-import { Customer } from '@customer/schemas/customer.schema';
-import { ErrorResponse } from '@common/contracts/dto';
+import { CustomerService } from '@customer/services/customer.service'
+import { CreateCustomerDto } from '@customer/dto/customer.dto'
+import { Customer } from '@customer/schemas/customer.schema'
+import { ErrorResponse } from '@common/contracts/dto'
 
 @ApiTags('Customer')
 @Controller()
@@ -28,10 +14,8 @@ export class CustomerController {
   @Post('register')
   @ApiOkResponse({ type: Customer })
   async login(@Body() createCustomerDto: CreateCustomerDto) {
-    const customer = await this.customerService.createCustomer(
-      createCustomerDto,
-    );
-    return customer;
+    const customer = await this.customerService.createCustomer(createCustomerDto)
+    return customer
   }
 
   @Get(':id')
@@ -42,6 +26,6 @@ export class CustomerController {
   // @UseGuards(AccessTokenGuard)
   // @Sides(SidesAuth.CUSTOMER)
   async getDetail(@Req() req, @Param('id') id: string) {
-    return await this.customerService.getCustomerDetail(id);
+    return await this.customerService.getCustomerDetail(id)
   }
 }
