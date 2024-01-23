@@ -1,23 +1,19 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  MaxLength,
-} from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, MaxLength } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateCustomerDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  email: string
 
   @ApiProperty()
   @IsNotEmpty()
   @MaxLength(30)
-  name: string;
+  name: string
 
   @ApiProperty()
   @IsNotEmpty()
   //@IsPhoneNumber()
-  phone: string;
+  phone: string
 }

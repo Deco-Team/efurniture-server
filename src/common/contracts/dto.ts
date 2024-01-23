@@ -1,22 +1,22 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 export class BooleanResponseDto {
   @ApiProperty()
-  success: boolean;
+  success: boolean
 }
 
 export class ResponseSuccessDto {
   @ApiProperty({ default: BooleanResponseDto })
-  data: BooleanResponseDto;
+  data: BooleanResponseDto
 }
 
 export class ErrorResponse {
   @ApiProperty()
-  error: string;
+  error: string
 
   @ApiProperty()
-  message: string;
+  message: string
 
   @ApiProperty()
-  data: any;
+  data: any
 }
