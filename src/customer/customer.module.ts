@@ -9,6 +9,6 @@ import { CustomerController } from '@src/customer/controllers/customer.controlle
   imports: [MongooseModule.forFeature([{ name: Customer.name, schema: CustomerSchema }])],
   controllers: [CustomerController],
   providers: [CustomerService, CustomerRepository],
-  exports: [CustomerService]
+  exports: [CustomerService, CustomerRepository],
 })
 export class CustomerModule {}
