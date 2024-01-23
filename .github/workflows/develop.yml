@@ -27,12 +27,13 @@ jobs:
       run: pm2 list
     - name: 'Create env file'
       run: |
-        echo "${{ vars.NODE_ENV }}" > .env
-        echo "${{ vars.PORT }}" > .env
-        echo "${{ secrets.MONGODB_CONNECTION_STRING }}" > .env
-        echo "${{ vars.JWT_ACCESS_SECRET }}" > .env
-        echo "${{ vars.JWT_ACCESS_EXPIRATION }}" > .env
-        echo "${{ vars.JWT_REFRESH_SECRET }}" > .env
-        echo "${{ vars.JWT_REFRESH_EXPIRATION }}" > .env
+        touch .env
+        echo NODE_ENV=${{ vars.NODE_ENV }} >> .env
+        echo PORT=${{ vars.PORT }} >> .env
+        echo MONGODB_CONNECTION_STRING=${{ secrets.MONGODB_CONNECTION_STRING }} >> .env
+        echo JWT_ACCESS_SECRET=${{ vars.JWT_ACCESS_SECRET }} >> .env
+        echo JWT_ACCESS_EXPIRATION=${{ vars.JWT_ACCESS_EXPIRATION }} >> .env
+        echo JWT_REFRESH_SECRET=${{ vars.JWT_REFRESH_SECRET }} >> .env
+        echo JWT_REFRESH_EXPIRATION=${{ vars.JWT_REFRESH_EXPIRATION }} >> .env
     - name: Deploy
       run: pm2 restart efurniture-api
