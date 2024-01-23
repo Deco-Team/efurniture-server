@@ -13,16 +13,25 @@ jobs:
         node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
-    - name: Echo env secrets
-      run: echo "Env ${{ env.TEST }}, ${{ vars.TEST }}, ${{ secrets.TEST }}"
-    - name: Echo env vars
-      run: echo "Env ${{ env.JWT_ACCESS_EXPIRATION }}, ${{ vars.JWT_ACCESS_EXPIRATION }}, ${{ secrets.JWT_ACCESS_EXPIRATION }}"
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build
-    - run: pm2 restart efurniture-api
+    - name: Install 
+      run: npm ci
+    - name: Build
+      run: npm run build
+    - name: Check pm2 list
+      run: pm2 list
+    - name: Deploy
+      env: 
+        NODE_ENV: ${{ vars.NODE_ENV }}
+        PORT: ${{ vars.PORT }}
+        MONGODB_CONNECTION_STRING: ${{ secrets.MONGODB_CONNECTION_STRING }}
+        JWT_ACCESS_SECRET: ${{ vars.JWT_ACCESS_SECRET }}
+        JWT_ACCESS_EXPIRATION: ${{ vars.JWT_ACCESS_EXPIRATION }}
+        JWT_REFRESH_SECRET: ${{ vars.JWT_REFRESH_SECRET }}
+        JWT_REFRESH_EXPIRATION: ${{ vars.JWT_REFRESH_EXPIRATION }}
+      run: pm2 restart efurniture-api
