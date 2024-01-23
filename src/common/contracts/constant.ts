@@ -4,10 +4,16 @@ export enum Status {
   DELETED = 'DELETED'
 }
 
+export enum UserSide {
+  CUSTOMER = 'CUSTOMER',
+  PROVIDER = 'PROVIDER'
+}
+
 export enum UserRole {
   ADMIN = 'ADMIN',
   STAFF = 'STAFF',
-
+  DELIVERY_STAFF = 'DELIVERY_STAFF',
+  CONSULTANT_STAFF = 'CONSULTANT_STAFF',
   CUSTOMER = 'CUSTOMER'
 }
 
