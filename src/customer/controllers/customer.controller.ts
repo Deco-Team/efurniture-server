@@ -11,21 +11,21 @@ import { ErrorResponse } from '@common/contracts/dto'
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @Post('register')
-  @ApiOkResponse({ type: Customer })
-  async login(@Body() createCustomerDto: CreateCustomerDto) {
-    const customer = await this.customerService.createCustomer(createCustomerDto)
-    return customer
-  }
+  // @Post('register')
+  // @ApiOkResponse({ type: Customer })
+  // async login(@Body() createCustomerDto: CreateCustomerDto) {
+  //   const customer = await this.customerService.createCustomer(createCustomerDto)
+  //   return customer
+  // }
 
-  @Get(':id')
-  @ApiBadRequestResponse({ type: ErrorResponse })
-  @ApiOkResponse({ type: Customer })
+  // @Get(':id')
+  // @ApiBadRequestResponse({ type: ErrorResponse })
+  // @ApiOkResponse({ type: Customer })
   // @ApiBearerAuth()
   // @UseGuards(SidesGuard)
   // @UseGuards(AccessTokenGuard)
   // @Sides(SidesAuth.CUSTOMER)
-  async getDetail(@Req() req, @Param('id') id: string) {
-    return await this.customerService.getCustomerDetail(id)
-  }
+  // async getDetail(@Req() req, @Param('id') id: string) {
+  //   return await this.customerService.getCustomerDetail(id)
+  // }
 }
