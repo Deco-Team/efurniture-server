@@ -16,7 +16,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt-access') 
   }
 
   async validate(payload: AccessTokenPayload) {
-    return { id: payload.sub, name: payload.name, role: payload.role }
+    return { _id: payload.sub, name: payload.name, role: payload.role }
   }
 }
 

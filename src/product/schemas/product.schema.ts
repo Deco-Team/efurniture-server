@@ -123,9 +123,7 @@ export class Product {
   variants: Variant[]
 
   //TODO: Add another status and fix this props
-  @ApiProperty()
   @Prop({
-    type: String,
     enum: Status,
     default: Status.ACTIVE
   })

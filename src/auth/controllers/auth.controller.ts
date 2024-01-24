@@ -3,7 +3,7 @@ import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags }
 import { ErrorResponse } from '@common/contracts/dto'
 import { LoginReqDto } from '@auth/dto/login.dto'
 import { AuthService } from '@auth/services/auth.service'
-import { TokenResDto } from '@auth/dto/token.dto'
+import { ResponseTokenDto, TokenResDto } from '@auth/dto/token.dto'
 import { UserSide } from '@common/contracts/constant'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 
@@ -14,7 +14,7 @@ export class AuthController {
 
   @Post('customer/login')
   @ApiBody({ type: LoginReqDto })
-  @ApiOkResponse({ type: TokenResDto })
+  @ApiOkResponse({ type: ResponseTokenDto })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async login(@Body() loginReqDto: LoginReqDto): Promise<TokenResDto> {
     const res = await this.authService.login(loginReqDto, UserSide.CUSTOMER)
@@ -25,7 +25,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard.REFRESH_TOKEN)
   @Post('customer/refresh')
   @ApiBearerAuth()
-  @ApiOkResponse({ type: TokenResDto })
+  @ApiOkResponse({ type: ResponseTokenDto })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async refreshToken(@Req() req): Promise<TokenResDto> {
     const res = await this.authService.refreshAccessToken(req.user.id, UserSide.CUSTOMER)
