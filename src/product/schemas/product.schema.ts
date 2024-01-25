@@ -63,6 +63,7 @@ export class Product {
     this._id = id
   }
 
+  @ApiProperty()
   @Transform(({ value }) => value?.toString())
   _id: string
 
