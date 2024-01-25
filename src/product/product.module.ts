@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ProductController } from '@product/controllers/product.controller'
+import { ProductController } from '@src/product/controllers/provider.controller'
 import { ProductService } from '@product/services/product.service'
 import { ProductRepository } from '@product/repositories/product.repository'
 import { MongooseModule } from '@nestjs/mongoose'

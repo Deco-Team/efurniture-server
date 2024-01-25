@@ -31,22 +31,6 @@ export class PaginationQuery {
   sort: Record<string, 1 | -1>
 }
 
-export class PaginateDto {
-  @ApiProperty({ type: Number })
-  @ApiPropertyOptional()
-  @IsPositive()
-  page = 1
-
-  @ApiProperty({ type: Number })
-  @ApiPropertyOptional()
-  @IsPositive()
-  limit = 10
-
-  @ApiProperty({ type: String, example: 'field1.asc_field2.desc' })
-  @ApiPropertyOptional()
-  sort: Record<string, 1 | -1>
-
-
 export class BooleanResponseDto {
   @ApiProperty()
   success: boolean

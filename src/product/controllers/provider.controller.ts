@@ -10,11 +10,11 @@ import { JwtAuthGuard } from '@src/auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@src/auth/guards/roles.guard'
 import { UserRole } from '@src/common/contracts/constant'
 
-@ApiTags('Product')
-// @ApiBearerAuth()
-// @Roles(UserRole.ADMIN, UserRole.STAFF)
-// @UseGuards(JwtAuthGuard.ACCESS_TOKEN, RolesGuard)
-@Controller()
+@ApiTags('Product - Provider')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard.ACCESS_TOKEN, RolesGuard)
+@Roles(UserRole.ADMIN, UserRole.STAFF)
+@Controller('provider')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
