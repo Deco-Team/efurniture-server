@@ -14,7 +14,7 @@ import { AddToCartDto, ResponseCartDto } from '@cart/dto/cart.dto'
 @ApiBearerAuth()
 @Roles(UserRole.CUSTOMER)
 @UseGuards(JwtAuthGuard.ACCESS_TOKEN, RolesGuard)
-@Controller('cart')
+@Controller('carts')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
