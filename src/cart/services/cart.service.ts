@@ -9,6 +9,11 @@ export class CartService {
 
   public async addToCart(addToCartDto: AddToCartDto) {
     const { customerId, product, quantity } = addToCartDto
+
+    // TODO: Check exists productId, implement after product module done
+
+    // TODO: Check inventory quantity <= product.quantity
+
     const cart = await this.cartRepository.findOne({
       conditions: {
         customerId

@@ -16,7 +16,10 @@ export const handlePagination: (request: any) => PaginationParams = (request) =>
     sort: request.query.sort
   }
   paginationParams.page = Number(paginationParams.page) > 0 ? Number(paginationParams.page) : 1
-  paginationParams.limit = Number(paginationParams.limit) > 0 ? Number(paginationParams.limit) : DEFAULT_LIMIT
+  paginationParams.limit =
+    Number(paginationParams.limit) > 0 && Number(paginationParams.limit) < 100
+      ? Number(paginationParams.limit)
+      : DEFAULT_LIMIT
   if (_.isEmpty(paginationParams.sort)) {
     paginationParams.sort = {
       createdAt: -1
