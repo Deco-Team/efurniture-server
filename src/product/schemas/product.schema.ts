@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 import { Status } from '@src/common/contracts/constant'
-import { URL_REGEX } from '@src/config'
 import { Transform } from 'class-transformer'
 import { IsNotEmpty, Min } from 'class-validator'
 import { HydratedDocument } from 'mongoose'
@@ -67,63 +66,49 @@ export class Product {
   _id: string
 
   @ApiProperty()
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   name: string
 
   @ApiProperty()
-  @Prop({ type: String, maxlength: 512, required: true })
+  @Prop({ type: String })
   description: string
 
   @ApiProperty()
   @Prop({
-    type: Array<String>,
-    validate: {
-      validator: (v: string[]) => {
-        return v.some((s) => URL_REGEX.test(s))
-      },
-      message: (props) => `${props.value} is not a valid image url!`
-    },
-    required: true
+    type: Array<String>
   })
   images: string[]
 
   @ApiProperty()
-  @Prop({ type: Number, max: 5, min: 0, default: 0, required: true })
+  @Prop({ type: Number, default: 0 })
   rate: number
 
   @ApiProperty()
-  @Prop({ type: String, maxlength: 30, required: true })
+  @Prop({ type: String })
   sku: string
 
   @ApiProperty()
-  @Prop({ type: String, maxlength: 30, required: true })
+  @Prop({ type: String })
   brand: string
 
   @ApiProperty()
-  @Prop({ type: Dimension, required: true })
+  @Prop({ type: Dimension })
   dimensions: Dimension
 
   @ApiProperty()
-  @Prop({ type: Number, min: 1, required: true })
+  @Prop({ type: Number })
   price: number
 
   @ApiProperty()
-  @Prop({ type: Number, min: 0, required: true })
+  @Prop({ type: Number })
   quantity: number
 
-  @ApiProperty()
+  @ApiProperty({ type: Variant, isArray: true })
   @Prop({
-    type: Variant,
-    required: true,
-    validator: (v: Variant[]) => {
-      return v.length < 5
-    },
-    message: (props) => `${props.value} is not more than 4`
+    type: [Variant]
   })
   variants: Variant[]
 
-  //TODO: Add another status and fix this props
-  @ApiProperty()
   @Prop({
     type: String,
     enum: Status,

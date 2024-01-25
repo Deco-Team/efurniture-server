@@ -27,6 +27,7 @@
       "@seeds/*": ["src/seeds/*"],
       "@i18n/*": ["src/i18n/*"],
       "@booking/*": ["src/booking/*"],
+      "@product/*":["src/product/*"]
     }
   }
 }

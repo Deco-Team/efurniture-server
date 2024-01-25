@@ -43,12 +43,16 @@ import { AuthModule } from './auth/auth.module'
     }),
     RouterModule.register([
       {
-        path: 'customer',
+        path: 'customers',
         module: CustomerModule
       },
       {
         path: 'auth',
         module: AuthModule
+      },
+      {
+        path: 'products',
+        module: ProductModule
       }
     ]),
     CommonModule,
