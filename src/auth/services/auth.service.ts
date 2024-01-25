@@ -10,6 +10,7 @@ import { AccessTokenPayload } from '@auth/strategies/jwt-access.strategy'
 import { RefreshTokenPayload } from '@auth/strategies/jwt-refresh.strategy'
 import { TokenResDto } from '@auth/dto/token.dto'
 import { ConfigService } from '@nestjs/config'
+import { RegisterReqDto } from '@auth/dto/register.dto'
 
 @Injectable()
 export class AuthService {
@@ -49,6 +50,29 @@ export class AuthService {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken
     }
+  }
+
+  public async register(registerReqDto: RegisterReqDto) {
+    const customer = await this.customerRepository.findOne({
+      conditions: {
+        email: registerReqDto.email
+      }
+    })
+
+    if (customer) throw new BadRequestException(Errors.EMAIL_ALREADY_EXIST.message)
+
+    const password = await this.hashPassword(registerReqDto.password)
+
+    await this.customerRepository.create({
+      firstName: registerReqDto.firstName,
+      lastName: registerReqDto.lastName,
+      email: registerReqDto.email,
+      password,
+      phone: registerReqDto.phone,
+      address: [registerReqDto.address]
+    })
+
+    return { success: true }
   }
 
   public async refreshAccessToken(id: string, side: UserSide): Promise<TokenResDto> {

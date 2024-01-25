@@ -10,7 +10,9 @@ import { join } from 'path'
 import configuration from '@src/config'
 import { CommonModule } from '@common/common.module'
 import { CustomerModule } from '@customer/customer.module'
-import { AuthModule } from './auth/auth.module'
+import { AuthModule } from '@auth/auth.module'
+import { ProductModule } from '@product/product.module'
+import { CartModule } from '@cart/cart.module'
 
 @Module({
   imports: [
@@ -57,7 +59,9 @@ import { AuthModule } from './auth/auth.module'
     ]),
     CommonModule,
     CustomerModule,
-    AuthModule
+    AuthModule,
+    ProductModule,
+    CartModule
   ],
   controllers: [AppController],
   providers: [AppService]

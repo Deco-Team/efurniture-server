@@ -70,7 +70,7 @@ export class Customer {
   dateOfBirth: Date
 
   @ApiProperty()
-  @Prop({ type: String, enum: Gender, default: Gender.OTHER })
+  @Prop({ enum: Gender, default: Gender.OTHER })
   gender: Gender
 
   @ApiProperty()
@@ -94,7 +94,6 @@ export class Customer {
   lastLoginDate: Date
 
   @Prop({
-    type: String,
     enum: Status,
     default: Status.ACTIVE
   })

@@ -62,6 +62,7 @@ export class Product {
     this._id = id
   }
 
+  @ApiProperty()
   @Transform(({ value }) => value?.toString())
   _id: string
 
@@ -110,7 +111,6 @@ export class Product {
   variants: Variant[]
 
   @Prop({
-    type: String,
     enum: Status,
     default: Status.ACTIVE
   })

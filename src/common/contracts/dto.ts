@@ -45,7 +45,7 @@ export class PaginateDto {
   @ApiProperty({ type: String, example: 'field1.asc_field2.desc' })
   @ApiPropertyOptional()
   sort: Record<string, 1 | -1>
-}
+
 
 export class BooleanResponseDto {
   @ApiProperty()
