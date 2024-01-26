@@ -8,12 +8,12 @@ import { UserSide } from '@common/contracts/constant'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RegisterReqDto } from '@auth/dto/register.dto'
 
-@ApiTags('Auth')
-@Controller()
-export class AuthController {
+@ApiTags('Auth - Customer')
+@Controller('customer')
+export class AuthCustomerController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('customer/login')
+  @Post('login')
   @ApiBody({ type: LoginReqDto })
   @ApiOkResponse({ type: ResponseTokenDto })
   @ApiBadRequestResponse({ type: ErrorResponse })
@@ -23,7 +23,7 @@ export class AuthController {
     return res
   }
 
-  @Post('customer/register')
+  @Post('register')
   @ApiBody({ type: RegisterReqDto })
   @ApiOkResponse({ type: ResponseSuccessDto })
   @ApiBadRequestResponse({ type: ErrorResponse })
@@ -32,7 +32,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard.REFRESH_TOKEN)
-  @Post('customer/refresh')
+  @Post('refresh')
   @ApiBearerAuth()
   @ApiOkResponse({ type: ResponseTokenDto })
   @ApiBadRequestResponse({ type: ErrorResponse })

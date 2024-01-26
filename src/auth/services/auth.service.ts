@@ -11,17 +11,20 @@ import { RefreshTokenPayload } from '@auth/strategies/jwt-refresh.strategy'
 import { TokenResDto } from '@auth/dto/token.dto'
 import { ConfigService } from '@nestjs/config'
 import { RegisterReqDto } from '@auth/dto/register.dto'
+import { StaffRepository } from '@staff/repositories/staff.repository'
+import { Staff } from '@staff/schemas/staff.schema'
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly customerRepository: CustomerRepository,
+    private readonly staffRepository: StaffRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
   ) {}
 
   public async login(loginReqDto: LoginReqDto, side: UserSide): Promise<TokenResDto> {
-    let user: Customer | null
+    let user: Customer | Staff
     let userRole: UserRole
 
     if (side === UserSide.CUSTOMER) {
@@ -32,6 +35,16 @@ export class AuthService {
       })
 
       userRole = UserRole.CUSTOMER
+    }
+
+    if (side === UserSide.PROVIDER) {
+      user = (await this.staffRepository.findOne({
+        conditions: {
+          email: loginReqDto.email
+        }
+      }))
+
+      userRole = user?.role
     }
 
     if (!user) throw new BadRequestException(Errors.WRONG_EMAIL_OR_PASSWORD.message)

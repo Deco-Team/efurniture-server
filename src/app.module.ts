@@ -13,6 +13,7 @@ import { CustomerModule } from '@customer/customer.module'
 import { AuthModule } from '@auth/auth.module'
 import { ProductModule } from '@product/product.module'
 import { CartModule } from '@cart/cart.module'
+import { StaffModule } from '@staff/staff.module'
 
 @Module({
   imports: [
@@ -61,7 +62,8 @@ import { CartModule } from '@cart/cart.module'
     CustomerModule,
     AuthModule,
     ProductModule,
-    CartModule
+    CartModule,
+    StaffModule
   ],
   controllers: [AppController],
   providers: [AppService]

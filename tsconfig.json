@@ -29,6 +29,7 @@
       "@booking/*": ["src/booking/*"],
       "@product/*": ["src/product/*"],
       "@cart/*": ["src/cart/*"],
+      "@staff/*": ["src/staff/*"],
     }
   }
 }
