@@ -1,45 +1,52 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsPositive } from 'class-validator'
+import { IsOptional, IsPositive } from 'class-validator'
+import { DataResponse } from '@common/contracts/openapi-builder'
 
 export class PaginationQuery {
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Number,
     description: 'Page number',
     example: 1,
     default: 1
   })
-  @ApiPropertyOptional()
+  @IsOptional()
   @IsPositive()
   page = 1
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Number,
     description: 'Number of items per page',
     example: 10,
     default: 10
   })
-  @ApiPropertyOptional()
+  @IsOptional()
   @IsPositive()
   limit = 10
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
-    example: 'field1.asc_field2.desc',
-    description: 'Sorting criteria'
+    example: 'createdAt.asc or createdAt.desc_email.asc',
+    description: 'sort any fields. format: <strong>field1.asc|desc or field1.asc|desc_field2.asc|desc</strong>'
   })
-  @ApiPropertyOptional()
+  @IsOptional()
   sort: Record<string, 1 | -1>
 }
 
-export class BooleanResponseDto {
-  @ApiProperty()
+export class SuccessResponse {
+  @ApiProperty({
+    type: Boolean,
+    required: true,
+    example: true,
+    description: 'The response status.'
+  })
   success: boolean
-}
 
-export class ResponseSuccessDto {
-  @ApiProperty({ default: BooleanResponseDto })
-  data: BooleanResponseDto
+  constructor(success: boolean) {
+    this.success = success
+  }
 }
+export class SuccessDataResponse extends DataResponse(SuccessResponse) {}
+
 
 export class ErrorResponse {
   @ApiProperty()

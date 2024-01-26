@@ -1,12 +1,13 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { ErrorResponse, ResponseSuccessDto } from '@common/contracts/dto'
+import { ErrorResponse, SuccessDataResponse } from '@common/contracts/dto'
 import { LoginReqDto } from '@auth/dto/login.dto'
 import { AuthService } from '@auth/services/auth.service'
-import { ResponseTokenDto, TokenResDto } from '@auth/dto/token.dto'
+import { TokenResDto } from '@auth/dto/token.dto'
 import { UserSide } from '@common/contracts/constant'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RegisterReqDto } from '@auth/dto/register.dto'
+import { DataResponse } from '@src/common/contracts/openapi-builder'
 
 @ApiTags('Auth - Customer')
 @Controller('customer')
@@ -15,7 +16,7 @@ export class AuthCustomerController {
 
   @Post('login')
   @ApiBody({ type: LoginReqDto })
-  @ApiOkResponse({ type: ResponseTokenDto })
+  @ApiOkResponse({ type: DataResponse(TokenResDto) })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async login(@Body() loginReqDto: LoginReqDto): Promise<TokenResDto> {
     const res = await this.authService.login(loginReqDto, UserSide.CUSTOMER)
@@ -25,7 +26,7 @@ export class AuthCustomerController {
 
   @Post('register')
   @ApiBody({ type: RegisterReqDto })
-  @ApiOkResponse({ type: ResponseSuccessDto })
+  @ApiOkResponse({ type: SuccessDataResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async register(@Body() registerReqDto: RegisterReqDto) {
     return await this.authService.register(registerReqDto)
@@ -34,7 +35,7 @@ export class AuthCustomerController {
   @UseGuards(JwtAuthGuard.REFRESH_TOKEN)
   @Post('refresh')
   @ApiBearerAuth()
-  @ApiOkResponse({ type: ResponseTokenDto })
+  @ApiOkResponse({ type: DataResponse(TokenResDto) })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async refreshToken(@Req() req): Promise<TokenResDto> {
     const res = await this.authService.refreshAccessToken(req.user.id, UserSide.CUSTOMER)

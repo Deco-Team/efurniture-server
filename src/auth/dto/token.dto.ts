@@ -9,11 +9,6 @@ export class TokenResDto {
   refreshToken: string
 }
 
-export class ResponseTokenDto {
-  @ApiProperty()
-  data: TokenResDto
-}
-
 export class RefreshTokenReqDto {
   @ApiProperty()
   @IsNotEmpty()
