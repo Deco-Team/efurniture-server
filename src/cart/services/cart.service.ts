@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { Errors } from '@src/common/contracts/error'
 import { CartRepository } from '@cart/repositories/cart.repository'
 import { AddToCartDto } from '@cart/dto/cart.dto'
+import { SuccessResponse } from '@src/common/contracts/dto'
 
 @Injectable()
 export class CartService {
@@ -51,7 +52,7 @@ export class CartService {
         }
       )
     }
-    return { success: true }
+    return new SuccessResponse(true)
   }
 
   public async getListCard(customerId: string) {
