@@ -15,7 +15,9 @@ export default () => ({
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET || 'accessSecret',
   JWT_ACCESS_EXPIRATION: process.env.JWT_ACCESS_EXPIRATION || 864000, // seconds
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'refreshSecret',
-  JWT_REFRESH_EXPIRATION: Number(process.env.JWT_REFRESH_EXPIRATION) || 90 // 90 days
+  JWT_REFRESH_EXPIRATION: Number(process.env.JWT_REFRESH_EXPIRATION) || 90, // 90 days
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 })
 
 export const AuthRoles = {

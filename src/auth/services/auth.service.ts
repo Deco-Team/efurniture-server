@@ -1,6 +1,6 @@
 import { JwtService } from '@nestjs/jwt'
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common'
-import { LoginReqDto } from '@auth/dto/login.dto'
+import { GoogleLoginReqDto, LoginReqDto } from '@auth/dto/login.dto'
 import { CustomerRepository } from '@customer/repositories/customer.repository'
 import { Errors } from '@common/contracts/error'
 import { Customer } from '@customer/schemas/customer.schema'
@@ -13,6 +13,8 @@ import { ConfigService } from '@nestjs/config'
 import { RegisterReqDto } from '@auth/dto/register.dto'
 import { StaffRepository } from '@staff/repositories/staff.repository'
 import { Staff } from '@staff/schemas/staff.schema'
+import { SuccessResponse } from '@common/contracts/dto'
+import { OAuth2Client } from 'google-auth-library'
 
 @Injectable()
 export class AuthService {
@@ -38,11 +40,11 @@ export class AuthService {
     }
 
     if (side === UserSide.PROVIDER) {
-      user = (await this.staffRepository.findOne({
+      user = await this.staffRepository.findOne({
         conditions: {
           email: loginReqDto.email
         }
-      }))
+      })
 
       userRole = user?.role
     }
@@ -56,6 +58,48 @@ export class AuthService {
     const accessTokenPayload: AccessTokenPayload = { name: user.firstName, sub: user._id, role: userRole }
 
     const refreshTokenPayload: RefreshTokenPayload = { sub: user._id, role: userRole }
+
+    const tokens = this.generateTokens(accessTokenPayload, refreshTokenPayload)
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken
+    }
+  }
+
+  public async googleLogin(googleLoginReqDto: GoogleLoginReqDto): Promise<TokenResDto> {
+    const client = new OAuth2Client({
+      clientId: this.configService.get('GOOGLE_CLIENT_ID'),
+      clientSecret: this.configService.get('GOOGLE_CLIENT_SECRET')
+    })
+
+    const ticket = await client.verifyIdToken({
+      idToken: googleLoginReqDto.token
+    })
+
+    const payload = ticket.getPayload()
+
+    const googleUserId = payload.sub
+
+    const user = await this.customerRepository.findOne({
+      conditions: {
+        googleUserId: googleUserId
+      }
+    })
+
+    if (!user) {
+      await this.customerRepository.create({
+        firstName: payload.given_name,
+        lastName: payload.family_name,
+        email: payload.email,
+        avatar: payload.picture,
+        googleUserId: googleUserId
+      })
+    }
+
+    const accessTokenPayload: AccessTokenPayload = { name: user.firstName, sub: user._id, role: UserRole.CUSTOMER }
+
+    const refreshTokenPayload: RefreshTokenPayload = { sub: user._id, role: UserRole.CUSTOMER }
 
     const tokens = this.generateTokens(accessTokenPayload, refreshTokenPayload)
 
@@ -80,12 +124,10 @@ export class AuthService {
       firstName: registerReqDto.firstName,
       lastName: registerReqDto.lastName,
       email: registerReqDto.email,
-      password,
-      phone: registerReqDto.phone,
-      address: [registerReqDto.address]
+      password
     })
 
-    return { success: true }
+    return new SuccessResponse(true)
   }
 
   public async refreshAccessToken(id: string, side: UserSide): Promise<TokenResDto> {
