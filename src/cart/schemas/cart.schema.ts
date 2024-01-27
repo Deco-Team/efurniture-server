@@ -1,20 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument } from 'mongoose'
+import { HydratedDocument, Types } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform, Type } from 'class-transformer'
 import { Status } from '@common/contracts/constant'
 import { IsNotEmpty, Min, ValidateNested } from 'class-validator'
 
-import { Product } from '@product/schemas/product.schema'
-
 export class ItemDto {
-  @ApiProperty()
+  @Prop({ type: Types.ObjectId, ref: 'Product' })
+  @ApiProperty({ example: 'productId' })
   @IsNotEmpty()
-  @ValidateNested()
-  product: Product
+  productId: Types.ObjectId
 
-  @ApiProperty()
+  @Prop()
+  @ApiProperty({ example: 1 })
   @IsNotEmpty()
   @Min(1)
   quantity: number
@@ -44,7 +43,7 @@ export class Cart {
   _id: string
 
   @Prop({ type: String, required: true })
-  customerId: string;
+  customerId: string
 
   @ApiProperty({ isArray: true, type: ItemDto })
   @ValidateNested()
@@ -65,3 +64,10 @@ export class Cart {
 export const CartSchema = SchemaFactory.createForClass(Cart)
 
 CartSchema.plugin(paginate)
+
+CartSchema.virtual('items.product', {
+  ref: 'Product',
+  localField: 'items.productId',
+  foreignField: '_id',
+  justOne: true
+})

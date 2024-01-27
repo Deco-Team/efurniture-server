@@ -9,37 +9,51 @@ import * as paginate from 'mongoose-paginate-v2'
 export type ProductDocument = HydratedDocument<Product>
 
 export class Variant {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'EF20241010'
+  })
   @IsNotEmpty()
   sku: string
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 90
+  })
   @IsNotEmpty()
   @Min(1)
   price: number
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 10
+  })
   @IsNotEmpty()
   @Min(1)
   quantity: number
 
-  @ApiProperty()
+  @ApiProperty({
+    example: { color: 'yellow', material: 'cotton' }
+  })
   @IsNotEmpty()
   keyValue: Map<string, string>
 }
 
 export class Dimension {
-  @ApiProperty()
+  @ApiProperty({
+    example: 36
+  })
   @IsNotEmpty()
   @Min(1)
   height: number
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 72
+  })
   @IsNotEmpty()
   @Min(1)
   width: number
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 38
+  })
   @IsNotEmpty()
   @Min(1)
   length: number

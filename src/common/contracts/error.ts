@@ -1,5 +1,6 @@
 import { HttpStatus } from '@nestjs/common'
-export const Errors = {
+import { ErrorResponse } from '@common/exceptions/app.exception'
+export const Errors: Record<string, ErrorResponse> = {
   OBJECT_NOT_FOUND: {
     error: 'OBJECT_NOT_FOUND',
     message: 'Không tìm thấy đối tượng',
@@ -13,6 +14,11 @@ export const Errors = {
   EMAIL_ALREADY_EXIST: {
     error: 'EMAIL_ALREADY_EXIST',
     message: 'Email đã được sử dụng',
+    httpStatus: HttpStatus.BAD_REQUEST
+  },
+  NOT_ENOUGH_QUANTITY_IN_STOCK: {
+    error: 'NOT_ENOUGH_QUANTITY_IN_STOCK',
+    message: 'Không đủ số lượng trong kho.',
     httpStatus: HttpStatus.BAD_REQUEST
   }
 }

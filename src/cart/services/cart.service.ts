@@ -3,42 +3,65 @@ import { Errors } from '@src/common/contracts/error'
 import { CartRepository } from '@cart/repositories/cart.repository'
 import { AddToCartDto } from '@cart/dto/cart.dto'
 import { SuccessResponse } from '@src/common/contracts/dto'
+import { ProductRepository } from '@src/product/repositories/product.repository'
+import { AppException } from '@src/common/exceptions/app.exception'
+import { Types } from 'mongoose'
 
 @Injectable()
 export class CartService {
-  constructor(private readonly cartRepository: CartRepository) {}
+  constructor(private readonly cartRepository: CartRepository, private readonly productRepository: ProductRepository) {}
 
   public async addToCart(addToCartDto: AddToCartDto) {
-    const { customerId, product, quantity } = addToCartDto
+    const { customerId, productId, quantity } = addToCartDto
 
-    // TODO: Check exists productId, implement after product module done
+    // 1.Check exists productId, implement after product module done
+    const product = await this.productRepository.findOne({
+      conditions: {
+        _id: productId
+      }
+    })
+    if (!product) throw new AppException(Errors.OBJECT_NOT_FOUND)
 
-    // TODO: Check inventory quantity <= product.quantity
-
+    // 2. Fetch cart
     const cart = await this.cartRepository.findOne({
       conditions: {
         customerId
       }
     })
-    const amount = product.price * quantity
+
+    const { quantity: remainQuantity, price } = product
+    const amount = price * quantity
+
     if (!cart) {
-      // create new cart
+      // 3.1 Cart not existed
+      // Check inventory quantity <= product.quantity
+      if (quantity > remainQuantity) throw new AppException(Errors.NOT_ENOUGH_QUANTITY_IN_STOCK)
+      // Create new cart
       await this.cartRepository.create({
         customerId,
-        items: [{ product, quantity }],
+        items: [{ productId: product._id, quantity }],
         totalAmount: amount
       })
     } else {
       const { _id, items } = cart
-      // update cart
-      // check existed item
-      const existedItemIndex = items.findIndex((item) => item.product._id === product._id)
+      // 3.2 Cart existed, update cart
+      // Check existed item
+      const existedItemIndex = items.findIndex((item) => {
+        return item.productId == productId
+      })
 
       if (existedItemIndex === -1) {
-        // push new item in the first element
-        items.unshift({ product, quantity })
+        // 3.2.1 Item not existed in cart
+        // Check inventory quantity <= product.quantity
+        if (quantity > remainQuantity) throw new AppException(Errors.NOT_ENOUGH_QUANTITY_IN_STOCK)
+        // Push new item in the first element
+        items.unshift({ productId: new Types.ObjectId(product._id), quantity })
       } else {
-        // update quantity in existed item
+        // 3.2.2 Item existed in cart
+        // Check inventory quantity + previousQuantity <= product.quantity
+        if (items[existedItemIndex].quantity + quantity > remainQuantity)
+          throw new AppException(Errors.NOT_ENOUGH_QUANTITY_IN_STOCK)
+        // Update quantity in existed item
         items[existedItemIndex].quantity += quantity
       }
       const totalAmount = (cart.totalAmount += amount)
@@ -62,7 +85,12 @@ export class CartService {
         _id: 1,
         items: 1,
         totalAmount: 1
-      }
+      },
+      populates: [
+        {
+          path: 'items.product'
+        }
+      ]
     })
     if (!cartList) {
       const newCartList = await this.cartRepository.create({
