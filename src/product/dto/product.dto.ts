@@ -14,15 +14,22 @@ import {
 } from 'class-validator'
 
 export class CreateProductDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Sofa Luxury'
+  })
   @IsNotEmpty()
   name: string
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Sofa Luxury Description'
+  })
   @MaxLength(512)
   @IsNotEmpty()
   description: string
 
+  @ApiProperty({
+    example: ['https://m.media-amazon.com/images/I/61KtSpR0SfL._AC_UL480_FMwebp_QL65_.jpg']
+  })
   @IsArray()
   @IsUrl({}, { each: true })
   @IsNotEmpty()
@@ -35,12 +42,16 @@ export class CreateProductDto {
   @IsNotEmpty()
   rate: number
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'EF20241212'
+  })
   @IsNotEmpty()
   @MaxLength(30)
   sku: string
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'SureFit'
+  })
   @IsNotEmpty()
   @MaxLength(30)
   brand: string
@@ -50,17 +61,24 @@ export class CreateProductDto {
   @ValidateNested()
   dimensions: Dimension
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 10
+  })
   @Min(1)
   @IsNotEmpty()
   price: number
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 100
+  })
   @Min(0)
   @IsNotEmpty()
   quantity: number
 
-  @ApiProperty({ type: [Variant], isArray: true })
+  @ApiProperty({
+    type: Variant,
+    isArray: true,
+  })
   @IsArray()
   @IsNotEmpty()
   @ArrayMaxSize(5)
