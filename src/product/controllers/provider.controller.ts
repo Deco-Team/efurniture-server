@@ -17,7 +17,7 @@ import { DataResponse } from '@common/contracts/openapi-builder';
 @UseGuards(JwtAuthGuard.ACCESS_TOKEN, RolesGuard)
 @Roles(UserRole.ADMIN, UserRole.STAFF)
 @Controller('provider')
-export class ProductController {
+export class ProviderProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()

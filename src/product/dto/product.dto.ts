@@ -13,7 +13,7 @@ import {
   ValidateNested
 } from 'class-validator'
 
-export class CreateProductDto {
+export class ProductPublicListDto {
   @ApiProperty({
     example: 'Sofa Luxury'
   })
@@ -21,11 +21,18 @@ export class CreateProductDto {
   name: string
 
   @ApiProperty({
-    example: 'Sofa Luxury Description'
+    example: 10
   })
-  @MaxLength(512)
+  @Min(1)
   @IsNotEmpty()
-  description: string
+  price: number
+
+  @ApiProperty()
+  @IsNumber()
+  @Max(5)
+  @Min(0)
+  @IsNotEmpty()
+  rate: number
 
   @ApiProperty({
     example: ['https://m.media-amazon.com/images/I/61KtSpR0SfL._AC_UL480_FMwebp_QL65_.jpg']
@@ -34,13 +41,15 @@ export class CreateProductDto {
   @IsUrl({}, { each: true })
   @IsNotEmpty()
   images: string[]
+}
 
-  @ApiProperty()
-  @IsNumber()
-  @Max(5)
-  @Min(0)
+export class CreateProductDto extends ProductPublicListDto {
+  @ApiProperty({
+    example: 'Sofa Luxury Description'
+  })
+  @MaxLength(512)
   @IsNotEmpty()
-  rate: number
+  description: string
 
   @ApiProperty({
     example: 'EF20241212'
@@ -62,13 +71,6 @@ export class CreateProductDto {
   dimensions: Dimension
 
   @ApiProperty({
-    example: 10
-  })
-  @Min(1)
-  @IsNotEmpty()
-  price: number
-
-  @ApiProperty({
     example: 100
   })
   @Min(0)
@@ -77,11 +79,16 @@ export class CreateProductDto {
 
   @ApiProperty({
     type: Variant,
-    isArray: true,
+    isArray: true
   })
   @IsArray()
   @IsNotEmpty()
   @ArrayMaxSize(5)
   @ValidateNested({ each: true })
   variants: Variant[]
+}
+
+export class ProductDetailDto extends CreateProductDto {
+  @ApiProperty()
+  _id: string
 }
