@@ -38,31 +38,18 @@ export class Customer {
   @ApiProperty()
   @Prop({
     type: String,
-    validate: {
-      validator: (v: string) => {
-        return EMAIL_REGEX.test(v)
-      },
-      message: (props) => `${props.value} is not a valid email!`
-    },
     required: true
   })
   email: string
 
   @ApiProperty()
   @Prop({
-    type: String,
-    validate: {
-      validator: (v: string) => {
-        return PHONE_REGEX.test(v)
-      },
-      message: (props) => `${props.value} is not a valid phone number!`
-    },
-    required: true
+    type: String
   })
   phone: string
 
   @ApiProperty()
-  @Prop({ type: Array<String>, required: true })
+  @Prop({ type: Array<String> })
   address: string[]
 
   @ApiProperty()
@@ -75,23 +62,21 @@ export class Customer {
 
   @ApiProperty()
   @Prop({
-    type: String,
-    validate: {
-      validator: (v: string) => {
-        return URL_REGEX.test(v)
-      },
-      message: (props) => `${props.value} is not a valid image url!`
-    }
+    type: String
   })
   avatar: string
 
   @ApiProperty()
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   password: string
 
   @ApiProperty()
   @Prop({ type: Date, default: Date.now() })
   lastLoginDate: Date
+
+  @ApiProperty()
+  @Prop({ type: String })
+  googleUserId: string
 
   @Prop({
     enum: Status,

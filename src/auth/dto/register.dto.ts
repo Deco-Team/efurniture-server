@@ -22,13 +22,4 @@ export class RegisterReqDto {
   @IsNotEmpty()
   @IsStrongPassword()
   password: string
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @Matches(PHONE_REGEX)
-  phone: string
-
-  @ApiProperty()
-  @IsNotEmpty()
-  address: string
 }
