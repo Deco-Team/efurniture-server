@@ -47,6 +47,20 @@ export class SuccessResponse {
 }
 export class SuccessDataResponse extends DataResponse(SuccessResponse) {}
 
+export class IDResponse {
+  @ApiProperty({
+    type: String,
+    required: true,
+    example: true,
+    description: 'The _id of resource.'
+  })
+  _id: string
+
+  constructor(_id: string) {
+    this._id = _id
+  }
+}
+export class IDDataResponse extends DataResponse(IDResponse) {}
 
 export class ErrorResponse {
   @ApiProperty()
