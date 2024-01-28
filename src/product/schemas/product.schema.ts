@@ -124,7 +124,7 @@ export class Product {
   })
   variants: Variant[]
 
-  @ApiProperty({ type: Types.ObjectId, isArray: true })
+  @ApiProperty({ type: String, isArray: true })
   @Prop({
     type: [{ type: Types.ObjectId, ref: 'Category' }]
   })

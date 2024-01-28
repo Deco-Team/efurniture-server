@@ -1,5 +1,5 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
-import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { UserRole } from '@common/contracts/constant'
@@ -9,6 +9,7 @@ import { PaginateResponse } from '@common/contracts/openapi-builder'
 import { PaginationQuery } from '@src/common/contracts/dto'
 import { CategoryService } from '@category/services/category.service'
 import { Pagination, PaginationParams } from '@src/common/decorators/pagination.decorator'
+import { CreateCategoryDto } from '@category/dto/category.dto'
 
 @ApiTags('Category - Provider')
 @ApiBearerAuth()
@@ -23,5 +24,11 @@ export class CategoryProviderController {
   @ApiQuery({ type: PaginationQuery })
   async getAllCategories(@Pagination() paginationParams: PaginationParams) {
     return await this.categoryService.getAllCategories(paginationParams)
+  }
+
+  @Post()
+  @ApiCreatedResponse({ type: Category })
+  async createCategory(@Body() createCategoryDto: CreateCategoryDto) {
+    return await this.categoryService.createCategory(createCategoryDto)
   }
 }
