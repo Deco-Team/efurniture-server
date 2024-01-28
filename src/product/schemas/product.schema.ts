@@ -8,34 +8,6 @@ import * as paginate from 'mongoose-paginate-v2'
 
 export type ProductDocument = HydratedDocument<Product>
 
-export class Variant {
-  @ApiProperty({
-    example: 'EF20241010'
-  })
-  @IsNotEmpty()
-  sku: string
-
-  @ApiProperty({
-    example: 90
-  })
-  @IsNotEmpty()
-  @Min(1)
-  price: number
-
-  @ApiProperty({
-    example: 10
-  })
-  @IsNotEmpty()
-  @Min(1)
-  quantity: number
-
-  @ApiProperty({
-    example: { color: 'yellow', material: 'cotton' }
-  })
-  @IsNotEmpty()
-  keyValue: Map<string, string>
-}
-
 export class Dimension {
   @ApiProperty({
     example: 36
@@ -57,6 +29,41 @@ export class Dimension {
   @IsNotEmpty()
   @Min(1)
   length: number
+}
+
+export class Variant {
+  @ApiProperty({
+    example: 'EF20241010'
+  })
+  @Prop({
+    unique: true
+  })
+  @IsNotEmpty()
+  sku: string
+
+  @ApiProperty({
+    example: 90
+  })
+  @IsNotEmpty()
+  @Min(1)
+  price: number
+
+  @ApiProperty({
+    example: 10
+  })
+  @IsNotEmpty()
+  @Min(1)
+  quantity: number
+
+  @ApiProperty()
+  @Prop({ type: Dimension })
+  dimensions: Dimension
+
+  @ApiProperty({
+    example: { color: 'yellow', material: 'cotton' }
+  })
+  @IsNotEmpty()
+  keyValue: Map<string, string>
 }
 
 @Schema({
@@ -100,23 +107,7 @@ export class Product {
 
   @ApiProperty()
   @Prop({ type: String })
-  sku: string
-
-  @ApiProperty()
-  @Prop({ type: String })
   brand: string
-
-  @ApiProperty()
-  @Prop({ type: Dimension })
-  dimensions: Dimension
-
-  @ApiProperty()
-  @Prop({ type: Number })
-  price: number
-
-  @ApiProperty()
-  @Prop({ type: Number })
-  quantity: number
 
   @ApiProperty({ type: Variant, isArray: true })
   @Prop({
