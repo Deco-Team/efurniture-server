@@ -32,7 +32,7 @@ export class Customer {
   firstName: string
 
   @ApiProperty()
-  @Prop({ type: String, maxlength: 30, required: true })
+  @Prop({ type: String, maxlength: 30, default: '' })
   lastName: string
 
   @ApiProperty()
