@@ -1,16 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Dimension, Variant } from '@product/schemas/product.schema'
-import {
-  ArrayMaxSize,
-  IsArray,
-  IsNotEmpty,
-  IsNumber,
-  IsUrl,
-  Max,
-  MaxLength,
-  Min,
-  ValidateNested
-} from 'class-validator'
+import { Variant } from '@product/schemas/product.schema'
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsUrl, Max, Min } from 'class-validator'
+import { Types } from 'mongoose'
 
 export class ProductPublicListDto {
   @ApiProperty({
@@ -19,13 +10,6 @@ export class ProductPublicListDto {
   @IsNotEmpty()
   name: string
 
-  @ApiProperty({
-    example: 10
-  })
-  @Min(1)
-  @IsNotEmpty()
-  price: number
-
   @ApiProperty()
   @IsNumber()
   @Max(5)
@@ -33,12 +17,8 @@ export class ProductPublicListDto {
   @IsNotEmpty()
   rate: number
 
-  @ApiProperty({
-    example: 10
-  })
-  @Min(1)
-  @IsNotEmpty()
-  price: number
+  @ApiProperty({ type: Variant, isArray: true })
+  variants: Variant[]
 
   @ApiProperty({
     example: ['https://m.media-amazon.com/images/I/61KtSpR0SfL._AC_UL480_FMwebp_QL65_.jpg']
@@ -49,57 +29,55 @@ export class ProductPublicListDto {
   images: string[]
 }
 
-export class CreateProductDto extends ProductPublicListDto {
-  @ApiProperty({
-    example: 'Sofa Luxury Description'
-  })
-  @MaxLength(512)
-  @IsNotEmpty()
+export class CreateProductDto {
+  @ApiProperty()
+  name: string
+
+  @ApiProperty()
   description: string
 
-  @ApiProperty({
-    example: 'EF20241212'
-  })
-  @IsNotEmpty()
-  @MaxLength(30)
-  sku: string
+  @ApiProperty()
+  images: string[]
 
-  @ApiProperty({
-    example: 'SureFit'
-  })
-  @IsNotEmpty()
-  @MaxLength(30)
+  @ApiProperty()
+  rate: number
+
+  @ApiProperty()
   brand: string
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @ValidateNested()
-  dimensions: Dimension
-
-  @ApiProperty({
-    example: 100
-  })
-  @Min(0)
-  @IsNotEmpty()
-  quantity: number
-
-  @ApiProperty({
-    type: Variant,
-    isArray: true
-  })
-  @IsArray()
-  @IsNotEmpty()
+  @ApiProperty({ type: Variant, isArray: true })
+  @ArrayMinSize(1)
   @ArrayMaxSize(5)
-  @ValidateNested({ each: true })
   variants: Variant[]
 
-  @ApiProperty({ type: String, isArray: true })
-  @IsArray()
+  @ApiProperty({ type: Types.ObjectId, isArray: true })
   @IsNotEmpty()
-  categories: string[]
+  categories: Types.ObjectId[]
 }
 
-export class ProductDetailDto extends CreateProductDto {
+export class ProductDetailDto {
   @ApiProperty()
   _id: string
+
+  @ApiProperty()
+  name: string
+
+  @ApiProperty()
+  description: string
+
+  @ApiProperty()
+  images: string[]
+
+  @ApiProperty()
+  rate: number
+
+  @ApiProperty()
+  brand: string
+
+  @ApiProperty({ type: Variant, isArray: true })
+  variants: Variant[]
+
+  @ApiProperty({ type: Types.ObjectId, isArray: true })
+  @IsNotEmpty()
+  categories: Types.ObjectId[]
 }
