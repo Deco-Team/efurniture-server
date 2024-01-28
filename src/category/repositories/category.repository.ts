@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { AbstractRepository } from '@src/common/repositories'
-import { Category, CategoryDocument } from '@category/schemas/Category.schema'
+import { Category, CategoryDocument } from '@category/schemas/category.schema'
 import { InjectModel } from '@nestjs/mongoose'
 import { PaginateModel } from 'mongoose'
 
