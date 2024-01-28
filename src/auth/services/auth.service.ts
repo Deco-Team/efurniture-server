@@ -90,6 +90,7 @@ export class AuthService {
     if (!user) {
       user = await this.customerRepository.create({
         firstName: payload.name,
+        lastName: '',
         email: payload.email,
         avatar: payload.picture,
         googleUserId: googleUserId
