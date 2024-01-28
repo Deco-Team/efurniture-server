@@ -20,5 +20,10 @@ export const Errors: Record<string, ErrorResponse> = {
     error: 'NOT_ENOUGH_QUANTITY_IN_STOCK',
     message: 'Không đủ số lượng trong kho.',
     httpStatus: HttpStatus.BAD_REQUEST
+  },
+  CATEGORY_ALREADY_EXIST: {
+    error: 'CATEGORY_ALREADY_EXIST',
+    message: 'Danh mục đã tồn tại',
+    httpStatus: HttpStatus.BAD_REQUEST
   }
 }
