@@ -6,7 +6,6 @@ import {
   IsNotEmpty,
   IsNumber,
   IsUrl,
-  Matches,
   Max,
   MaxLength,
   Min,
@@ -84,4 +83,9 @@ export class CreateProductDto {
   @ArrayMaxSize(5)
   @ValidateNested({ each: true })
   variants: Variant[]
+
+  @ApiProperty({ type: String, isArray: true })
+  @IsArray()
+  @IsNotEmpty()
+  categories: string[]
 }

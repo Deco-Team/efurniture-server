@@ -30,6 +30,7 @@
       "@product/*": ["src/product/*"],
       "@cart/*": ["src/cart/*"],
       "@staff/*": ["src/staff/*"],
+      "@category/*": ["src/category/*"]
     }
   }
 }
