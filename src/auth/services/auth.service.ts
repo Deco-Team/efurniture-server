@@ -81,16 +81,15 @@ export class AuthService {
 
     const googleUserId = payload.sub
 
-    const user = await this.customerRepository.findOne({
+    let user = await this.customerRepository.findOne({
       conditions: {
         googleUserId: googleUserId
       }
     })
 
     if (!user) {
-      await this.customerRepository.create({
-        firstName: payload.given_name,
-        lastName: payload.family_name,
+      user = await this.customerRepository.create({
+        firstName: payload.name,
         email: payload.email,
         avatar: payload.picture,
         googleUserId: googleUserId

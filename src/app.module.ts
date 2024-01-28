@@ -14,6 +14,7 @@ import { AuthModule } from '@auth/auth.module'
 import { ProductModule } from '@product/product.module'
 import { CartModule } from '@cart/cart.module'
 import { StaffModule } from '@staff/staff.module'
+import { CategoryModule } from './category/category.module'
 
 @Module({
   imports: [
@@ -56,6 +57,10 @@ import { StaffModule } from '@staff/staff.module'
       {
         path: 'products',
         module: ProductModule
+      },
+      {
+        path: 'categories',
+        module: CategoryModule
       }
     ]),
     CommonModule,
@@ -63,7 +68,8 @@ import { StaffModule } from '@staff/staff.module'
     AuthModule,
     ProductModule,
     CartModule,
-    StaffModule
+    StaffModule,
+    CategoryModule
   ],
   controllers: [AppController],
   providers: [AppService]
