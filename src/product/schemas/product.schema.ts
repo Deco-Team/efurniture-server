@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Status } from '@src/common/contracts/constant'
 import { Transform } from 'class-transformer'
 import { IsNotEmpty, Min } from 'class-validator'
-import { HydratedDocument } from 'mongoose'
+import { HydratedDocument, Types } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
 
 export type ProductDocument = HydratedDocument<Product>
@@ -123,6 +123,13 @@ export class Product {
     type: [Variant]
   })
   variants: Variant[]
+
+  @ApiProperty({ type: Types.ObjectId, isArray: true })
+  @Prop({
+    type: [{ type: Types.ObjectId, ref: 'Category' }]
+  })
+  @IsNotEmpty()
+  categories: Types.ObjectId[]
 
   @Prop({
     enum: Status,
