@@ -4,6 +4,30 @@ export enum Status {
   DELETED = 'DELETED'
 }
 
+export enum ProductStatus {
+  ACTIVE = 'ACTIVE',
+  OUT_OF_STOCK = 'OUT_OF_STOCK',
+  INACTIVE = 'INACTIVE',
+  DELETED = 'DELETED'
+}
+
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  DELIVERING = 'DELIVERING',
+  COMPLETED = 'COMPLETED',
+  CANCELED = 'CANCELED',
+  DELETED = 'DELETED'
+}
+
+export enum TransactionStatus {
+  DRAFT = 'DRAFT',
+  CAPTURED = 'CAPTURED',
+  ERROR = 'ERROR',
+  CANCELED = 'CANCELED',
+  DELETED = 'DELETED'
+}
+
 export enum UserSide {
   CUSTOMER = 'CUSTOMER',
   PROVIDER = 'PROVIDER'
