@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument, Types } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
 import { ApiProperty } from '@nestjs/swagger'
-import { Transform, Type } from 'class-transformer'
+import { Transform } from 'class-transformer'
 import { Status } from '@common/contracts/constant'
 import { IsMongoId, IsNotEmpty, Min, ValidateNested } from 'class-validator'
 
