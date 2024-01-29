@@ -35,9 +35,6 @@ export class Variant {
   @ApiProperty({
     example: 'EF20241010'
   })
-  @Prop({
-    unique: true
-  })
   @IsNotEmpty()
   sku: string
 
@@ -56,7 +53,7 @@ export class Variant {
   quantity: number
 
   @ApiProperty()
-  @Prop({ type: Dimension })
+  @IsNotEmpty()
   dimensions: Dimension
 
   @ApiProperty({
@@ -68,10 +65,7 @@ export class Variant {
 
 @Schema({
   collection: 'products',
-  timestamps: {
-    createdAt: true,
-    updatedAt: true
-  },
+  timestamps: true,
   toJSON: {
     transform(doc, ret) {
       delete ret.__v
@@ -131,4 +125,5 @@ export class Product {
 
 export const ProductSchema = SchemaFactory.createForClass(Product)
 
+ProductSchema.index({ 'variants.sku': 1 }, { unique: true })
 ProductSchema.plugin(paginate)
