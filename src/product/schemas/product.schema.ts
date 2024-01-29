@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ApiProperty } from '@nestjs/swagger'
-import { Status } from '@src/common/contracts/constant'
+import { ProductStatus } from '@src/common/contracts/constant'
 import { Transform } from 'class-transformer'
 import { IsNotEmpty, Min } from 'class-validator'
 import { HydratedDocument, Types } from 'mongoose'
@@ -117,10 +117,10 @@ export class Product {
   categories: Types.ObjectId[]
 
   @Prop({
-    enum: Status,
-    default: Status.ACTIVE
+    enum: ProductStatus,
+    default: ProductStatus.ACTIVE
   })
-  status: Status
+  status: ProductStatus
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product)
@@ -131,7 +131,7 @@ ProductSchema.index(
     unique: true,
     partialFilterExpression: {
       status: {
-        $in: [Status.ACTIVE, Status.INACTIVE]
+        $in: [ProductStatus.ACTIVE, ProductStatus.INACTIVE, ProductStatus.OUT_OF_STOCK]
       }
     }
   }
