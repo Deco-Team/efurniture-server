@@ -25,5 +25,15 @@ export const Errors: Record<string, ErrorResponse> = {
     error: 'CATEGORY_ALREADY_EXIST',
     message: 'Danh mục đã tồn tại',
     httpStatus: HttpStatus.BAD_REQUEST
-  }
+  },
+  CATEGORY_NOT_FOUND: {
+    error: 'CATEGORY_NOT_FOUND',
+    message: 'Không tìm thấy danh mục',
+    httpStatus: HttpStatus.BAD_REQUEST
+  },
+  PRODUCT_NOT_FOUND: {
+    error: 'PRODUCT_NOT_FOUND',
+    message: 'Không tìm thấy sản phẩm',
+    httpStatus: HttpStatus.BAD_REQUEST
+  },
 }

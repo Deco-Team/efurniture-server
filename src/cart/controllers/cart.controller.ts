@@ -20,19 +20,19 @@ import { Cart } from '@cart/schemas/cart.schema'
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  // @Post()
-  // @ApiOkResponse({ type: SuccessDataResponse })
-  // @ApiBadRequestResponse({ type: ErrorResponse })
-  // async addToCart(@Req() req, @Body() addToCartDto: AddToCartDto) {
-  //   addToCartDto.customerId = _.get(req, 'user._id')
-  //   const result = await this.cartService.addToCart(addToCartDto)
-  //   return result
-  // }
+  @Post()
+  @ApiOkResponse({ type: SuccessDataResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  async addToCart(@Req() req, @Body() addToCartDto: AddToCartDto) {
+    addToCartDto.customerId = _.get(req, 'user._id')
+    const result = await this.cartService.addToCart(addToCartDto)
+    return result
+  }
 
-  // @Get()
-  // @ApiOkResponse({ type: DataResponse(Cart) })
-  // async getListCard(@Req() req) {
-  //   const customerId = _.get(req, 'user._id')
-  //   return await this.cartService.getListCard(customerId)
-  // }
+  @Get()
+  @ApiOkResponse({ type: DataResponse(Cart) })
+  async getListCard(@Req() req) {
+    const customerId = _.get(req, 'user._id')
+    return await this.cartService.getListCard(customerId)
+  }
 }

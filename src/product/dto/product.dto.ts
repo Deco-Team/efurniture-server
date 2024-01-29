@@ -1,6 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Variant } from '@product/schemas/product.schema'
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsUrl, Max, Min } from 'class-validator'
+import { Type } from 'class-transformer'
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsUrl,
+  Max,
+  MaxLength,
+  Min,
+  ValidateNested
+} from 'class-validator'
 import { Types } from 'mongoose'
 
 export class ProductPublicListDto {
@@ -30,27 +42,44 @@ export class ProductPublicListDto {
 }
 
 export class CreateProductDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Sofa Luxury'
+  })
+  @IsNotEmpty()
+  @MaxLength(50)
   name: string
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Sofa Luxury Description'
+  })
+  @IsNotEmpty()
+  @MaxLength(256)
   description: string
 
-  @ApiProperty()
+  @ApiProperty({
+    example: ['https://m.media-amazon.com/images/I/61KtSpR0SfL._AC_UL480_FMwebp_QL65_.jpg']
+  })
+  @IsArray()
+  @IsUrl({}, { each: true })
+  @IsNotEmpty()
   images: string[]
 
-  @ApiProperty()
-  rate: number
-
-  @ApiProperty()
+  @ApiProperty({
+    example: 'ERYE'
+  })
+  @IsNotEmpty()
   brand: string
 
   @ApiProperty({ type: Variant, isArray: true })
+  @IsNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true })
   @ArrayMinSize(1)
   @ArrayMaxSize(5)
+  @Type(() => Variant)
   variants: Variant[]
 
-  @ApiProperty({ type: Types.ObjectId, isArray: true })
+  @ApiProperty({ type: Types.ObjectId, isArray: true, example: ['65b7805c041a5a29734ce110'] })
   @IsNotEmpty()
   categories: Types.ObjectId[]
 }

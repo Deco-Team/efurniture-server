@@ -1,16 +1,22 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument, Types } from 'mongoose'
+import { HydratedDocument, Types, isValidObjectId } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform, Type } from 'class-transformer'
 import { Status } from '@common/contracts/constant'
-import { IsNotEmpty, Min, ValidateNested } from 'class-validator'
+import { IsMongoId, IsNotEmpty, Min, ValidateNested } from 'class-validator'
+import { Variant } from '@src/product/schemas/product.schema'
 
 export class ItemDto {
   @Prop({ type: Types.ObjectId, ref: 'Product' })
   @ApiProperty({ example: 'productId' })
   @IsNotEmpty()
+  @IsMongoId()
   productId: Types.ObjectId
+
+  @Prop()
+  @ApiProperty({ example: 'EF20241212' })
+  sku: string
 
   @Prop()
   @ApiProperty({ example: 1 })
@@ -23,10 +29,7 @@ export type CartDocument = HydratedDocument<Cart>
 
 @Schema({
   collection: 'carts',
-  timestamps: {
-    createdAt: true,
-    updatedAt: true
-  },
+  timestamps: true,
   toJSON: {
     transform(doc, ret) {
       delete ret.__v
