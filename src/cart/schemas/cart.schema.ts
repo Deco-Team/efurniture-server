@@ -1,11 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument, Types, isValidObjectId } from 'mongoose'
+import { HydratedDocument, Types } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform, Type } from 'class-transformer'
 import { Status } from '@common/contracts/constant'
 import { IsMongoId, IsNotEmpty, Min, ValidateNested } from 'class-validator'
-import { Variant } from '@src/product/schemas/product.schema'
 
 export class ItemDto {
   @Prop({ type: Types.ObjectId, ref: 'Product' })
