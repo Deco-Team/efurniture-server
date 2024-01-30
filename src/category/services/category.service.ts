@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { CategoryRepository } from '@category/repositories/category.repository'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
 import { Status } from '@common/contracts/constant'
-import { CreateCategoryDto } from '@category/dto/category.dto'
+import { CreateCategoryDto, UpdateCategoryDto } from '@category/dto/category.dto'
 import { Errors } from '@common/contracts/error'
 
 @Injectable()
@@ -42,5 +42,27 @@ export class CategoryService {
     }
 
     return await this.categoryRepository.create(createCategoryDto)
+  }
+
+  async updateCategory(id: string, updateCategoryDto: UpdateCategoryDto) {
+    let category = await this.categoryRepository.findOne({
+      conditions: {
+        _id: { $ne: id },
+        name: updateCategoryDto.name,
+        status: { $ne: Status.DELETED }
+      }
+    })
+
+    if (category) {
+      throw new BadRequestException(Errors.CATEGORY_NAME_DUPLICATED)
+    }
+
+    category = await this.categoryRepository.findOneAndUpdate({ _id: id }, updateCategoryDto)
+
+    if (!category) {
+      throw new NotFoundException(Errors.CATEGORY_NOT_FOUND)
+    }
+
+    return category
   }
 }

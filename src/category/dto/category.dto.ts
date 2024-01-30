@@ -16,17 +16,33 @@ export class PublicCategory {
 }
 
 export class CreateCategoryDto {
-    @ApiProperty()
-    @IsNotEmpty()
-    @MaxLength(30)
-    name: string
-    
-    @ApiProperty()
-    @MaxLength(100)
-    description: string
-    
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsUrl()
-    image: string
+  @ApiProperty()
+  @IsNotEmpty()
+  @MaxLength(30)
+  name: string
+
+  @ApiProperty()
+  @MaxLength(100)
+  description: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUrl()
+  image: string
+}
+
+export class UpdateCategoryDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @MaxLength(30)
+  name: string
+
+  @ApiProperty()
+  @MaxLength(100)
+  description: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUrl()
+  image: string
 }
