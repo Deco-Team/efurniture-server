@@ -125,5 +125,15 @@ export class Product {
 
 export const ProductSchema = SchemaFactory.createForClass(Product)
 
-ProductSchema.index({ 'variants.sku': 1 }, { unique: true })
+ProductSchema.index(
+  { 'variants.sku': 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      status: {
+        $in: [Status.ACTIVE, Status.INACTIVE]
+      }
+    }
+  }
+)
 ProductSchema.plugin(paginate)
