@@ -33,6 +33,6 @@ export class OrderCustomerController {
   @ApiQuery({ type: PaginationQuery })
   async getListOrder(@Req() req, @Pagination() paginationParams: PaginationParams) {
     const customerId = _.get(req, 'user._id')
-    return await this.orderService.getCustomerOrderList({ customerId }, paginationParams)
+    return await this.orderService.getOrderList({ 'customer._id': customerId }, paginationParams)
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Errors } from '@src/common/contracts/error'
 import { CartRepository } from '@cart/repositories/cart.repository'
 import { AddToCartDto } from '@cart/dto/cart.dto'
@@ -9,7 +9,7 @@ import { Types } from 'mongoose'
 
 @Injectable()
 export class CartService {
-  constructor(private readonly cartRepository: CartRepository, private readonly productRepository: ProductRepository) {}
+  constructor(readonly cartRepository: CartRepository, private readonly productRepository: ProductRepository) {}
 
   public async addToCart(addToCartDto: AddToCartDto) {
     const { customerId, productId, sku, quantity } = addToCartDto

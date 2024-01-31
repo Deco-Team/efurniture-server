@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument, isValidObjectId } from 'mongoose'
+import { HydratedDocument } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { OrderStatus, TransactionStatus } from '@common/contracts/constant'
-import { IsEmail, IsMongoId, IsNotEmpty, IsPhoneNumber, MaxLength, Min, ValidateNested } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsPhoneNumber, MaxLength, Min, ValidateNested } from 'class-validator'
 import { Product } from '@product/schemas/product.schema'
+import { CreateOrderItemDto } from '@order/dto/order.dto'
 
 export class CustomerOrderDto {
   _id?: string
@@ -31,19 +32,15 @@ export class CustomerOrderDto {
   phone: string
 
   @ApiProperty()
-  @Prop({ type: String, required: true })
+  @IsNotEmpty()
   shippingAddress: string
 }
 
-export class ItemOrderDto {
+export class OrderItemDto extends CreateOrderItemDto {
   @ApiProperty()
-  @IsNotEmpty()
-  @ValidateNested()
   product: Product
 
   @ApiProperty()
-  @IsNotEmpty()
-  @Min(1)
   quantity: number
 }
 
@@ -67,14 +64,14 @@ export class Order {
   @Transform(({ value }) => value?.toString())
   _id: string
 
-  @ApiProperty()
+  @ApiProperty({ type: () => CustomerOrderDto })
   @Prop({ type: CustomerOrderDto, required: true })
   customer: CustomerOrderDto;
 
-  @ApiProperty({ isArray: true, type: ItemOrderDto })
+  @ApiProperty({ isArray: true, type: OrderItemDto })
   @ValidateNested()
-  @Prop({ type: Array<ItemOrderDto>, required: true })
-  items: ItemOrderDto[]
+  @Prop({ type: Array<OrderItemDto>, required: true })
+  items: OrderItemDto[]
 
   @ApiProperty()
   @Prop({ type: Number, required: true })

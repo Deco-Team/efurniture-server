@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { ProductRepository } from '@product/repositories/product.repository'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
 import { CreateProductDto } from '@product/dto/product.dto'
-import { Status } from '@common/contracts/constant'
+import { ProductStatus } from '@common/contracts/constant'
 import { CategoryRepository } from '@category/repositories/category.repository'
 import { AppException } from '@common/exceptions/app.exception'
 import { Errors } from '@common/contracts/error'
@@ -20,7 +20,7 @@ export class ProductService {
     return await this.productRepository.paginate(
       {
         status: {
-          $ne: Status.DELETED
+          $ne: ProductStatus.DELETED
         }
       },
       { ...paginationParams, populate: 'categories' }
@@ -31,7 +31,7 @@ export class ProductService {
     const result = await this.productRepository.paginate(
       {
         status: {
-          $in: Status.ACTIVE
+          $in: ProductStatus.ACTIVE
         }
       },
       {

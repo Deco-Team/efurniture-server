@@ -1,19 +1,36 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { DataResponse } from '@src/common/contracts/openapi-builder'
-import { IsNotEmpty, MaxLength, ValidateNested } from 'class-validator';
-import { CustomerOrderDto, Order } from '@order/schemas/order.schema';
-import { ItemDto } from '@cart/schemas/cart.schema';
+import { ArrayMinSize, IsMongoId, IsNotEmpty, MaxLength, Min, ValidateNested } from 'class-validator'
+import { CustomerOrderDto, Order } from '@order/schemas/order.schema'
+import { Prop } from '@nestjs/mongoose'
+import { Types } from 'mongoose'
+import { Type } from 'class-transformer'
+
+export class CreateOrderItemDto {
+  @Prop({ type: Types.ObjectId, ref: 'Product' })
+  @ApiProperty({ example: 'productId' })
+  @IsNotEmpty()
+  @IsMongoId()
+  productId: Types.ObjectId
+
+  @Prop()
+  @ApiProperty({ example: 'EF20241212' })
+  sku: string
+}
 
 export class CreateOrderDto {
-  @ApiProperty()
+  @ApiProperty({ type: () => CustomerOrderDto })
   @IsNotEmpty()
   @ValidateNested()
-  customer: CustomerOrderDto;
+  @Type(() => CustomerOrderDto)
+  customer: CustomerOrderDto
 
-  @ApiProperty({ isArray: true, type: ItemDto })
+  @ApiProperty({ isArray: true, type: CreateOrderItemDto })
   @IsNotEmpty()
-  @ValidateNested()
-  items: ItemDto[]
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => CreateOrderItemDto)
+  items: CreateOrderItemDto[]
 
   @ApiPropertyOptional()
   @MaxLength(256)
