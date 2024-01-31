@@ -1,16 +1,15 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { UserRole } from '@common/contracts/constant'
 import { Roles } from '@src/auth/decorators/roles.decorator'
 import { Category } from '@category/schemas/category.schema'
-import { DataResponse, PaginateResponse } from '@common/contracts/openapi-builder'
+import { PaginateResponse } from '@common/contracts/openapi-builder'
 import { PaginationQuery } from '@src/common/contracts/dto'
 import { CategoryService } from '@category/services/category.service'
 import { Pagination, PaginationParams } from '@src/common/decorators/pagination.decorator'
-import { CreateCategoryDto, UpdateCategoryDto } from '@category/dto/category.dto'
-import { Types } from 'mongoose'
+import { CreateCategoryDto } from '@category/dto/category.dto'
 
 @ApiTags('Category - Provider')
 @ApiBearerAuth()
@@ -28,15 +27,8 @@ export class CategoryProviderController {
   }
 
   @Post()
-  @ApiCreatedResponse({ type: DataResponse(Category) })
+  @ApiCreatedResponse({ type: Category })
   async createCategory(@Body() createCategoryDto: CreateCategoryDto) {
     return await this.categoryService.createCategory(createCategoryDto)
-  }
-
-  @Put(':id')
-  @ApiParam({ name: 'id' })
-  @ApiOkResponse({ type: DataResponse(Category) })
-  async updateCategory(@Param() params: { id: string }, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return await this.categoryService.updateCategory(params.id, updateCategoryDto)
   }
 }

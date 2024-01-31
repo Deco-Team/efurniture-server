@@ -26,11 +26,6 @@ export const Errors: Record<string, ErrorResponse> = {
     message: 'Danh mục đã tồn tại',
     httpStatus: HttpStatus.BAD_REQUEST
   },
-  CATEGORY_NAME_DUPLICATED: {
-    error: 'CATEGORY_NAME_DUPLICATED',
-    message: 'Tên danh mục đã tồn tại',
-    httpStatus: HttpStatus.BAD_REQUEST
-  },
   CATEGORY_NOT_FOUND: {
     error: 'CATEGORY_NOT_FOUND',
     message: 'Không tìm thấy danh mục',
