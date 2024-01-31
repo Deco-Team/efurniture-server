@@ -65,14 +65,4 @@ export class CategoryService {
 
     return category
   }
-
-  async deleteCategory(id: string) {
-    const category = await this.categoryRepository.findOneAndUpdate({ _id: id }, { status: Status.DELETED })
-
-    if (!category) {
-      throw new NotFoundException(Errors.CATEGORY_NOT_FOUND)
-    }
-
-    return category
-  }
 }
