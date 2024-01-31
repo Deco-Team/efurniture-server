@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
@@ -38,5 +38,12 @@ export class CategoryProviderController {
   @ApiOkResponse({ type: DataResponse(Category) })
   async updateCategory(@Param() params: { id: string }, @Body() updateCategoryDto: UpdateCategoryDto) {
     return await this.categoryService.updateCategory(params.id, updateCategoryDto)
+  }
+
+  @Delete(':id')
+  @ApiParam({ name: 'id' })
+  @ApiOkResponse({ type: DataResponse(Category) })
+  async deleteCategory(@Param() params: { id: string }) {
+    return await this.categoryService.deleteCategory(params.id)
   }
 }
