@@ -40,10 +40,10 @@ export class CategoryProviderController {
     return await this.categoryService.updateCategory(params.id, updateCategoryDto)
   }
 
-  @Delete(':id')
+/*   @Delete(':id')
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: DataResponse(Category) })
   async deleteCategory(@Param() params: { id: string }) {
     return await this.categoryService.deleteCategory(params.id)
-  }
+  } */
 }
