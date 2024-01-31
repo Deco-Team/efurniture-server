@@ -1,5 +1,5 @@
 import { Cart, ItemDto } from '@cart/schemas/cart.schema'
-import { DataResponse } from '@src/common/contracts/openapi-builder'
+import { DataResponse } from '@common/contracts/openapi-builder'
 
 export class AddToCartDto extends ItemDto {
   customerId?: string
