@@ -66,7 +66,7 @@ export class CategoryService {
     return category
   }
 
-  async deleteCategory(id: string) {
+/*   async deleteCategory(id: string) {
     const category = await this.categoryRepository.findOneAndUpdate({ _id: id }, { status: Status.DELETED })
 
     if (!category) {
@@ -74,5 +74,5 @@ export class CategoryService {
     }
 
     return category
-  }
+  } */
 }
