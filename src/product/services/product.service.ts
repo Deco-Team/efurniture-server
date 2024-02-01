@@ -16,6 +16,16 @@ export class ProductService {
     private readonly categoryRepository: CategoryRepository
   ) {}
 
+  private populateCategories = {
+    path: 'categories',
+    model: 'Category',
+    select: {
+      _id: 1,
+      name: 1,
+      image: 1
+    }
+  }
+
   public async getAllProducts(paginationParams: PaginationParams) {
     return await this.productRepository.paginate(
       {
@@ -23,7 +33,10 @@ export class ProductService {
           $ne: ProductStatus.DELETED
         }
       },
-      { ...paginationParams, populate: 'categories' }
+      {
+        ...paginationParams,
+        populate: this.populateCategories
+      }
     )
   }
 
@@ -31,11 +44,12 @@ export class ProductService {
     const result = await this.productRepository.paginate(
       {
         status: {
-          $in: ProductStatus.ACTIVE
+          $in: [ProductStatus.ACTIVE]
         }
       },
       {
         ...paginationParams,
+        populate: this.populateCategories,
         projection: {
           name: 1,
           rate: 1,
@@ -78,7 +92,8 @@ export class ProductService {
         status: 0,
         createdAt: 0,
         updatedAt: 0
-      }
+      },
+      populates: [this.populateCategories]
     })
     if (!result) throw new AppException(Errors.PRODUCT_NOT_FOUND)
     return result
