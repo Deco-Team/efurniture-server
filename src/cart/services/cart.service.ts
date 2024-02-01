@@ -79,7 +79,7 @@ export class CartService {
     return new SuccessResponse(true)
   }
 
-  public async getListCard(customerId: string) {
+  public async getCart(customerId: string) {
     const cartList = await this.cartRepository.findOne({
       conditions: { customerId },
       projection: {
