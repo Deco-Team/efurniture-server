@@ -9,7 +9,7 @@ import { UserRole } from '@common/contracts/constant'
 import { Roles } from '@auth/decorators/roles.decorator'
 import { OrderService } from '@order/services/order.service'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
-import { OrderResponseDto } from '@order/dto/order.dto'
+import { OrderPaginateResponseDto } from '@order/dto/order.dto'
 
 @ApiTags('Order - Provider')
 @ApiBearerAuth()
@@ -20,9 +20,9 @@ export class OrderProviderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get()
-  @ApiOkResponse({ type: OrderResponseDto })
+  @ApiOkResponse({ type: OrderPaginateResponseDto })
   @ApiQuery({ type: PaginationQuery })
   async getListOrder(@Pagination() paginationParams: PaginationParams) {
-    return await this.orderService.getOrderList({  }, paginationParams)
+    return await this.orderService.getOrderList({}, paginationParams)
   }
 }

@@ -1,10 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { DataResponse, PaginateResponse } from '@src/common/contracts/openapi-builder'
 import { ArrayMinSize, IsMongoId, IsNotEmpty, MaxLength, ValidateNested } from 'class-validator'
-import { CustomerOrderDto, Order } from '@order/schemas/order.schema'
+import { CustomerOrderDto, OrderItemDto } from '@order/schemas/order.schema'
 import { Prop } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
 import { Type } from 'class-transformer'
+import { OrderStatus, TransactionStatus } from '@src/common/contracts/constant'
 
 export class CreateOrderItemDto {
   @Prop({ type: Types.ObjectId, ref: 'Product' })
@@ -37,4 +38,38 @@ export class CreateOrderDto {
   notes?: string
 }
 
-export class OrderResponseDto extends DataResponse(PaginateResponse(Order)) {}
+export class OrderDto {
+  @ApiProperty()
+  _id: string
+
+  @ApiProperty({ type: () => CustomerOrderDto })
+  customer: CustomerOrderDto
+
+  @ApiProperty({ isArray: true, type: () => OrderItemDto })
+  items: OrderItemDto[]
+
+  @ApiProperty()
+  totalAmount: number
+
+  @ApiProperty()
+  orderDate: Date
+
+  @ApiProperty({ enum: OrderStatus })
+  orderStatus: OrderStatus
+
+  @ApiProperty({ enum: TransactionStatus })
+  transactionStatus: TransactionStatus
+
+  @ApiProperty()
+  deliveryDate: Date
+
+  @ApiProperty()
+  completeDate: Date
+
+  @ApiPropertyOptional()
+  notes?: string
+}
+
+export class OrderPaginateResponseDto extends DataResponse(
+  class OrderPaginateResponse extends PaginateResponse(OrderDto) {}
+) {}

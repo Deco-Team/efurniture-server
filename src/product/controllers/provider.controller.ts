@@ -3,13 +3,12 @@ import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiTags } f
 import { ProductService } from '@product/services/product.service'
 import { Product } from '@product/schemas/product.schema'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
-import { PaginationQuery } from '@src/common/contracts/dto'
-import { CreateProductDto } from '@product/dto/product.dto'
-import { Roles } from '@src/auth/decorators/roles.decorator'
-import { JwtAuthGuard } from '@src/auth/guards/jwt-auth.guard'
-import { RolesGuard } from '@src/auth/guards/roles.guard'
-import { UserRole } from '@src/common/contracts/constant'
-import { PaginateResponse } from '@common/contracts/openapi-builder';
+import { PaginationQuery } from '@common/contracts/dto'
+import { CreateProductDto, ProductPaginateDto } from '@product/dto/product.dto'
+import { Roles } from '@auth/decorators/roles.decorator'
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
+import { RolesGuard } from '@auth/guards/roles.guard'
+import { UserRole } from '@common/contracts/constant'
 import { DataResponse } from '@common/contracts/openapi-builder';
 
 @ApiTags('Product - Provider')
@@ -21,7 +20,7 @@ export class ProviderProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  @ApiOkResponse({ type: PaginateResponse(Product) })
+  @ApiOkResponse({ type: ProductPaginateDto })
   @ApiQuery({ type: PaginationQuery })
   async getAllProducts(@Pagination() paginationParams: PaginationParams) {
     return this.productService.getAllProducts(paginationParams)

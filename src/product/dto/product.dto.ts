@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Variant } from '@product/schemas/product.schema'
+import { Product, Variant } from '@product/schemas/product.schema'
+import { Category } from '@src/category/schemas/category.schema'
+import { DataResponse, PaginateResponse } from '@src/common/contracts/openapi-builder'
 import { Type } from 'class-transformer'
 import {
   ArrayMaxSize,
@@ -15,18 +17,13 @@ import {
 } from 'class-validator'
 import { Types } from 'mongoose'
 
-export class ProductPublicListDto {
+export class PublicProductDto {
   @ApiProperty({
     example: 'Sofa Luxury'
   })
-  @IsNotEmpty()
   name: string
 
   @ApiProperty()
-  @IsNumber()
-  @Max(5)
-  @Min(0)
-  @IsNotEmpty()
   rate: number
 
   @ApiProperty({ type: Variant, isArray: true })
@@ -35,11 +32,19 @@ export class ProductPublicListDto {
   @ApiProperty({
     example: ['https://m.media-amazon.com/images/I/61KtSpR0SfL._AC_UL480_FMwebp_QL65_.jpg']
   })
-  @IsArray()
-  @IsUrl({}, { each: true })
-  @IsNotEmpty()
   images: string[]
+
+  @ApiProperty({ type: Category, isArray: true })
+  categories: Category[]
 }
+
+export class PublicProductPaginateDto extends DataResponse(
+  class PublicProductPaginate extends PaginateResponse(PublicProductDto) {}
+) {}
+
+export class ProductPaginateDto extends DataResponse(
+  class ProductPaginate extends PaginateResponse(Product) {}
+) {}
 
 export class CreateProductDto {
   @ApiProperty({
@@ -106,7 +111,6 @@ export class ProductDetailDto {
   @ApiProperty({ type: Variant, isArray: true })
   variants: Variant[]
 
-  @ApiProperty({ type: Types.ObjectId, isArray: true })
-  @IsNotEmpty()
-  categories: Types.ObjectId[]
+  @ApiProperty({ type: Category, isArray: true })
+  categories: Category[]
 }

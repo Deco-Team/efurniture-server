@@ -14,7 +14,7 @@ export function PaginateResponse<TDoc extends ClassConstructor<any>>(
       description: 'The list of doc.',
       ...options
     })
-    docs: (TDoc)[]
+    docs: (typeof Doc)[]
 
     @ApiProperty({
       required: true,
@@ -97,15 +97,7 @@ export function PaginateResponse<TDoc extends ClassConstructor<any>>(
     })
     nextPage?: number | null | undefined
   }
-
-  class PaginateDataResponse {
-    @ApiProperty({
-      required: true,
-      type: PaginateResponse,
-    })
-    data: PaginateResponse
-  }
-  return mixin(PaginateDataResponse)
+  return mixin(PaginateResponse)
 }
 
 export function DataResponse<TDoc extends ClassConstructor<any>>(
@@ -118,7 +110,7 @@ export function DataResponse<TDoc extends ClassConstructor<any>>(
       type: Doc,
       ...options
     })
-    data: TDoc
+    data: typeof Doc
   }
   return mixin(DataResponse)
 }
