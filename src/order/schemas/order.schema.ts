@@ -64,7 +64,7 @@ export class Order {
   @Transform(({ value }) => value?.toString())
   _id: string
 
-  @ApiProperty({ type: () => CustomerOrderDto })
+  @ApiProperty({ type: CustomerOrderDto })
   @Prop({ type: CustomerOrderDto, required: true })
   customer: CustomerOrderDto;
 

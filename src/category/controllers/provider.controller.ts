@@ -5,12 +5,11 @@ import { RolesGuard } from '@auth/guards/roles.guard'
 import { UserRole } from '@common/contracts/constant'
 import { Roles } from '@src/auth/decorators/roles.decorator'
 import { Category } from '@category/schemas/category.schema'
-import { DataResponse, PaginateResponse } from '@common/contracts/openapi-builder'
+import { DataResponse } from '@common/contracts/openapi-builder'
 import { PaginationQuery } from '@src/common/contracts/dto'
 import { CategoryService } from '@category/services/category.service'
 import { Pagination, PaginationParams } from '@src/common/decorators/pagination.decorator'
-import { CreateCategoryDto, UpdateCategoryDto } from '@category/dto/category.dto'
-import { Types } from 'mongoose'
+import { CategoryPaginateDto, CreateCategoryDto, UpdateCategoryDto } from '@category/dto/category.dto'
 
 @ApiTags('Category - Provider')
 @ApiBearerAuth()
@@ -21,7 +20,7 @@ export class CategoryProviderController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  @ApiOkResponse({ type: PaginateResponse(Category) })
+  @ApiOkResponse({ type: CategoryPaginateDto })
   @ApiQuery({ type: PaginationQuery })
   async getAllCategories(@Pagination() paginationParams: PaginationParams) {
     return await this.categoryService.getAllCategories(paginationParams)
