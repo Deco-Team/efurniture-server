@@ -31,8 +31,8 @@ export class CartController {
 
   @Get()
   @ApiOkResponse({ type: DataResponse(Cart) })
-  async getListCard(@Req() req) {
+  async getCart(@Req() req) {
     const customerId = _.get(req, 'user._id')
-    return await this.cartService.getListCard(customerId)
+    return await this.cartService.getCart(customerId)
   }
 }

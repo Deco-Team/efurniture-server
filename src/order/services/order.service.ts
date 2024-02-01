@@ -42,7 +42,7 @@ export class OrderService {
         _id: cartId,
         items,
         totalAmount: cartTotalAmount
-      } = await this.cartService.getListCard(createOrderDto.customer?._id)
+      } = await this.cartService.getCart(createOrderDto.customer?._id)
       if (items.length === 0) throw new AppException(Errors.CART_EMPTY)
       let cartItems = items
 
