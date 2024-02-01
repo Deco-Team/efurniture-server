@@ -38,9 +38,10 @@ export class ProductService {
         ...paginationParams,
         projection: {
           name: 1,
-          price: 1,
           rate: 1,
-          images: 1
+          images: 1,
+          variants: 1,
+          categories: 1
         }
       }
     )
