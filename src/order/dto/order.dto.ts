@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { DataResponse } from '@src/common/contracts/openapi-builder'
-import { ArrayMinSize, IsMongoId, IsNotEmpty, MaxLength, Min, ValidateNested } from 'class-validator'
+import { DataResponse, PaginateResponse } from '@src/common/contracts/openapi-builder'
+import { ArrayMinSize, IsMongoId, IsNotEmpty, MaxLength, ValidateNested } from 'class-validator'
 import { CustomerOrderDto, Order } from '@order/schemas/order.schema'
 import { Prop } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
@@ -37,4 +37,4 @@ export class CreateOrderDto {
   notes?: string
 }
 
-export class OrderResponseDto extends DataResponse(Order) {}
+export class OrderResponseDto extends DataResponse(PaginateResponse(Order)) {}

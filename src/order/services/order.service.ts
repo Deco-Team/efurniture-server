@@ -10,13 +10,15 @@ import { AppException } from '@src/common/exceptions/app.exception'
 import { Errors } from '@src/common/contracts/error'
 import { CartService } from '@cart/services/cart.service'
 import { InjectConnection } from '@nestjs/mongoose'
+import { ProductRepository } from '@product/repositories/product.repository'
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectConnection() readonly connection: Connection,
     private readonly orderRepository: OrderRepository,
-    private readonly cartService: CartService
+    private readonly cartService: CartService,
+    private readonly productRepository: ProductRepository
   ) {}
 
   public async getOrderList(filter: FilterQuery<Order>, paginationParams: PaginationParams) {
@@ -49,6 +51,9 @@ export class OrderService {
       let totalAmount = 0
       let orderItems = createOrderDto.items
 
+      // array to process bulk update
+      const operations = []
+
       orderItems = orderItems.map((orderItem) => {
         // 2. Check valid dto with cartItems
         const index = cartItems.findIndex((cartItem) => {
@@ -60,13 +65,21 @@ export class OrderService {
         const variant = product?.variants?.find((variant) => variant.sku === orderItem.sku)
         if (!variant) throw new AppException(Errors.ORDER_ITEMS_INVALID)
 
-        // 3. check remain quantity in inventory
-        const { quantity: remainQuantity, price } = variant
+        // 3. Check remain quantity in inventory
+        const { sku, quantity: remainQuantity, price } = variant
         if (quantity > remainQuantity) throw new AppException(Errors.ORDER_ITEMS_INVALID)
         totalAmount += price * quantity
 
         // 4. Subtract items in cart
         cartItems.splice(index, 1)
+
+        // 5. Push update quantity in product.variants to operation to execute later
+        operations.push({
+          updateOne: {
+            filter: { 'variants.sku': sku },
+            update: { $set: { 'variants.$.quantity': remainQuantity - quantity } }
+          }
+        })
 
         return {
           ...orderItem,
@@ -89,7 +102,10 @@ export class OrderService {
         // }
       )
 
-      // 6. Create order
+      // 6. Bulk write Update quantity in product.variants
+      await this.productRepository.model.bulkWrite(operations)
+
+      // 7. Create order
       const order = await this.orderRepository.create(
         {
           ...createOrderDto,
@@ -101,9 +117,9 @@ export class OrderService {
         // }
       )
 
-      // 7. Process payment
-      // 8. Send email/notification to customer
-      // 9. Send notification to staff
+      // 8. Process payment
+      // 9. Send email/notification to customer
+      // 10. Send notification to staff
 
       await session.commitTransaction()
       return new IDResponse(order._id)
