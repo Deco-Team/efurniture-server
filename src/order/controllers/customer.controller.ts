@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
 import { ErrorResponse, IDDataResponse } from '@common/contracts/dto'
@@ -19,6 +19,9 @@ export class OrderCustomerController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Create new order'
+  })
   @ApiOkResponse({ type: IDDataResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async createOrder(@Req() req, @Body() createOrderDto: CreateOrderDto) {
