@@ -5,6 +5,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { Status } from '@common/contracts/constant'
 import { IsMongoId, IsNotEmpty, Min, ValidateNested } from 'class-validator'
+import { Product } from '@product/schemas/product.schema'
 
 export class ItemDto {
   @Prop({ type: Types.ObjectId, ref: 'Product' })
@@ -22,6 +23,8 @@ export class ItemDto {
   @IsNotEmpty()
   @Min(1)
   quantity: number
+
+  product?: Product
 }
 
 export type CartDocument = HydratedDocument<Cart>
@@ -44,7 +47,7 @@ export class Cart {
   @Transform(({ value }) => value?.toString())
   _id: string
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, index: true })
   customerId: string
 
   @ApiProperty({ isArray: true, type: ItemDto })
