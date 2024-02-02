@@ -77,7 +77,8 @@ export class OrderService {
         operations.push({
           updateOne: {
             filter: { 'variants.sku': sku },
-            update: { $set: { 'variants.$.quantity': remainQuantity - quantity } }
+            update: { $set: { 'variants.$.quantity': remainQuantity - quantity } },
+            session
           }
         })
 
@@ -97,9 +98,9 @@ export class OrderService {
           items: cartItems,
           totalAmount: cartTotalAmount - totalAmount
         },
-        // {
-        //   session
-        // }
+        {
+          session
+        }
       )
 
       // 6. Bulk write Update quantity in product.variants
@@ -112,9 +113,9 @@ export class OrderService {
           items: orderItems,
           totalAmount
         },
-        // {
-        //   session
-        // }
+        {
+          session
+        }
       )
 
       // 8. Process payment
