@@ -90,6 +90,10 @@ export class OrderService {
       })
 
       // 5. Update new cart
+      cartItems = cartItems.map((item) => {
+        delete item.product // remove product populate before update
+        return item
+      })
       await this.cartService.cartRepository.findOneAndUpdate(
         {
           _id: cartId
