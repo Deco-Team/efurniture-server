@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common'
-import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
 import { PaginationQuery } from '@common/contracts/dto'
@@ -20,6 +20,9 @@ export class OrderProviderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get()
+  @ApiOperation({
+    summary: 'Paginate list order'
+  })
   @ApiOkResponse({ type: OrderPaginateResponseDto })
   @ApiQuery({ type: PaginationQuery })
   async getListOrder(@Pagination() paginationParams: PaginationParams) {

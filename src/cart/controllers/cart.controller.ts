@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Patch, Post, Req, UseGuards } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
@@ -8,7 +8,7 @@ import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { UserRole } from '@common/contracts/constant'
 import { Roles } from '@auth/decorators/roles.decorator'
-import { AddToCartDto, DeleteItemInCartDto } from '@cart/dto/cart.dto'
+import { AddToCartDto, UpdateCartDto, DeleteItemInCartDto } from '@cart/dto/cart.dto'
 import { DataResponse } from '@common/contracts/openapi-builder'
 import { Cart } from '@cart/schemas/cart.schema'
 
@@ -21,6 +21,9 @@ export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Add product to cart'
+  })
   @ApiOkResponse({ type: SuccessDataResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async addToCart(@Req() req, @Body() addToCartDto: AddToCartDto) {
@@ -30,10 +33,25 @@ export class CartController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'Get customer cart'
+  })
   @ApiOkResponse({ type: DataResponse(Cart) })
   async getCart(@Req() req) {
     const customerId = _.get(req, 'user._id')
     return await this.cartService.getCart(customerId)
+  }
+  
+  @Patch()
+  @ApiOperation({
+    summary: 'Update product quantity in cart'
+  })
+  @ApiOkResponse({ type: SuccessDataResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  async updateCart(@Req() req, @Body() updateCartDto: UpdateCartDto) {
+    updateCartDto.customerId = _.get(req, 'user._id')
+    const result = await this.cartService.updateCart(updateCartDto)
+    return result
   }
 
   @Delete()

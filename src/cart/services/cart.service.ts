@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Errors } from '@src/common/contracts/error'
 import { CartRepository } from '@cart/repositories/cart.repository'
-import { AddToCartDto, DeleteItemInCartDto } from '@cart/dto/cart.dto'
+import { AddToCartDto, DeleteItemInCartDto, UpdateCartDto } from '@cart/dto/cart.dto'
 import { SuccessResponse } from '@src/common/contracts/dto'
 import { ProductRepository } from '@src/product/repositories/product.repository'
 import { AppException } from '@src/common/exceptions/app.exception'
@@ -14,7 +14,7 @@ export class CartService {
   public async addToCart(addToCartDto: AddToCartDto) {
     const { customerId, productId, sku, quantity } = addToCartDto
 
-    // 1.Check exists productId, implement after product module done
+    // 1.Check exists productId
     const product = await this.productRepository.findOne({
       conditions: {
         _id: productId
@@ -102,6 +102,53 @@ export class CartService {
       return { _id: newCartList._id, items: [], totalAmount: 0 }
     }
     return cartList
+  }
+
+  public async updateCart(updateCartDto: UpdateCartDto) {
+    const { customerId, productId, sku, quantity } = updateCartDto
+
+    // 1. Fetch cart
+    const cart = await this.cartRepository.findOne({
+      conditions: {
+        customerId
+      },
+      populates: [
+        {
+          path: 'items.product'
+        }
+      ]
+    })
+    if (!cart) throw new AppException(Errors.CART_EMPTY)
+
+    // 2. Check existed item in cart
+    const { _id, items } = cart
+    const existedItemIndex = items.findIndex((item) => {
+      return item.productId == productId && item.sku === sku
+    })
+    if (existedItemIndex === -1) throw new AppException(Errors.CART_ITEM_INVALID)
+
+    const { product } = items[existedItemIndex]
+    const { quantity: remainQuantity, price } = product?.variants?.find((variant) => variant.sku === sku)
+    if (quantity > remainQuantity) throw new AppException(Errors.NOT_ENOUGH_QUANTITY_IN_STOCK)
+
+    // 4. Update totalAmount, quantity in existed item
+    const totalAmount = cart.totalAmount + price * (quantity - items[existedItemIndex].quantity)
+    items[existedItemIndex].quantity = quantity
+    let cartItems = items.map((item) => {
+      delete item.product // remove product populate before update
+      return item
+    })
+
+    await this.cartRepository.findOneAndUpdate(
+      {
+        _id
+      },
+      {
+        items: cartItems,
+        totalAmount
+      }
+    )
+    return new SuccessResponse(true)
   }
 
   public async deleteItemInCart(deleteItemInCartDto: DeleteItemInCartDto) {

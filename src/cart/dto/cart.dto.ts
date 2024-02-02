@@ -8,6 +8,10 @@ export class AddToCartDto extends ItemDto {
   customerId?: string
 }
 
+export class UpdateCartDto extends ItemDto {
+  customerId?: string
+}
+
 export class DeleteItemInCartDto {
   @ApiProperty({ example: 'productId' })
   @IsNotEmpty()
