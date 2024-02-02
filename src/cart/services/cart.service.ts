@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Errors } from '@src/common/contracts/error'
 import { CartRepository } from '@cart/repositories/cart.repository'
-import { AddToCartDto } from '@cart/dto/cart.dto'
+import { AddToCartDto, DeleteItemInCartDto } from '@cart/dto/cart.dto'
 import { SuccessResponse } from '@src/common/contracts/dto'
 import { ProductRepository } from '@src/product/repositories/product.repository'
 import { AppException } from '@src/common/exceptions/app.exception'
@@ -102,5 +102,46 @@ export class CartService {
       return { _id: newCartList._id, items: [], totalAmount: 0 }
     }
     return cartList
+  }
+
+  public async deleteItemInCart(deleteItemInCartDto: DeleteItemInCartDto) {
+    const { customerId, productId, sku } = deleteItemInCartDto
+
+    // 1. Fetch cart
+    const cart = await this.cartRepository.findOne({
+      conditions: { customerId },
+      populates: [
+        {
+          path: 'items.product'
+        }
+      ]
+    })
+    if (!cart) throw new AppException(Errors.CART_ITEM_INVALID)
+
+    // 2. Check existed item
+    const { _id, items } = cart
+    const existedItemIndex = items.findIndex((item) => {
+      return item.productId == productId && item.sku === sku
+    })
+    if (existedItemIndex === -1) throw new AppException(Errors.CART_ITEM_INVALID)
+
+    // 3. Update totalAmount
+    const { product, quantity } = items[existedItemIndex] // product fetch via populate
+    const { price } = product?.variants?.find((variant) => variant.sku === sku)
+    const totalAmount = cart.totalAmount - quantity * price
+
+    // 4. Delete items in cart
+    let cartItems = items.splice(existedItemIndex, 1)
+
+    await this.cartRepository.findOneAndUpdate(
+      {
+        _id
+      },
+      {
+        items: cartItems,
+        totalAmount
+      }
+    )
+    return new SuccessResponse(true)
   }
 }
