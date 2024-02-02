@@ -131,10 +131,10 @@ export class CartService {
     const totalAmount = cart.totalAmount - quantity * price
 
     // 4. Delete items in cart
-    let cartItems = items.map((item) => { 
-      delete item.product; // remove product populate before update
-      return item; 
-  });
+    let cartItems = items.map((item) => {
+      delete item.product // remove product populate before update
+      return item
+    })
     cartItems.splice(existedItemIndex, 1)
 
     await this.cartRepository.findOneAndUpdate(
