@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { OrderRepository } from '@order/repositories/order.repository'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
-import { CreateOrderDto } from '@order/dto/order.dto'
+import { CancelOrderDto, CreateOrderDto } from '@order/dto/order.dto'
 import { Connection, FilterQuery } from 'mongoose'
 import { Order, OrderHistoryDto } from '@order/schemas/order.schema'
 import { IDResponse, SuccessResponse } from '@common/contracts/dto'
@@ -142,6 +142,7 @@ export class OrderService {
       {
         _id: orderId,
         orderStatus: OrderStatus.PENDING
+        // transactionStatus: TransactionStatus.CAPTURED
       },
       {
         $set: { orderStatus: OrderStatus.CONFIRMED },
@@ -152,5 +153,53 @@ export class OrderService {
 
     // 2. Send email/notification to customer
     return new SuccessResponse(true)
+  }
+
+  public async cancelOrder(cancelOrderDto: CancelOrderDto) {
+    // Execute in transaction
+    const session = await this.connection.startSession()
+    session.startTransaction()
+    try {
+      const { orderId, orderHistoryItem, reason } = cancelOrderDto
+      // 1. Update order status, reason and order history
+      const order = await this.orderRepository.findOneAndUpdate(
+        {
+          _id: orderId,
+          orderStatus: OrderStatus.PENDING
+          // transactionStatus: TransactionStatus.CAPTURED
+        },
+        {
+          $set: { orderStatus: OrderStatus.CANCELED, transactionStatus: TransactionStatus.CANCELED, reason },
+          $push: { orderHistory: orderHistoryItem }
+        }
+      )
+      if (!order) throw new AppException(Errors.ORDER_STATUS_INVALID)
+
+      // 2. Push update quantity in product.variants to operation to execute later
+      // array to process bulk update
+      const operations = []
+      const { items } = order
+      items.forEach((item) => {
+        operations.push({
+          updateOne: {
+            filter: { 'variants.sku': item.sku },
+            update: { $inc: { 'variants.$.quantity': item.quantity }, },
+            session
+          }
+        })
+      })
+      await this.productRepository.model.bulkWrite(operations)
+
+      // 3. Send email/notification to customer
+
+      // 4. Refund payment
+      
+      await session.commitTransaction()
+      return new SuccessResponse(true)
+    } catch (error) {
+      await session.abortTransaction()
+      console.error(error)
+      throw error
+    }
   }
 }

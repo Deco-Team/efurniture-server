@@ -1,15 +1,16 @@
-import { Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
 import { ErrorResponse, PaginationQuery, SuccessDataResponse } from '@common/contracts/dto'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
-import { UserRole } from '@common/contracts/constant'
+import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
 import { Roles } from '@auth/decorators/roles.decorator'
 import { OrderService } from '@order/services/order.service'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
-import { OrderPaginateResponseDto } from '@order/dto/order.dto'
+import { CancelOrderDto, OrderPaginateResponseDto } from '@order/dto/order.dto'
+import { OrderHistoryDto } from '../schemas/order.schema'
 
 @ApiTags('Order - Provider')
 @ApiBearerAuth()
@@ -36,8 +37,27 @@ export class OrderProviderController {
   @ApiOkResponse({ type: SuccessDataResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async confirmOrder(@Req() req, @Param('orderId') orderId: string) {
-    const {_id: userId, role} = _.get(req, 'user')
+    const { _id: userId, role } = _.get(req, 'user')
     const result = await this.orderService.confirmOrder(orderId, userId, role)
+    return result
+  }
+
+  @Patch(':orderId/cancel')
+  @ApiOperation({
+    summary: 'Cancel order (new field: cancel reason)'
+  })
+  @ApiOkResponse({ type: SuccessDataResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  async cancelOrder(@Req() req, @Param('orderId') orderId: string, @Body() cancelOrderDto: CancelOrderDto) {
+    const { _id: userId, role } = _.get(req, 'user')
+    cancelOrderDto.orderId = orderId
+    cancelOrderDto.orderHistoryItem = new OrderHistoryDto(
+      OrderStatus.CANCELED,
+      TransactionStatus.CANCELED,
+      userId,
+      role
+    )
+    const result = await this.orderService.cancelOrder(cancelOrderDto)
     return result
   }
 }
