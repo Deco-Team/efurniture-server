@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { DataResponse, PaginateResponse } from '@src/common/contracts/openapi-builder'
-import { ArrayMinSize, IsMongoId, IsNotEmpty, MaxLength, ValidateNested } from 'class-validator'
+import { ArrayMinSize, IsMongoId, IsNotEmpty, MaxLength, MinLength, ValidateNested } from 'class-validator'
 import { CustomerOrderDto, OrderHistoryDto, OrderItemDto } from '@order/schemas/order.schema'
 import { Prop } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
@@ -75,3 +75,14 @@ export class OrderDto {
 export class OrderPaginateResponseDto extends DataResponse(
   class OrderPaginateResponse extends PaginateResponse(OrderDto) {}
 ) {}
+
+export class CancelOrderDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @MaxLength(256)
+  @MinLength(10)
+  reason: string
+
+  orderId?: string
+  orderHistoryItem?: OrderHistoryDto
+}

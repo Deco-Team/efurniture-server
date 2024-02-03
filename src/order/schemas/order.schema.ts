@@ -134,6 +134,9 @@ export class Order {
   @ApiPropertyOptional()
   @Prop({ type: String })
   notes?: string
+
+  @Prop({ type: String })
+  reason?: string
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order)
