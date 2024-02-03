@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
-import { OrderStatus, TransactionStatus } from '@common/contracts/constant'
+import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
 import { IsEmail, IsNotEmpty, IsPhoneNumber, MaxLength, Min, ValidateNested } from 'class-validator'
 import { Product } from '@product/schemas/product.schema'
 import { CreateOrderItemDto } from '@order/dto/order.dto'
@@ -36,6 +36,31 @@ export class CustomerOrderDto {
   shippingAddress: string
 }
 
+export class OrderHistoryDto {
+  constructor(orderStatus: OrderStatus, transactionStatus: TransactionStatus, userId: string, userRole: UserRole) {
+    this.orderStatus = orderStatus
+    this.transactionStatus = transactionStatus
+    this.timestamp = new Date()
+    this.userId = userId
+    this.userRole = userRole
+  }
+
+  @ApiProperty()
+  orderStatus: OrderStatus
+
+  @ApiProperty()
+  transactionStatus: TransactionStatus
+
+  @ApiProperty()
+  timestamp: Date
+
+  @ApiProperty()
+  userId: string
+
+  @ApiProperty()
+  userRole: UserRole
+}
+
 export class OrderItemDto extends CreateOrderItemDto {
   @ApiProperty()
   product: Product
@@ -66,7 +91,7 @@ export class Order {
 
   @ApiProperty({ type: CustomerOrderDto })
   @Prop({ type: CustomerOrderDto, required: true })
-  customer: CustomerOrderDto;
+  customer: CustomerOrderDto
 
   @ApiProperty({ isArray: true, type: OrderItemDto })
   @ValidateNested()
@@ -94,6 +119,9 @@ export class Order {
     default: TransactionStatus.DRAFT
   })
   transactionStatus: TransactionStatus
+
+  @Prop({ type: [OrderHistoryDto], select: false })
+  orderHistory: OrderHistoryDto[]
 
   @ApiProperty()
   @Prop({ type: Date })

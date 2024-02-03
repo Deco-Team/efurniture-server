@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { OrderRepository } from '@order/repositories/order.repository'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
-import { OrderStatus } from '@common/contracts/constant'
+import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
 import { CreateOrderDto } from '@order/dto/order.dto'
 import { Connection, FilterQuery } from 'mongoose'
-import { Order } from '@order/schemas/order.schema'
-import { IDResponse } from '@common/contracts/dto'
+import { Order, OrderHistoryDto } from '@order/schemas/order.schema'
+import { IDResponse, SuccessResponse } from '@common/contracts/dto'
 import { AppException } from '@src/common/exceptions/app.exception'
 import { Errors } from '@src/common/contracts/error'
 import { CartService } from '@cart/services/cart.service'
@@ -133,5 +133,24 @@ export class OrderService {
       console.error(error)
       throw error
     }
+  }
+
+  public async confirmOrder(orderId: string, userId: string, role: UserRole) {
+    // 1. Update order status and order history
+    const orderHistory = new OrderHistoryDto(OrderStatus.CONFIRMED, TransactionStatus.CAPTURED, userId, role)
+    const order = await this.orderRepository.findOneAndUpdate(
+      {
+        _id: orderId,
+        orderStatus: OrderStatus.PENDING
+      },
+      {
+        $set: { orderStatus: OrderStatus.CONFIRMED },
+        $push: { orderHistory }
+      }
+    )
+    if (!order) throw new AppException(Errors.ORDER_STATUS_INVALID)
+
+    // 2. Send email/notification to customer
+    return new SuccessResponse(true)
   }
 }

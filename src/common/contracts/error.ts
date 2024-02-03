@@ -55,5 +55,10 @@ export const Errors: Record<string, ErrorResponse> = {
     error: 'ORDER_ITEMS_INVALID',
     message: 'Sản phẩm không có trong giỏ hàng.',
     httpStatus: HttpStatus.BAD_REQUEST
+  },
+  ORDER_STATUS_INVALID: {
+    error: 'ORDER_STATUS_INVALID',
+    message: 'Đơn hàng không hợp lệ.',
+    httpStatus: HttpStatus.BAD_REQUEST
   }
 }
