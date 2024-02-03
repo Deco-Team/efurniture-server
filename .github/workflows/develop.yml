@@ -36,3 +36,13 @@ jobs:
         echo CORS_VALID_ORIGINS=${{ vars.CORS_VALID_ORIGINS }} >> .env
     - name: Deploy
       run: pm2 restart efurniture-api
+  
+  snyk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
