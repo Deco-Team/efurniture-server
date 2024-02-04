@@ -18,7 +18,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@src/*": ["src/*"],
       "@common/*": ["src/common/*"],
       "@media/*": ["src/media/*"],
       "@mail/*": ["src/mail/*"],
@@ -32,6 +31,7 @@
       "@staff/*": ["src/staff/*"],
       "@category/*": ["src/category/*"],
       "@order/*": ["src/order/*"],
+      "@src/*": ["src/*"]
     }
   }
 }

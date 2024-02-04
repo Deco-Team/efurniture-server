@@ -1,15 +1,17 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common'
+import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiQuery } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
-import { ErrorResponse, IDDataResponse } from '@common/contracts/dto'
+import { ErrorResponse, IDDataResponse, PaginationQuery } from '@common/contracts/dto'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
 import { Roles } from '@auth/decorators/roles.decorator'
-import { CreateOrderDto } from '@order/dto/order.dto'
+import { CreateOrderDto, OrderDto } from '@order/dto/order.dto'
 import { OrderService } from '@order/services/order.service'
 import { OrderHistoryDto } from '@order/schemas/order.schema'
+import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
+import { DataResponse } from '@common/contracts/openapi-builder'
 
 @ApiTags('Order - Customer')
 @ApiBearerAuth()
@@ -31,5 +33,26 @@ export class OrderCustomerController {
     createOrderDto.orderHistory = [new OrderHistoryDto(OrderStatus.PENDING, TransactionStatus.DRAFT, _id, role)]
     const result = await this.orderService.createOrder(createOrderDto)
     return result
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: 'Get customer purchases history'
+  })
+  @ApiQuery({ type: PaginationQuery })
+  async getPurchaseHistory(@Req() req, @Pagination() paginationParams: PaginationParams) {
+    const customerId = _.get(req, 'user._id')
+    return await this.orderService.getPurchaseHistory(customerId, {}, paginationParams)
+  }
+
+  @Get(':orderId')
+  @ApiOperation({
+    summary: 'Get a customer purchase details'
+  })
+  @ApiOkResponse({ type: DataResponse(OrderDto) })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  async getPurchaseDetails(@Req() req, @Param('orderId') orderId: string) {
+    const customerId = _.get(req, 'user._id')
+    return await this.orderService.getPurchaseDetails(customerId, orderId)
   }
 }
