@@ -95,7 +95,7 @@ export class Order {
 
   @ApiProperty({ isArray: true, type: OrderItemDto })
   @ValidateNested()
-  @Prop({ type: Array<OrderItemDto>, required: true })
+  @Prop({ type: Array<OrderItemDto>, required: true, select: false })
   items: OrderItemDto[]
 
   @ApiProperty()

@@ -34,6 +34,37 @@ export class OrderService {
     return result
   }
 
+  public async getPurchaseHistory(customerId: string, filter: FilterQuery<Order>, paginationParams: PaginationParams) {
+    const orders = await this.orderRepository.paginate(
+      {
+        'customer._id': customerId,
+        ...filter,
+        status: {
+          $ne: OrderStatus.DELETED
+        }
+      },
+      { ...paginationParams }
+    )
+    return orders
+  }
+
+  public async getPurchaseDetails(customerId: string, orderId: string) {
+    const order = await this.orderRepository.findOne({
+      conditions: {
+        'customer._id': customerId,
+        _id: orderId,
+        status: {
+          $ne: OrderStatus.DELETED
+        }
+      },
+      projection: '+items'
+    })
+
+    if (!order) throw new AppException(Errors.ORDER_NOT_FOUND)
+
+    return order
+  }
+
   public async createOrder(createOrderDto: CreateOrderDto) {
     // Execute in transaction
     const session = await this.connection.startSession()
