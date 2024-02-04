@@ -74,6 +74,17 @@ export class OrderService {
       },
       projection: '+items'
     })
+  }
+
+  public async getOrderHistory(customerId: string, orderId: string) {
+    const order = await this.orderRepository.findOne({
+      conditions: {
+        _id: orderId,
+        'customer._id': customerId,
+        status: { $ne: OrderStatus.DELETED }
+      },
+      projection: '+orderHistory'
+    })
 
     if (!order) throw new AppException(Errors.ORDER_NOT_FOUND)
 
@@ -229,7 +240,7 @@ export class OrderService {
         operations.push({
           updateOne: {
             filter: { 'variants.sku': item.sku },
-            update: { $inc: { 'variants.$.quantity': item.quantity }, },
+            update: { $inc: { 'variants.$.quantity': item.quantity } },
             session
           }
         })
@@ -239,7 +250,7 @@ export class OrderService {
       // 3. Send email/notification to customer
 
       // 4. Refund payment
-      
+
       await session.commitTransaction()
       return new SuccessResponse(true)
     } catch (error) {

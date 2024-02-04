@@ -55,4 +55,16 @@ export class OrderCustomerController {
     const customerId = _.get(req, 'user._id')
     return await this.orderService.getPurchaseDetails(customerId, orderId)
   }
+
+  @Get(':orderId/history')
+  @ApiOperation({
+    summary: 'Get a customer order history'
+  })
+  @ApiOkResponse({ type: DataResponse(OrderDto) })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  async getOrderHistory(@Req() req, @Param('orderId') orderId: string) {
+    const { _id: customerId } = _.get(req, 'user')
+    const result = await this.orderService.getOrderHistory(customerId, orderId)
+    return result
+  }
 }
