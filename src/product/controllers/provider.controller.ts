@@ -22,13 +22,13 @@ export class ProviderProductController {
   @Get()
   @ApiOkResponse({ type: ProductPaginateDto })
   @ApiQuery({ type: PaginationQuery })
-  async getAllProducts(@Pagination() paginationParams: PaginationParams) {
+  getAllProducts(@Pagination() paginationParams: PaginationParams) {
     return this.productService.getAllProducts(paginationParams)
   }
 
   @Post()
   @ApiCreatedResponse({ type: DataResponse(Product) })
-  async createProduct(@Body() createProductDto: CreateProductDto) {
+  createProduct(@Body() createProductDto: CreateProductDto) {
     return this.productService.createProduct(createProductDto)
   }
 }

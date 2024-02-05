@@ -5,6 +5,7 @@ import { Transform } from 'class-transformer'
 import { IsNotEmpty, Min } from 'class-validator'
 import { HydratedDocument, Types } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
+import * as slug from 'mongoose-slug-updater'
 
 export type ProductDocument = HydratedDocument<Product>
 
@@ -86,6 +87,10 @@ export class Product {
   name: string
 
   @ApiProperty()
+  @Prop({ type: String, slug: 'name', unique: true })
+  slug: string
+
+  @ApiProperty()
   @Prop({ type: String })
   description: string
 
@@ -137,3 +142,4 @@ ProductSchema.index(
   }
 )
 ProductSchema.plugin(paginate)
+ProductSchema.plugin(slug)
