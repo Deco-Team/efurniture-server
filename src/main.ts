@@ -6,6 +6,7 @@ import { AppLogger } from '@src/common/services/app-logger.service'
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor'
 import { AppExceptionFilter } from '@common/exceptions/app-exception.filter'
 import { AppValidationPipe } from '@common/pipes/app-validate.pipe'
+import { TrimRequestBodyPipe } from '@common/pipes/trim-req-body.pipe'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -13,7 +14,7 @@ async function bootstrap() {
   app.useLogger(logger)
   app.useGlobalInterceptors(new TransformInterceptor())
   app.useGlobalFilters(new AppExceptionFilter(logger))
-  const globalPipes = [new AppValidationPipe()]
+  const globalPipes = [new AppValidationPipe(), new TrimRequestBodyPipe()]
   app.useGlobalPipes(...globalPipes)
 
   // Adding custom validator decorator
