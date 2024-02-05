@@ -1,6 +1,11 @@
 import { HttpStatus } from '@nestjs/common'
 import { ErrorResponse } from '@common/exceptions/app.exception'
 export const Errors: Record<string, ErrorResponse> = {
+  VALIDATION_FAILED: {
+    error: 'VALIDATION_FAILED',
+    message: 'Dữ liệu không hợp lệ',
+    httpStatus: HttpStatus.BAD_REQUEST
+  },
   OBJECT_NOT_FOUND: {
     error: 'OBJECT_NOT_FOUND',
     message: 'Không tìm thấy đối tượng',
