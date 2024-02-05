@@ -8,6 +8,8 @@ import { AppException } from '@common/exceptions/app.exception'
 import { Errors } from '@common/contracts/error'
 import { MongoServerError } from 'mongodb'
 import * as _ from 'lodash'
+import { FilterQuery } from 'mongoose'
+import { Product } from '@product/schemas/product.schema'
 
 @Injectable()
 export class ProductService {
@@ -83,10 +85,10 @@ export class ProductService {
     }
   }
 
-  public async getProductsDetail(id: string) {
+  public async getProductsDetail(filter: FilterQuery<Product>) {
     const result = await this.productRepository.findOne({
       conditions: {
-        _id: id
+        ...filter
       },
       projection: {
         status: 0,

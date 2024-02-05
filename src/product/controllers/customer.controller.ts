@@ -22,6 +22,13 @@ export class PublicProductController {
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: DataResponse(ProductDetailDto) })
   async getProductsDetail(@Param() params: any) {
-    return this.productService.getProductsDetail(params.id)
+    return this.productService.getProductsDetail({ _id: params.id })
+  }
+
+  @Get('slug/:slug')
+  @ApiParam({ name: 'slug' })
+  @ApiOkResponse({ type: DataResponse(ProductDetailDto) })
+  async getProductsDetailBySlug(@Param('slug') slug: string) {
+    return this.productService.getProductsDetail({ slug })
   }
 }

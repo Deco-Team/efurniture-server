@@ -35,6 +35,7 @@
     "moment": "^2.30.1",
     "mongoose": "^8.1.0",
     "mongoose-paginate-v2": "^1.8.0",
+    "mongoose-slug-updater": "^3.3.0",
     "nest-commander": "^3.12.5",
     "nestjs-cls": "^3.6.0",
     "nestjs-i18n": "^10.4.0",

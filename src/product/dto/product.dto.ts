@@ -23,6 +23,11 @@ export class PublicProductDto {
   })
   name: string
 
+  @ApiProperty({
+    example: 'sofa-luxury'
+  })
+  slug: string
+
   @ApiProperty()
   rate: number
 
@@ -95,6 +100,9 @@ export class ProductDetailDto {
 
   @ApiProperty()
   name: string
+
+  @ApiProperty()
+  slug: string
 
   @ApiProperty()
   description: string
