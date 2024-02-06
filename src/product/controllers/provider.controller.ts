@@ -36,7 +36,7 @@ export class ProviderProductController {
   @Get(':id')
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: DataResponse(ProductDetailDto) })
-  async getProductsDetail(@Param('id', ParseObjectIdPipe) id: string) {
+  getProductsDetail(@Param('id', ParseObjectIdPipe) id: string) {
     return this.productService.getProductsDetail(id)
   }
 }
