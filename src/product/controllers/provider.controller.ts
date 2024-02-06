@@ -1,15 +1,16 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { ProductService } from '@product/services/product.service'
 import { Product } from '@product/schemas/product.schema'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
 import { PaginationQuery } from '@common/contracts/dto'
-import { CreateProductDto, ProductPaginateDto } from '@product/dto/product.dto'
+import { CreateProductDto, ProductDetailDto, ProductPaginateDto } from '@product/dto/product.dto'
 import { Roles } from '@auth/decorators/roles.decorator'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { UserRole } from '@common/contracts/constant'
 import { DataResponse } from '@common/contracts/openapi-builder';
+import { ParseObjectIdPipe } from '@common/pipes/parse-object-id.pipe'
 
 @ApiTags('Product - Provider')
 @ApiBearerAuth()
@@ -30,5 +31,12 @@ export class ProviderProductController {
   @ApiCreatedResponse({ type: DataResponse(Product) })
   createProduct(@Body() createProductDto: CreateProductDto) {
     return this.productService.createProduct(createProductDto)
+  }
+
+  @Get(':id')
+  @ApiParam({ name: 'id' })
+  @ApiOkResponse({ type: DataResponse(ProductDetailDto) })
+  async getProductsDetail(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.productService.getProductsDetail(id)
   }
 }
