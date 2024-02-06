@@ -57,7 +57,8 @@ export class ProductService {
           rate: 1,
           images: 1,
           variants: 1,
-          categories: 1
+          categories: 1,
+          slug: 1
         }
       }
     )
