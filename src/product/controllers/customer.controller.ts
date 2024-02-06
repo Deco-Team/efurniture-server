@@ -14,21 +14,21 @@ export class PublicProductController {
   @Get()
   @ApiOkResponse({ type: PublicProductPaginateDto })
   @ApiQuery({ type: PaginationQuery })
-  async getAllProducts(@Pagination() paginationParams: PaginationParams) {
+  getAllProducts(@Pagination() paginationParams: PaginationParams) {
     return this.productService.getAllPublicProducts(paginationParams)
   }
 
   @Get(':id')
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: DataResponse(ProductDetailDto) })
-  async getProductsDetail(@Param() params: any) {
+  getProductsDetail(@Param() params: any) {
     return this.productService.getProductsDetail({ _id: params.id })
   }
 
   @Get('slug/:slug')
   @ApiParam({ name: 'slug' })
   @ApiOkResponse({ type: DataResponse(ProductDetailDto) })
-  async getProductsDetailBySlug(@Param('slug') slug: string) {
+  getProductsDetailBySlug(@Param('slug') slug: string) {
     return this.productService.getProductsDetail({ slug })
   }
 }
