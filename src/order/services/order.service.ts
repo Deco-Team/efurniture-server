@@ -34,6 +34,21 @@ export class OrderService {
     return result
   }
 
+  public async getOrderDetail(orderId: string) {
+    const order = await this.orderRepository.findOne({
+      conditions: {
+        _id: orderId,
+        status: {
+          $ne: OrderStatus.DELETED
+        }
+      },
+      projection: '+items'
+    })
+    if (!order) throw new AppException(Errors.ORDER_NOT_FOUND)
+
+    return order
+  }
+
   public async getPurchaseHistory(customerId: string, filter: FilterQuery<Order>, paginationParams: PaginationParams) {
     const orders = await this.orderRepository.paginate(
       {

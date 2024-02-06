@@ -9,8 +9,8 @@ import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/cons
 import { Roles } from '@auth/decorators/roles.decorator'
 import { OrderService } from '@order/services/order.service'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
-import { CancelOrderDto, OrderPaginateResponseDto } from '@order/dto/order.dto'
-import { OrderHistoryDto } from '../schemas/order.schema'
+import { CancelOrderDto, OrderPaginateResponseDto, OrderResponseDto } from '@order/dto/order.dto'
+import { OrderHistoryDto } from '@order/schemas/order.schema'
 
 @ApiTags('Order - Provider')
 @ApiBearerAuth()
@@ -28,6 +28,15 @@ export class OrderProviderController {
   @ApiQuery({ type: PaginationQuery })
   async getListOrder(@Pagination() paginationParams: PaginationParams) {
     return await this.orderService.getOrderList({}, paginationParams)
+  }
+
+  @Get(':orderId')
+  @ApiOperation({
+    summary: 'View order detail'
+  })
+  @ApiOkResponse({ type: OrderResponseDto })
+  async getOrderDetail(@Param('orderId') orderId: string) {
+    return this.orderService.getOrderDetail(orderId)
   }
 
   @Patch(':orderId/confirm')
