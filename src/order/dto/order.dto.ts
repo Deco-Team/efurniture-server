@@ -76,6 +76,8 @@ export class OrderPaginateResponseDto extends DataResponse(
   class OrderPaginateResponse extends PaginateResponse(OrderDto) {}
 ) {}
 
+export class OrderResponseDto extends DataResponse(OrderDto) {}
+
 export class CancelOrderDto {
   @ApiProperty()
   @IsNotEmpty()
