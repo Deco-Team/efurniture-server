@@ -7,7 +7,7 @@ import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
 import { Roles } from '@auth/decorators/roles.decorator'
-import { CreateOrderDto, OrderDto } from '@order/dto/order.dto'
+import { CreateOrderDto, OrderDto, PublicOrderHistoryDto } from '@order/dto/order.dto'
 import { OrderService } from '@order/services/order.service'
 import { OrderHistoryDto } from '@order/schemas/order.schema'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
@@ -42,7 +42,7 @@ export class OrderCustomerController {
   @ApiQuery({ type: PaginationQuery })
   async getPurchaseHistory(@Req() req, @Pagination() paginationParams: PaginationParams) {
     const customerId = _.get(req, 'user._id')
-    return await this.orderService.getPurchaseHistory(customerId, {}, paginationParams)
+    return await this.orderService.getOrderList({ 'customer._id': customerId }, paginationParams)
   }
 
   @Get(':orderId')
@@ -53,14 +53,14 @@ export class OrderCustomerController {
   @ApiBadRequestResponse({ type: ErrorResponse })
   async getPurchaseDetails(@Req() req, @Param('orderId') orderId: string) {
     const customerId = _.get(req, 'user._id')
-    return await this.orderService.getPurchaseDetails(customerId, orderId)
+    return await this.orderService.getOrderDetails({ 'customer._id': customerId, _id: orderId })
   }
 
   @Get(':orderId/history')
   @ApiOperation({
     summary: 'Get a customer order history'
   })
-  @ApiOkResponse({ type: DataResponse(OrderDto) })
+  @ApiOkResponse({ type: DataResponse(PublicOrderHistoryDto) })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async getOrderHistory(@Req() req, @Param('orderId') orderId: string) {
     const { _id: customerId } = _.get(req, 'user')

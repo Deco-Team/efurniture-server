@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { ProductRepository } from '@product/repositories/product.repository'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
 import { CreateProductDto } from '@product/dto/product.dto'

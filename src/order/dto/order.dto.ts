@@ -88,3 +88,14 @@ export class CancelOrderDto {
   orderId?: string
   orderHistoryItem?: OrderHistoryDto
 }
+
+export class PublicOrderHistoryDto {
+  @ApiProperty()
+  orderStatus: OrderStatus
+
+  @ApiProperty()
+  transactionStatus: TransactionStatus
+
+  @ApiProperty()
+  timestamp: Date
+}

@@ -34,10 +34,10 @@ export class OrderService {
     return result
   }
 
-  public async getOrderDetail(orderId: string) {
+  public async getOrderDetails(filter: FilterQuery<Order>) {
     const order = await this.orderRepository.findOne({
       conditions: {
-        _id: orderId,
+        ...filter,
         status: {
           $ne: OrderStatus.DELETED
         }
@@ -47,33 +47,6 @@ export class OrderService {
     if (!order) throw new AppException(Errors.ORDER_NOT_FOUND)
 
     return order
-  }
-
-  public async getPurchaseHistory(customerId: string, filter: FilterQuery<Order>, paginationParams: PaginationParams) {
-    const orders = await this.orderRepository.paginate(
-      {
-        'customer._id': customerId,
-        ...filter,
-        status: {
-          $ne: OrderStatus.DELETED
-        }
-      },
-      { ...paginationParams }
-    )
-    return orders
-  }
-
-  public async getPurchaseDetails(customerId: string, orderId: string) {
-    const order = await this.orderRepository.findOne({
-      conditions: {
-        'customer._id': customerId,
-        _id: orderId,
-        status: {
-          $ne: OrderStatus.DELETED
-        }
-      },
-      projection: '+items'
-    })
   }
 
   public async getOrderHistory(customerId: string, orderId: string) {
@@ -83,12 +56,18 @@ export class OrderService {
         'customer._id': customerId,
         status: { $ne: OrderStatus.DELETED }
       },
-      projection: '+orderHistory'
+      projection: {
+        orderHistory: {
+          orderStatus: 1,
+          transactionStatus: 1,
+          timestamp: 1
+        }
+      }
     })
 
     if (!order) throw new AppException(Errors.ORDER_NOT_FOUND)
 
-    return order
+    return order.orderHistory
   }
 
   public async createOrder(createOrderDto: CreateOrderDto) {

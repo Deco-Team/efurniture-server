@@ -18,14 +18,14 @@ export class AuthCustomerController {
   @ApiBody({ type: LoginReqDto })
   @ApiOkResponse({ type: DataResponse(TokenResDto) })
   @ApiBadRequestResponse({ type: ErrorResponse })
-  async login(@Body() loginReqDto: LoginReqDto): Promise<TokenResDto> {
+  login(@Body() loginReqDto: LoginReqDto): Promise<TokenResDto> {
     return this.authService.login(loginReqDto, UserSide.CUSTOMER)
   }
 
   @Post('google')
   @ApiOkResponse({ type: DataResponse(TokenResDto) })
   @ApiBadRequestResponse({ type: ErrorResponse })
-  async googleLogin(@Body() googleLoginReqDto: GoogleLoginReqDto): Promise<TokenResDto> {
+  googleLogin(@Body() googleLoginReqDto: GoogleLoginReqDto): Promise<TokenResDto> {
     return this.authService.googleLogin(googleLoginReqDto)
   }
 
