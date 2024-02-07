@@ -36,7 +36,7 @@ export class OrderProviderController {
   })
   @ApiOkResponse({ type: OrderResponseDto })
   getOrderDetail(@Param('orderId') orderId: string) {
-    return this.orderService.getOrderDetail(orderId)
+    return this.orderService.getOrderDetails({ _id: orderId })
   }
 
   @Patch(':orderId/confirm')

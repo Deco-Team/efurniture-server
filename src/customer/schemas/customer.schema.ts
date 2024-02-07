@@ -4,7 +4,6 @@ import * as paginate from 'mongoose-paginate-v2'
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { Gender, Status } from '@common/contracts/constant'
-import { EMAIL_REGEX, PHONE_REGEX, URL_REGEX } from '@src/config'
 
 export type CustomerDocument = HydratedDocument<Customer>
 

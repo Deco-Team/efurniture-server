@@ -4,7 +4,7 @@ import * as paginate from 'mongoose-paginate-v2'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
-import { IsEmail, IsNotEmpty, IsPhoneNumber, MaxLength, Min, ValidateNested } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsPhoneNumber, MaxLength, ValidateNested } from 'class-validator'
 import { Product } from '@product/schemas/product.schema'
 import { CreateOrderItemDto } from '@order/dto/order.dto'
 

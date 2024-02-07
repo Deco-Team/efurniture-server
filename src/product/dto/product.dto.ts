@@ -8,11 +8,8 @@ import {
   ArrayMinSize,
   IsArray,
   IsNotEmpty,
-  IsNumber,
   IsUrl,
-  Max,
   MaxLength,
-  Min,
   ValidateNested
 } from 'class-validator'
 import { Types } from 'mongoose'
