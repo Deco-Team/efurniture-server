@@ -35,7 +35,7 @@ export class OrderProviderController {
     summary: 'View order detail'
   })
   @ApiOkResponse({ type: OrderResponseDto })
-  async getOrderDetail(@Param('orderId') orderId: string) {
+  getOrderDetail(@Param('orderId') orderId: string) {
     return this.orderService.getOrderDetail(orderId)
   }
 
