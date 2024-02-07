@@ -9,7 +9,7 @@ import { Roles } from '@auth/decorators/roles.decorator'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { UserRole } from '@common/contracts/constant'
-import { DataResponse } from '@common/contracts/openapi-builder';
+import { DataResponse } from '@common/contracts/openapi-builder'
 import { ParseObjectIdPipe } from '@common/pipes/parse-object-id.pipe'
 
 @ApiTags('Product - Provider')
@@ -37,6 +37,6 @@ export class ProviderProductController {
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: DataResponse(ProductDetailDto) })
   getProductsDetail(@Param('id', ParseObjectIdPipe) id: string) {
-    return this.productService.getProductsDetail(id)
+    return this.productService.getProductsDetail({ _id: id })
   }
 }
