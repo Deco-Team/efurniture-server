@@ -50,7 +50,7 @@ import { ProviderModule } from '@provider/provider.module'
       })
     }),
     MailerModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         transport: {
           host: configService.get('SMTP_HOST'),
           port: configService.get('SMTP_PORT'),
@@ -64,7 +64,7 @@ import { ProviderModule } from '@provider/provider.module'
           from: `"${configService.get('SMTP_FROM_NAME')}" <${configService.get('SMTP_FROM_EMAIL')}>`,
         },
         template: {
-          dir: __dirname + '/templates',
+          dir: join(__dirname, '/templates'),
           adapter: new EjsAdapter(),
           options: {
             strict: false,

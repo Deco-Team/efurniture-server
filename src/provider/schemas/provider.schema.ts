@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ApiProperty } from '@nestjs/swagger'
-import { Status, UserRole } from '@src/common/contracts/constant'
+import { Status } from '@src/common/contracts/constant'
 import { Transform } from 'class-transformer'
 import { HydratedDocument } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
