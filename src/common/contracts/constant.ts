@@ -41,6 +41,12 @@ export enum UserRole {
   CUSTOMER = 'CUSTOMER'
 }
 
+export enum StaffRole {
+  STAFF = 'STAFF',
+  DELIVERY_STAFF = 'DELIVERY_STAFF',
+  CONSULTANT_STAFF = 'CONSULTANT_STAFF',
+}
+
 export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',

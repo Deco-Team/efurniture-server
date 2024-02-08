@@ -31,6 +31,7 @@
       "@staff/*": ["src/staff/*"],
       "@category/*": ["src/category/*"],
       "@order/*": ["src/order/*"],
+      "@provider/*": ["src/provider/*"],
       "@src/*": ["src/*"]
     }
   }
