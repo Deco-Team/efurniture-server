@@ -29,11 +29,19 @@ jobs:
         echo NODE_ENV=${{ vars.NODE_ENV }} >> .env
         echo PORT=${{ vars.PORT }} >> .env
         echo MONGODB_CONNECTION_STRING=${{ secrets.MONGODB_CONNECTION_STRING }} >> .env
+        echo CORS_VALID_ORIGINS=${{ vars.CORS_VALID_ORIGINS }} >> .env
+
         echo JWT_ACCESS_SECRET=${{ vars.JWT_ACCESS_SECRET }} >> .env
         echo JWT_ACCESS_EXPIRATION=${{ vars.JWT_ACCESS_EXPIRATION }} >> .env
         echo JWT_REFRESH_SECRET=${{ vars.JWT_REFRESH_SECRET }} >> .env
         echo JWT_REFRESH_EXPIRATION=${{ vars.JWT_REFRESH_EXPIRATION }} >> .env
-        echo CORS_VALID_ORIGINS=${{ vars.CORS_VALID_ORIGINS }} >> .env
+
+        echo SMTP_USERNAME=${{ secrets.SMTP_USERNAME }} >> .env
+        echo SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }} >> .env
+        echo SMTP_HOST=${{ vars.SMTP_HOST }} >> .env
+        echo SMTP_PORT=${{ vars.SMTP_PORT }} >> .env
+        echo SMTP_FROM_EMAIL=${{ vars.SMTP_FROM_EMAIL }} >> .env
+        echo SMTP_FROM_NAME=${{ vars.SMTP_FROM_NAME }} >> .env
     - name: Deploy
       run: pm2 restart efurniture-api
   
