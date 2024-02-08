@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Global, Module } from '@nestjs/common'
 import { JwtAccessStrategy } from '@auth/strategies/jwt-access.strategy'
 import { PassportModule } from '@nestjs/passport'
 import { CustomerModule } from '@customer/customer.module'
@@ -10,6 +10,7 @@ import { JwtRefreshStrategy } from '@auth/strategies/jwt-refresh.strategy'
 import { StaffModule } from '@staff/staff.module'
 import { AuthProviderController } from '@auth/controllers/provider.controller'
 
+@Global()
 @Module({
   imports: [
     ConfigModule,

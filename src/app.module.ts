@@ -3,6 +3,8 @@ import { AcceptLanguageResolver, QueryResolver, HeaderResolver, CookieResolver, 
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { RouterModule } from '@nestjs/core'
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 
 import { AppController } from '@src/app.controller'
 import { AppService } from '@src/app.service'
@@ -16,6 +18,7 @@ import { CartModule } from '@cart/cart.module'
 import { StaffModule } from '@staff/staff.module'
 import { CategoryModule } from '@category/category.module'
 import { OrderModule } from '@order/order.module'
+import { ProviderModule } from '@provider/provider.module'
 
 @Module({
   imports: [
@@ -46,6 +49,30 @@ import { OrderModule } from '@order/order.module'
         uri: configService.get<string>('mongodbUrl')
       })
     }),
+    MailerModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          host: configService.get('SMTP_HOST'),
+          port: configService.get('SMTP_PORT'),
+          secure: configService.get('SMTP_SECURE'),
+          auth: {
+            user: configService.get('SMTP_USERNAME'),
+            pass: configService.get('SMTP_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: `"${configService.get('SMTP_FROM_NAME')}" <${configService.get('SMTP_FROM_EMAIL')}>`,
+        },
+        template: {
+          dir: __dirname + '/templates',
+          adapter: new EjsAdapter(),
+          options: {
+            strict: false,
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
     RouterModule.register([
       {
         path: 'customers',
@@ -75,7 +102,8 @@ import { OrderModule } from '@order/order.module'
     CartModule,
     StaffModule,
     CategoryModule,
-    OrderModule
+    OrderModule,
+    ProviderModule
   ],
   controllers: [AppController],
   providers: [AppService]

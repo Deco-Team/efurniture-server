@@ -2,13 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 import { Status, UserRole } from '@src/common/contracts/constant'
 import { Transform } from 'class-transformer'
-import { HydratedDocument, Types } from 'mongoose'
+import { HydratedDocument } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
 
-export type StaffDocument = HydratedDocument<Staff>
+export type ProviderDocument = HydratedDocument<Provider>
 
 @Schema({
-  collection: 'staffs',
+  collection: 'providers',
   timestamps: true,
   toJSON: {
     transform(doc, ret) {
@@ -16,7 +16,7 @@ export type StaffDocument = HydratedDocument<Staff>
     }
   }
 })
-export class Staff {
+export class Provider {
   constructor(id?: string) {
     this._id = id
   }
@@ -27,27 +27,14 @@ export class Staff {
 
   @ApiProperty()
   @Prop({ type: String, maxlength: 30, required: true })
-  firstName: string
-
-  @ApiProperty()
-  @Prop({ type: String, maxlength: 30, required: true })
-  lastName: string
+  name: string
 
   @ApiProperty()
   @Prop({
     type: String,
-    required: true,
-    unique: true
+    required: true
   })
   email: string
-
-  @ApiProperty()
-  @Prop({ type: String, required: true })
-  password: string
-
-  @ApiProperty()
-  @Prop({ type: String, required: true, unique: true })
-  staffCode: string
 
   @ApiProperty()
   @Prop({
@@ -57,32 +44,19 @@ export class Staff {
   phone: string
 
   @ApiProperty()
-  @Prop()
-  avatar: string
-
-  @ApiProperty()
   @Prop({
-    enum: UserRole,
-    default: UserRole.STAFF
+    type: String,
+    required: true
   })
-  role: UserRole
+  address: string
 
-  @ApiProperty()
   @Prop({
     enum: Status,
     default: Status.ACTIVE
   })
   status: Status
-
-  @ApiProperty()
-  @Prop({ type: Types.ObjectId, ref: 'Provider' })
-  providerId: Types.ObjectId
-
-  @ApiProperty()
-  @Prop()
-  createdBy: string
 }
 
-export const StaffSchema = SchemaFactory.createForClass(Staff)
+export const ProviderSchema = SchemaFactory.createForClass(Provider)
 
-StaffSchema.plugin(paginate)
+ProviderSchema.plugin(paginate)
