@@ -9,6 +9,7 @@ import { Roles } from '@auth/decorators/roles.decorator'
 import { UserRole } from '@common/contracts/constant'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
+import { CustomerResponseDto } from '@customer/dto/customer.dto'
 
 @ApiTags('Customer')
 @ApiBearerAuth()
@@ -23,7 +24,7 @@ export class CustomerController {
   })
   @Get('me')
   @ApiBadRequestResponse({ type: ErrorResponse })
-  @ApiOkResponse({ type: Customer })
+  @ApiOkResponse({ type: CustomerResponseDto })
   getOwnInformation(@Req() req) {
     const { _id } = _.get(req, 'user')
     return this.customerService.getCustomerDetail(_id)
