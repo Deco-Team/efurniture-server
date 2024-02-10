@@ -9,16 +9,12 @@ import { Errors } from '@src/common/contracts/error'
 export class CustomerService {
   constructor(private readonly customerRepository: CustomerRepository) {}
 
-  public async createCustomer(createCustomerDto: CreateCustomerDto): Promise<Customer> {
-    const customer = await this.customerRepository.create(createCustomerDto)
-    return customer
-  }
-
   public async getCustomerDetail(customerId: string): Promise<Customer> {
     const customer = await this.customerRepository.findOne({
-      conditions: { _id: customerId }
+      conditions: { _id: customerId },
+      projection: '-password'
     })
-    if (!customer) throw new BadRequestException(Errors.OBJECT_NOT_FOUND.message)
+    if (!customer) throw new BadRequestException(Errors.CUSTOMER_NOT_FOUND.message)
     return customer
   }
 }
