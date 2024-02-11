@@ -21,9 +21,9 @@ export class PublicCategoryPaginateDto extends DataResponse(
   class PublicCategoryPaginate extends PaginateResponse(PublicCategory) {}
 ) {}
 
-export class CategoryPaginateDto extends DataResponse(
-  class CategoryPaginate extends PaginateResponse(Category) {}
-) {}
+export class CategoryPaginateDto extends DataResponse(class CategoryPaginate extends PaginateResponse(Category) {}) {}
+
+export class CategoryResponseDto extends DataResponse(Category) {}
 
 export class CreateCategoryDto {
   @ApiProperty()

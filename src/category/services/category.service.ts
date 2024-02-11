@@ -20,6 +20,17 @@ export class CategoryService {
     )
   }
 
+  async getCategoryDetail(id: string) {
+    return await this.categoryRepository.findOne({
+      conditions: {
+        _id: id,
+        status: {
+          $ne: Status.DELETED
+        }
+      }
+    })
+  }
+
   async getAllPublicCategories(paginationParams: PaginationParams) {
     return await this.categoryRepository.paginate(
       {
@@ -66,7 +77,7 @@ export class CategoryService {
     return category
   }
 
-/*   async deleteCategory(id: string) {
+  /*   async deleteCategory(id: string) {
     const category = await this.categoryRepository.findOneAndUpdate({ _id: id }, { status: Status.DELETED })
 
     if (!category) {
