@@ -41,7 +41,6 @@ export class Staff {
   })
   email: string
 
-  @ApiProperty()
   @Prop({ type: String, required: true })
   password: string
 

@@ -75,5 +75,10 @@ export const Errors: Record<string, ErrorResponse> = {
     error: 'ORDER_STATUS_INVALID',
     message: 'Đơn hàng không hợp lệ.',
     httpStatus: HttpStatus.BAD_REQUEST
-  }
+  },
+  STAFF_NOT_FOUND: {
+    error: 'STAFF_NOT_FOUND',
+    message: 'Không tìm thấy nhân viên',
+    httpStatus: HttpStatus.BAD_REQUEST
+  },
 }
