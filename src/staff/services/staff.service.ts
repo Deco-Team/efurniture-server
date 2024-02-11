@@ -9,7 +9,11 @@ import { MongoServerError } from 'mongodb'
 import { Staff } from '@staff/schemas/staff.schema'
 import * as _ from 'lodash'
 import { InjectConnection } from '@nestjs/mongoose'
-import { Connection } from 'mongoose'
+import { Connection, FilterQuery } from 'mongoose'
+import { PaginationParams } from '@common/decorators/pagination.decorator'
+import { Status } from '@common/contracts/constant'
+import { AppException } from '@common/exceptions/app.exception'
+import { Errors } from '@common/contracts/error'
 
 @Injectable()
 export class StaffService {
@@ -80,5 +84,43 @@ export class StaffService {
       await session.abortTransaction()
       throw error
     }
+  }
+
+  public async getStaffList(filter: FilterQuery<Staff>, paginationParams: PaginationParams) {
+    const provider = await this.providerRepository.findOne({
+      conditions: {}
+    })
+
+    const result = await this.staffRepository.paginate(
+      {
+        providerId: provider._id,
+        status: {
+          $ne: Status.DELETED
+        },
+        ...filter,
+      },
+      { projection: '-password', ...paginationParams }
+    )
+    return result
+  }
+
+  public async getStaffDetails(filter: FilterQuery<Staff>) {
+    const provider = await this.providerRepository.findOne({
+      conditions: {}
+    })
+
+    const staff = await this.staffRepository.findOne({
+      conditions: {
+        providerId: provider._id,
+        status: {
+          $ne: Status.DELETED
+        },
+        ...filter,
+      },
+      projection: '-password'
+    })
+    if (!staff) throw new AppException(Errors.STAFF_NOT_FOUND)
+
+    return staff
   }
 }
