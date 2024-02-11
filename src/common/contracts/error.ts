@@ -21,6 +21,11 @@ export const Errors: Record<string, ErrorResponse> = {
     message: 'Email đã được sử dụng',
     httpStatus: HttpStatus.BAD_REQUEST
   },
+  CUSTOMER_NOT_FOUND: {
+    error: 'CUSTOMER_NOT_FOUND',
+    message: 'Thông tin khách hàng không tồn tại.',
+    httpStatus: HttpStatus.NOT_FOUND
+  },
   NOT_ENOUGH_QUANTITY_IN_STOCK: {
     error: 'NOT_ENOUGH_QUANTITY_IN_STOCK',
     message: 'Không đủ số lượng trong kho.',

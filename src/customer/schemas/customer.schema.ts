@@ -65,7 +65,6 @@ export class Customer {
   })
   avatar: string
 
-  @ApiProperty()
   @Prop({ type: String })
   password: string
 
