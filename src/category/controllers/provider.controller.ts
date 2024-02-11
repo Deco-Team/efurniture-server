@@ -9,7 +9,7 @@ import { DataResponse } from '@common/contracts/openapi-builder'
 import { PaginationQuery } from '@src/common/contracts/dto'
 import { CategoryService } from '@category/services/category.service'
 import { Pagination, PaginationParams } from '@src/common/decorators/pagination.decorator'
-import { CategoryPaginateDto, CreateCategoryDto, UpdateCategoryDto } from '@category/dto/category.dto'
+import { CategoryPaginateDto, CategoryResponseDto, CreateCategoryDto, UpdateCategoryDto } from '@category/dto/category.dto'
 
 @ApiTags('Category - Provider')
 @ApiBearerAuth()
@@ -24,6 +24,12 @@ export class CategoryProviderController {
   @ApiQuery({ type: PaginationQuery })
   async getAllCategories(@Pagination() paginationParams: PaginationParams) {
     return await this.categoryService.getAllCategories(paginationParams)
+  }
+
+  @Get(':id')
+  @ApiOkResponse({ type: CategoryResponseDto })
+  async getCategoryDetail(@Param('id') id: string ) {
+    return await this.categoryService.getCategoryDetail(id)
   }
 
   @Post()
