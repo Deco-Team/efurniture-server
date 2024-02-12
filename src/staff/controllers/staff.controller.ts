@@ -38,7 +38,7 @@ export class StaffController {
   })
   @ApiOkResponse({ type: StaffPaginateResponseDto })
   @ApiQuery({ type: PaginationQuery })
-  getListOrder(@Pagination() paginationParams: PaginationParams) {
+  getListStaff(@Pagination() paginationParams: PaginationParams) {
     return this.staffService.getStaffList({}, paginationParams)
   }
 
@@ -47,7 +47,7 @@ export class StaffController {
     summary: 'View staff detail'
   })
   @ApiOkResponse({ type: StaffResponseDto })
-  getOrderDetail(@Param('staffId') staffId: string) {
+  getStaffDetail(@Param('staffId') staffId: string) {
     return this.staffService.getStaffDetails({ _id: staffId })
   }
 }
