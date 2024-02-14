@@ -207,6 +207,10 @@ export class OrderService {
         {
           $set: { orderStatus: OrderStatus.CANCELED, transactionStatus: TransactionStatus.CANCELED, reason },
           $push: { orderHistory: orderHistoryItem }
+        },
+        {
+          projection: '+items',
+          session
         }
       )
       if (!order) throw new AppException(Errors.ORDER_STATUS_INVALID)
