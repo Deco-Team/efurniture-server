@@ -57,3 +57,12 @@ export enum Dimension {
   '2D' = '2D',
   '3D' = '3D'
 }
+
+export enum BookingStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  ACCEPTED = 'ACCEPTED',
+  COMPLETED = 'COMPLETED',
+  CANCELED = 'CANCELED',
+  DELETED = 'DELETED'
+}
