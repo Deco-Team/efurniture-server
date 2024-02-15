@@ -19,6 +19,7 @@ import { StaffModule } from '@staff/staff.module'
 import { CategoryModule } from '@category/category.module'
 import { OrderModule } from '@order/order.module'
 import { ProviderModule } from '@provider/provider.module'
+import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.module'
 
 @Module({
   imports: [
@@ -103,7 +104,8 @@ import { ProviderModule } from '@provider/provider.module'
     StaffModule,
     CategoryModule,
     OrderModule,
-    ProviderModule
+    ProviderModule,
+    VisitShowroomBookingModule
   ],
   controllers: [AppController],
   providers: [AppService]

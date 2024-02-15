@@ -1,0 +1,69 @@
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { OrderRepository } from '@order/repositories/order.repository'
+import { PaginationParams } from '@common/decorators/pagination.decorator'
+import { BookingStatus, OrderStatus, Status, TransactionStatus, UserRole } from '@common/contracts/constant'
+import { CancelOrderDto, CreateOrderDto } from '@order/dto/order.dto'
+import { Connection, FilterQuery } from 'mongoose'
+import { Order, OrderHistoryDto } from '@order/schemas/order.schema'
+import { IDResponse, SuccessResponse } from '@common/contracts/dto'
+import { AppException } from '@src/common/exceptions/app.exception'
+import { Errors } from '@src/common/contracts/error'
+import { CartService } from '@cart/services/cart.service'
+import { InjectConnection } from '@nestjs/mongoose'
+import { ProductRepository } from '@product/repositories/product.repository'
+import { CreateVisitShowroomBookingDto } from '@visit-showroom-booking/dto/booking.dto'
+import { CategoryRepository } from '@category/repositories/category.repository'
+import { VisitShowroomBookingRepository } from '@visit-showroom-booking/repositories/booking.repository'
+import { BookingHistoryDto } from '@visit-showroom-booking/schemas/booking.schema'
+import { CustomerRepository } from '@customer/repositories/customer.repository'
+
+@Injectable()
+export class VisitShowroomBookingService {
+  constructor(
+    private readonly visitShowroomBookingRepository: VisitShowroomBookingRepository,
+    private readonly customerRepository: CustomerRepository,
+    private readonly categoryRepository: CategoryRepository
+  ) {}
+
+  public async createBooking(createVisitShowroomBookingDto: CreateVisitShowroomBookingDto) {
+    const { _id } = createVisitShowroomBookingDto.customer
+    // check if customer or guest role
+    if (!_id) {
+      createVisitShowroomBookingDto.bookingHistory = [
+        new BookingHistoryDto(BookingStatus.PENDING, 'guest', 'GUEST' as UserRole)
+      ]
+    } else {
+      const customer = await this.customerRepository.findOne({
+        conditions: {
+          _id,
+          status: {
+            $ne: Status.DELETED
+          }
+        },
+        projection: '-password'
+      })
+      if (!customer) throw new BadRequestException(Errors.CUSTOMER_NOT_FOUND.message)
+      createVisitShowroomBookingDto.bookingHistory = [
+        new BookingHistoryDto(BookingStatus.PENDING, _id, UserRole.CUSTOMER)
+      ]
+    }
+
+    // 2. Check valid categories
+    const categories = await this.categoryRepository.findMany({
+      conditions: { _id: { $in: createVisitShowroomBookingDto.interestedCategories } }
+    })
+    if (categories.length !== createVisitShowroomBookingDto.interestedCategories.length)
+      throw new AppException(Errors.CATEGORY_NOT_FOUND)
+    createVisitShowroomBookingDto.interestedCategories
+    // 3. Create booking
+    const booking = await this.visitShowroomBookingRepository.create({
+      ...createVisitShowroomBookingDto,
+      interestedCategories: categories
+    })
+
+    // 4. Send email/notification to customer
+    // 5. Send notification to staff
+
+    return new IDResponse(booking._id)
+  }
+}

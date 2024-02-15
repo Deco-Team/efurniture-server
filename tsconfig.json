@@ -32,6 +32,7 @@
       "@category/*": ["src/category/*"],
       "@order/*": ["src/order/*"],
       "@provider/*": ["src/provider/*"],
+      "@visit-showroom-booking/*": ["src/visit-showroom-booking/*"],
       "@src/*": ["src/*"]
     }
   }
