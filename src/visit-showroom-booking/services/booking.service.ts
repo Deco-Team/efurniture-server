@@ -1,16 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { OrderRepository } from '@order/repositories/order.repository'
-import { PaginationParams } from '@common/decorators/pagination.decorator'
-import { BookingStatus, OrderStatus, Status, TransactionStatus, UserRole } from '@common/contracts/constant'
-import { CancelOrderDto, CreateOrderDto } from '@order/dto/order.dto'
-import { Connection, FilterQuery } from 'mongoose'
-import { Order, OrderHistoryDto } from '@order/schemas/order.schema'
-import { IDResponse, SuccessResponse } from '@common/contracts/dto'
+import { BookingStatus, Status, UserRole } from '@common/contracts/constant'
+import { IDResponse } from '@common/contracts/dto'
 import { AppException } from '@src/common/exceptions/app.exception'
 import { Errors } from '@src/common/contracts/error'
-import { CartService } from '@cart/services/cart.service'
-import { InjectConnection } from '@nestjs/mongoose'
-import { ProductRepository } from '@product/repositories/product.repository'
 import { CreateVisitShowroomBookingDto } from '@visit-showroom-booking/dto/booking.dto'
 import { CategoryRepository } from '@category/repositories/category.repository'
 import { VisitShowroomBookingRepository } from '@visit-showroom-booking/repositories/booking.repository'
@@ -54,7 +46,7 @@ export class VisitShowroomBookingService {
     })
     if (categories.length !== createVisitShowroomBookingDto.interestedCategories.length)
       throw new AppException(Errors.CATEGORY_NOT_FOUND)
-    createVisitShowroomBookingDto.interestedCategories
+
     // 3. Create booking
     const booking = await this.visitShowroomBookingRepository.create({
       ...createVisitShowroomBookingDto,
