@@ -1,10 +1,18 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiQuery,
+  ApiTags
+} from '@nestjs/swagger'
 import { ProductService } from '@product/services/product.service'
 import { Product } from '@product/schemas/product.schema'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
-import { PaginationQuery } from '@common/contracts/dto'
-import { CreateProductDto, ProductDetailDto, ProductPaginateDto } from '@product/dto/product.dto'
+import { ErrorResponse, PaginationQuery, SuccessDataResponse } from '@common/contracts/dto'
+import { CreateProductDto, ProductDetailDto, ProductPaginateDto, UpdateProductDto } from '@product/dto/product.dto'
 import { Roles } from '@auth/decorators/roles.decorator'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
@@ -38,5 +46,21 @@ export class ProviderProductController {
   @ApiOkResponse({ type: DataResponse(ProductDetailDto) })
   getProductsDetail(@Param('id', ParseObjectIdPipe) id: string) {
     return this.productService.getProductsDetail({ _id: id })
+  }
+
+  @Put(':id')
+  @ApiParam({ name: 'id' })
+  @ApiOkResponse({ type: DataResponse(ProductDetailDto) })
+  @ApiNotFoundResponse({ type: ErrorResponse })
+  updateProduct(@Param('id', ParseObjectIdPipe) id: string, @Body() updateProductDto: UpdateProductDto) {
+    return this.productService.updateProduct({ _id: id }, updateProductDto)
+  }
+
+  @Delete(':id')
+  @ApiParam({ name: 'id' })
+  @ApiOkResponse({ type: SuccessDataResponse })
+  @ApiNotFoundResponse({ type: ErrorResponse })
+  deleteProducts(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.productService.deleteProduct({ _id: id })
   }
 }

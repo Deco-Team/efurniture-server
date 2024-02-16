@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { ProductRepository } from '@product/repositories/product.repository'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
-import { CreateProductDto } from '@product/dto/product.dto'
-import { ProductStatus } from '@common/contracts/constant'
+import { CreateProductDto, UpdateProductDto } from '@product/dto/product.dto'
+import { ProductStatus, Status } from '@common/contracts/constant'
 import { CategoryRepository } from '@category/repositories/category.repository'
 import { AppException } from '@common/exceptions/app.exception'
 import { Errors } from '@common/contracts/error'
@@ -10,6 +10,7 @@ import { MongoServerError } from 'mongodb'
 import * as _ from 'lodash'
 import { FilterQuery } from 'mongoose'
 import { Product } from '@product/schemas/product.schema'
+import { SuccessResponse } from '@common/contracts/dto'
 
 @Injectable()
 export class ProductService {
@@ -100,5 +101,33 @@ export class ProductService {
     })
     if (!result) throw new AppException(Errors.PRODUCT_NOT_FOUND)
     return result
+  }
+
+  public async updateProduct(filter: FilterQuery<Product>, productDto: UpdateProductDto) {
+    let result = await this.productRepository.findOne({
+      conditions: {
+        ...filter,
+        status: {
+          $in: [ProductStatus.ACTIVE]
+        }
+      }
+    })
+    if (!result) throw new AppException(Errors.PRODUCT_NOT_FOUND)
+    result = await this.productRepository.findOneAndUpdate(filter, productDto)
+    return result
+  }
+
+  public async deleteProduct(filter: FilterQuery<Product>) {
+    let result = await this.productRepository.findOne({
+      conditions: {
+        ...filter,
+        status: {
+          $in: [ProductStatus.ACTIVE]
+        }
+      }
+    })
+    if (!result) throw new AppException(Errors.PRODUCT_NOT_FOUND)
+    result = await this.productRepository.findOneAndUpdate(filter, { status: Status.DELETED })
+    return new SuccessResponse(true)
   }
 }
