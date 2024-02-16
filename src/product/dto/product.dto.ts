@@ -60,7 +60,7 @@ export class CreateProductDto {
     example: 'Sofa Luxury Description'
   })
   @IsNotEmpty()
-  @MaxLength(256)
+  @MaxLength(1000)
   description: string
 
   @ApiProperty({
@@ -103,7 +103,7 @@ export class UpdateProductDto {
     example: 'Sofa Luxury Description'
   })
   @IsNotEmpty()
-  @MaxLength(256)
+  @MaxLength(1000)
   description: string
 
   @ApiProperty({
