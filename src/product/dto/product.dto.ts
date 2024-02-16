@@ -91,6 +91,49 @@ export class CreateProductDto {
   categories: Types.ObjectId[]
 }
 
+export class UpdateProductDto {
+  @ApiProperty({
+    example: 'Sofa Luxury'
+  })
+  @IsNotEmpty()
+  @MaxLength(50)
+  name: string
+
+  @ApiProperty({
+    example: 'Sofa Luxury Description'
+  })
+  @IsNotEmpty()
+  @MaxLength(256)
+  description: string
+
+  @ApiProperty({
+    example: ['https://m.media-amazon.com/images/I/61KtSpR0SfL._AC_UL480_FMwebp_QL65_.jpg']
+  })
+  @IsArray()
+  @IsUrl({}, { each: true })
+  @IsNotEmpty()
+  images: string[]
+
+  @ApiProperty({
+    example: 'ERYE'
+  })
+  @IsNotEmpty()
+  brand: string
+
+  @ApiProperty({ type: Variant, isArray: true })
+  @IsNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @ArrayMinSize(1)
+  @ArrayMaxSize(5)
+  @Type(() => Variant)
+  variants: Variant[]
+
+  @ApiProperty({ type: Types.ObjectId, isArray: true, example: ['65b7805c041a5a29734ce110'] })
+  @IsNotEmpty()
+  categories: Types.ObjectId[]
+}
+
 export class ProductDetailDto {
   @ApiProperty()
   _id: string
