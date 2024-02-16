@@ -4,7 +4,7 @@ import { GoogleLoginReqDto, LoginReqDto } from '@auth/dto/login.dto'
 import { CustomerRepository } from '@customer/repositories/customer.repository'
 import { Errors } from '@common/contracts/error'
 import { Customer } from '@customer/schemas/customer.schema'
-import { UserSide, UserRole } from '@common/contracts/constant'
+import { UserSide, UserRole, Status } from '@common/contracts/constant'
 import * as bcrypt from 'bcrypt'
 import { AccessTokenPayload } from '@auth/strategies/jwt-access.strategy'
 import { RefreshTokenPayload } from '@auth/strategies/jwt-refresh.strategy'
@@ -50,6 +50,8 @@ export class AuthService {
     }
 
     if (!user) throw new BadRequestException(Errors.WRONG_EMAIL_OR_PASSWORD.message)
+
+    if (user.status === Status.INACTIVE) throw new BadRequestException(Errors.INACTIVE_ACCOUNT.message)
 
     const isPasswordMatch = await this.comparePassword(loginReqDto.password, user.password)
 

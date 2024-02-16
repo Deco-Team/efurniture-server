@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { StaffRepository } from '@staff/repositories/staff.repository'
 import { CreateStaffDto } from '@staff/dto/staff.dto'
 import { ProviderRepository } from '@provider/repositories/provider.repository'
-import { IDResponse } from '@common/contracts/dto'
+import { IDResponse, SuccessResponse } from '@common/contracts/dto'
 import { AuthService } from '@auth/services/auth.service'
 import { MailerService } from '@nestjs-modules/mailer'
 import { MongoServerError } from 'mongodb'
@@ -11,7 +11,7 @@ import * as _ from 'lodash'
 import { InjectConnection } from '@nestjs/mongoose'
 import { Connection, FilterQuery } from 'mongoose'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
-import { Status } from '@common/contracts/constant'
+import { Status, UserRole } from '@common/contracts/constant'
 import { AppException } from '@common/exceptions/app.exception'
 import { Errors } from '@common/contracts/error'
 
@@ -97,7 +97,7 @@ export class StaffService {
         status: {
           $ne: Status.DELETED
         },
-        ...filter,
+        ...filter
       },
       { projection: '-password', ...paginationParams }
     )
@@ -115,12 +115,32 @@ export class StaffService {
         status: {
           $ne: Status.DELETED
         },
-        ...filter,
+        ...filter
       },
       projection: '-password'
     })
     if (!staff) throw new AppException(Errors.STAFF_NOT_FOUND)
 
     return staff
+  }
+
+  public async deactivateStaff(filter: FilterQuery<Staff>) {
+    const staff = await this.staffRepository.findOneAndUpdate(
+      {
+        status: Status.ACTIVE,
+        role: {
+          $in: [UserRole.STAFF, UserRole.CONSULTANT_STAFF, UserRole.DELIVERY_STAFF]
+        },
+        ...filter
+      },
+      {
+        status: Status.INACTIVE
+      }
+    )
+    if (!staff) throw new AppException(Errors.STAFF_NOT_FOUND)
+
+    // TODO: send mail for information
+
+    return new SuccessResponse(true)
   }
 }
