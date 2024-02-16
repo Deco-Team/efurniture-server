@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param,, Post, Req, UseGuards } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
@@ -36,6 +36,8 @@ export class StaffController {
   @ApiOperation({
     summary: 'Paginate list staff'
   })
+  @Roles(UserRole.ADMIN, UserRole.STAFF)
+  @UseGuards(RolesGuard)
   @ApiOkResponse({ type: StaffPaginateResponseDto })
   @ApiQuery({ type: PaginationQuery })
   getListStaff(@Pagination() paginationParams: PaginationParams) {
@@ -46,15 +48,19 @@ export class StaffController {
   @ApiOperation({
     summary: 'View staff detail'
   })
+  @Roles(UserRole.ADMIN, UserRole.STAFF)
+  @UseGuards(RolesGuard)
   @ApiOkResponse({ type: StaffResponseDto })
   getStaffDetail(@Param('staffId') staffId: string) {
     return this.staffService.getStaffDetails({ _id: staffId })
   }
 
-  @Patch(':staffId/deactivate')
+  @Delete(':staffId/deactivate')
   @ApiOperation({
     summary: 'Deactivate Staff'
   })
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOkResponse({ type: SuccessDataResponse })
   deactivateStaff(@Param('staffId') staffId: string) {
     return this.staffService.deactivateStaff({ _id: staffId })
