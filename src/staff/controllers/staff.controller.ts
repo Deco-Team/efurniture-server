@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param,, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
@@ -22,7 +22,7 @@ export class StaffController {
   @ApiOperation({
     summary: 'Create new staff'
   })
-  @Roles(UserRole.ADMIN, UserRole.STAFF)
+  @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)
   @ApiOkResponse({ type: IDDataResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
@@ -36,7 +36,7 @@ export class StaffController {
   @ApiOperation({
     summary: 'Paginate list staff'
   })
-  @Roles(UserRole.ADMIN, UserRole.STAFF)
+  @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)
   @ApiOkResponse({ type: StaffPaginateResponseDto })
   @ApiQuery({ type: PaginationQuery })
@@ -48,7 +48,7 @@ export class StaffController {
   @ApiOperation({
     summary: 'View staff detail'
   })
-  @Roles(UserRole.ADMIN, UserRole.STAFF)
+  @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)
   @ApiOkResponse({ type: StaffResponseDto })
   getStaffDetail(@Param('staffId') staffId: string) {
