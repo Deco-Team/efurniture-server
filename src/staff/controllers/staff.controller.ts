@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
-import { ErrorResponse, IDDataResponse, PaginationQuery } from '@common/contracts/dto'
+import { ErrorResponse, IDDataResponse, PaginationQuery, SuccessDataResponse } from '@common/contracts/dto'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { Roles } from '@auth/decorators/roles.decorator'
@@ -49,5 +49,14 @@ export class StaffController {
   @ApiOkResponse({ type: StaffResponseDto })
   getStaffDetail(@Param('staffId') staffId: string) {
     return this.staffService.getStaffDetails({ _id: staffId })
+  }
+
+  @Patch(':staffId/deactivate')
+  @ApiOperation({
+    summary: 'Deactivate Staff'
+  })
+  @ApiOkResponse({ type: SuccessDataResponse })
+  deactivateStaff(@Param('staffId') staffId: string) {
+    return this.staffService.deactivateStaff({ _id: staffId })
   }
 }
