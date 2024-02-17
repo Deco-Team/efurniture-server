@@ -3,8 +3,8 @@ import { AcceptLanguageResolver, QueryResolver, HeaderResolver, CookieResolver, 
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { RouterModule } from '@nestjs/core'
-import { MailerModule } from '@nestjs-modules/mailer';
-import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { MailerModule } from '@nestjs-modules/mailer'
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter'
 
 import { AppController } from '@src/app.controller'
 import { AppService } from '@src/app.service'
@@ -58,21 +58,21 @@ import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.modu
           secure: configService.get('SMTP_SECURE'),
           auth: {
             user: configService.get('SMTP_USERNAME'),
-            pass: configService.get('SMTP_PASSWORD'),
-          },
+            pass: configService.get('SMTP_PASSWORD')
+          }
         },
         defaults: {
-          from: `"${configService.get('SMTP_FROM_NAME')}" <${configService.get('SMTP_FROM_EMAIL')}>`,
+          from: `"${configService.get('SMTP_FROM_NAME')}" <${configService.get('SMTP_FROM_EMAIL')}>`
         },
         template: {
           dir: join(__dirname, '/templates'),
           adapter: new EjsAdapter(),
           options: {
-            strict: false,
-          },
-        },
+            strict: false
+          }
+        }
       }),
-      inject: [ConfigService],
+      inject: [ConfigService]
     }),
     RouterModule.register([
       {
@@ -94,6 +94,10 @@ import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.modu
       {
         path: 'orders',
         module: OrderModule
+      },
+      {
+        path: 'visit-showroom-booking',
+        module: VisitShowroomBookingModule
       }
     ]),
     CommonModule,
