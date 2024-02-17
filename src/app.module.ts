@@ -96,7 +96,7 @@ import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.modu
         module: OrderModule
       },
       {
-        path: 'visit-showroom-booking',
+        path: 'visit-showroom-bookings',
         module: VisitShowroomBookingModule
       }
     ]),
