@@ -1,0 +1,75 @@
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { BookingStatus, Status, UserRole } from '@common/contracts/constant'
+import { IDResponse } from '@common/contracts/dto'
+import { AppException } from '@common/exceptions/app.exception'
+import { Errors } from '@common/contracts/error'
+import { CategoryRepository } from '@category/repositories/category.repository'
+import { BookingHistoryDto, ConsultantBooking } from '@consultant-booking/schemas/booking.schema'
+import { ConsultantBookingRepository } from '@consultant-booking/repositories/booking.repository'
+import { CreateConsultantBookingDto } from '@consultant-booking/dto/booking.dto'
+import { StaffRepository } from '@staff/repositories/staff.repository'
+import { PaginationParams } from '@common/decorators/pagination.decorator'
+import { FilterQuery } from 'mongoose'
+
+@Injectable()
+export class ConsultantBookingService {
+  constructor(
+    private readonly consultantBookingRepository: ConsultantBookingRepository,
+    private readonly staffRepository: StaffRepository,
+    private readonly categoryRepository: CategoryRepository
+  ) {}
+
+  public async createBooking(createConsultantBookingDto: CreateConsultantBookingDto) {
+    const {
+      customer: { _id },
+      consultantId
+    } = createConsultantBookingDto
+    createConsultantBookingDto.bookingHistory = [new BookingHistoryDto(BookingStatus.PENDING, _id, UserRole.CUSTOMER)]
+
+    // 1. Check valid consultant
+    let consultant
+    if (consultantId) {
+      consultant = await this.staffRepository.findOne({
+        conditions: {
+          _id: consultantId,
+          status: Status.ACTIVE,
+          role: UserRole.CONSULTANT_STAFF
+        },
+        projection: '-password'
+      })
+      if (!consultant) throw new AppException(Errors.CONSULTANT_STAFF_NOT_FOUND)
+    }
+
+    // 2. Check valid categories
+    const categories = await this.categoryRepository.findMany({
+      conditions: { _id: { $in: createConsultantBookingDto.interestedCategories } }
+    })
+    if (categories.length !== createConsultantBookingDto.interestedCategories.length)
+      throw new AppException(Errors.CATEGORY_NOT_FOUND)
+
+    // 3. Create booking
+    const booking = await this.consultantBookingRepository.create({
+      ...createConsultantBookingDto,
+      interestedCategories: categories,
+      consultant
+    })
+
+    // 4. Send email/notification to customer
+    // 5. Send notification to staff
+
+    return new IDResponse(booking._id)
+  }
+
+  public async paginate(filter: FilterQuery<ConsultantBooking>, paginationParams: PaginationParams) {
+    const result = await this.consultantBookingRepository.paginate(
+      {
+        ...filter,
+        status: {
+          $ne: BookingStatus.DELETED
+        }
+      },
+      { ...paginationParams }
+    )
+    return result
+  }
+}

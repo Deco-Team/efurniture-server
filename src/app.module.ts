@@ -20,6 +20,7 @@ import { CategoryModule } from '@category/category.module'
 import { OrderModule } from '@order/order.module'
 import { ProviderModule } from '@provider/provider.module'
 import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.module'
+import { ConsultantBookingModule } from '@consultant-booking/booking.module'
 
 @Module({
   imports: [
@@ -96,8 +97,12 @@ import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.modu
         module: OrderModule
       },
       {
-        path: 'visit-showroom-booking',
+        path: 'visit-showroom-bookings',
         module: VisitShowroomBookingModule
+      },
+      {
+        path: 'consultant-bookings',
+        module: ConsultantBookingModule
       }
     ]),
     CommonModule,
@@ -109,7 +114,8 @@ import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.modu
     CategoryModule,
     OrderModule,
     ProviderModule,
-    VisitShowroomBookingModule
+    VisitShowroomBookingModule,
+    ConsultantBookingModule
   ],
   controllers: [AppController],
   providers: [AppService]

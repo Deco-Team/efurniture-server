@@ -1,8 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsDateString, IsNotEmpty, MaxLength, ValidateNested } from 'class-validator'
+import { IsDateString, IsMongoId, IsNotEmpty, MaxLength, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { BookingHistoryDto, CustomerDto } from '@visit-showroom-booking/schemas/booking.schema'
-import { Types } from 'mongoose'
 
 export class CreateVisitShowroomBookingDto {
   @ApiProperty({ type: () => CustomerDto })
@@ -15,9 +14,10 @@ export class CreateVisitShowroomBookingDto {
   @IsDateString()
   bookingDate: Date
 
-  @ApiProperty({ type: Types.ObjectId, isArray: true, example: ['65b7805c041a5a29734ce110'] })
+  @ApiProperty({ type: String, isArray: true, example: ['65b7805c041a5a29734ce110'] })
   @IsNotEmpty()
-  interestedCategories: Types.ObjectId[]
+  @IsMongoId({ each: true })
+  interestedCategories: string[]
 
   @ApiPropertyOptional()
   @MaxLength(256)
