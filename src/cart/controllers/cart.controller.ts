@@ -9,8 +9,6 @@ import { RolesGuard } from '@auth/guards/roles.guard'
 import { UserRole } from '@common/contracts/constant'
 import { Roles } from '@auth/decorators/roles.decorator'
 import { AddToCartDto, UpdateCartDto, DeleteItemInCartDto, CartResponseDto } from '@cart/dto/cart.dto'
-import { DataResponse } from '@common/contracts/openapi-builder'
-import { Cart } from '@cart/schemas/cart.schema'
 
 @ApiTags('Cart')
 @ApiBearerAuth()
