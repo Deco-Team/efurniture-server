@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { BookingStatus, Status, UserRole } from '@common/contracts/constant'
 import { IDResponse } from '@common/contracts/dto'
 import { AppException } from '@common/exceptions/app.exception'

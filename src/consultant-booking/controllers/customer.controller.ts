@@ -33,7 +33,7 @@ export class ConsultantBookingCustomerController {
 
   @Get()
   @ApiOperation({
-    summary: `Get customer's consultant bookings list`
+    summary: "Get customer's consultant bookings list"
   })
   @ApiQuery({ type: PaginationQuery })
   @ApiOkResponse({ type: ConsultantBookingPaginateResponseDto})

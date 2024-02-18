@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 import * as paginate from 'mongoose-paginate-v2'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { BookingStatus, UserRole } from '@common/contracts/constant'
 import { IsEmail, IsNotEmpty, IsPhoneNumber, MaxLength } from 'class-validator'
