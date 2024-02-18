@@ -37,7 +37,7 @@ export class OrderCustomerController {
 
   @Get()
   @ApiOperation({
-    summary: 'Get customer purchases history'
+    summary: 'Get customer order list'
   })
   @ApiQuery({ type: PaginationQuery })
   async getPurchaseHistory(@Req() req, @Pagination() paginationParams: PaginationParams) {
@@ -47,7 +47,7 @@ export class OrderCustomerController {
 
   @Get(':orderId')
   @ApiOperation({
-    summary: 'Get a customer purchase details'
+    summary: 'Get a customer order details'
   })
   @ApiOkResponse({ type: DataResponse(OrderDto) })
   @ApiBadRequestResponse({ type: ErrorResponse })
@@ -56,9 +56,9 @@ export class OrderCustomerController {
     return await this.orderService.getOrderDetails({ 'customer._id': customerId, _id: orderId })
   }
 
-  @Get(':orderId/history')
+  @Get(':orderId/status-history')
   @ApiOperation({
-    summary: 'Get a customer order history'
+    summary: 'Get a customer order status history'
   })
   @ApiOkResponse({ type: DataResponse(PublicOrderHistoryDto) })
   @ApiBadRequestResponse({ type: ErrorResponse })
