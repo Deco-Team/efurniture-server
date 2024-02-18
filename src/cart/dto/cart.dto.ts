@@ -20,6 +20,7 @@ export class DeleteItemInCartDto {
   productId: Types.ObjectId
 
   @ApiProperty({ example: 'EF20241212' })
+  @IsNotEmpty()
   sku: string
 
   customerId?: string
