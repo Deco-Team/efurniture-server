@@ -8,7 +8,7 @@ import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { UserRole } from '@common/contracts/constant'
 import { Roles } from '@auth/decorators/roles.decorator'
-import { AddToCartDto, UpdateCartDto, DeleteItemInCartDto } from '@cart/dto/cart.dto'
+import { AddToCartDto, UpdateCartDto, DeleteItemInCartDto, CartResponseDto } from '@cart/dto/cart.dto'
 import { DataResponse } from '@common/contracts/openapi-builder'
 import { Cart } from '@cart/schemas/cart.schema'
 
@@ -36,7 +36,7 @@ export class CartController {
   @ApiOperation({
     summary: 'Get customer cart'
   })
-  @ApiOkResponse({ type: DataResponse(Cart) })
+  @ApiOkResponse({ type: CartResponseDto })
   async getCart(@Req() req) {
     const customerId = _.get(req, 'user._id')
     return await this.cartService.getCart(customerId)

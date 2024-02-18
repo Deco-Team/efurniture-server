@@ -14,7 +14,7 @@ async function bootstrap() {
   app.useLogger(logger)
   app.useGlobalInterceptors(new TransformInterceptor())
   app.useGlobalFilters(new AppExceptionFilter(logger))
-  const globalPipes = [new AppValidationPipe(), new TrimRequestBodyPipe()]
+  const globalPipes = [new TrimRequestBodyPipe(), new AppValidationPipe()]
   app.useGlobalPipes(...globalPipes)
 
   // Adding custom validator decorator
