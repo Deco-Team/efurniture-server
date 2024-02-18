@@ -1,8 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, PartialType, PickType } from '@nestjs/swagger'
 import { DataResponse, PaginateResponse } from '@common/contracts/openapi-builder'
 import { IsEmail, IsEnum, IsNotEmpty, IsPhoneNumber, IsUrl, MaxLength } from 'class-validator'
 import { StaffRole, Status, UserRole } from '@common/contracts/constant'
 import { Staff } from '@staff/schemas/staff.schema'
+import { Types } from 'mongoose'
 
 export class CreateStaffDto {
   @ApiProperty({ example: 'Staff' })
@@ -41,9 +42,16 @@ export class CreateStaffDto {
   role: StaffRole
 
   password?: string
-  providerId?: string
+  providerId?: Types.ObjectId
   createdBy?: string
 }
+
+export class UpdateStaffDto extends PickType(PartialType(CreateStaffDto), [
+  'firstName',
+  'lastName',
+  'phone',
+  'avatar'
+]) {}
 
 export class StaffDto {
   @ApiProperty()

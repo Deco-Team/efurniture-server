@@ -6,6 +6,7 @@ export class AppValidationPipe extends ValidationPipe {
   constructor(options?: ValidationPipeOptions) {
     super({
       ...options,
+      whitelist: true,
       exceptionFactory: (validationErrors: ValidationError[] = []) => {
         throw new AppException({
           error: 'INVALID_PARAMS',

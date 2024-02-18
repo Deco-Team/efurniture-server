@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { StaffRepository } from '@staff/repositories/staff.repository'
-import { CreateStaffDto } from '@staff/dto/staff.dto'
+import { CreateStaffDto, UpdateStaffDto } from '@staff/dto/staff.dto'
 import { ProviderRepository } from '@provider/repositories/provider.repository'
 import { IDResponse, SuccessResponse } from '@common/contracts/dto'
 import { AuthService } from '@auth/services/auth.service'
@@ -25,14 +25,14 @@ export class StaffService {
     private readonly mailerService: MailerService
   ) {}
 
-  public async createStaff(createStaffDto: CreateStaffDto) {
+  public async create(createStaffDto: CreateStaffDto, adminId: string) {
     const session = await this.connection.startSession()
     session.startTransaction()
     try {
-      const provider = await this.providerRepository.findOne({
-        conditions: {}
+      const { providerId } = await this.staffRepository.findOne({
+        conditions: { _id: adminId }
       })
-      createStaffDto.providerId = provider._id
+      createStaffDto.providerId = providerId
 
       // Generate random password
       const password = Math.random().toString(36).slice(-8)
@@ -86,14 +86,37 @@ export class StaffService {
     }
   }
 
-  public async getStaffList(filter: FilterQuery<Staff>, paginationParams: PaginationParams) {
-    const provider = await this.providerRepository.findOne({
-      conditions: {}
+  public async update(staffId: string, updateStaffDto: UpdateStaffDto, adminId: string) {
+    const { providerId } = await this.staffRepository.findOne({
+      conditions: { _id: adminId }
+    })
+
+    const staff = await this.staffRepository.findOneAndUpdate(
+      {
+        _id: staffId,
+        providerId,
+        role: {
+          $in: [UserRole.STAFF, UserRole.CONSULTANT_STAFF, UserRole.DELIVERY_STAFF]
+        }
+      },
+      updateStaffDto
+    )
+    if (!staff) throw new AppException(Errors.STAFF_NOT_FOUND)
+
+    return new SuccessResponse(true)
+  }
+
+  public async getStaffList(filter: FilterQuery<Staff>, paginationParams: PaginationParams, adminId: string) {
+    const { providerId } = await this.staffRepository.findOne({
+      conditions: { _id: adminId }
     })
 
     const result = await this.staffRepository.paginate(
       {
-        providerId: provider._id,
+        providerId,
+        role: {
+          $in: [UserRole.STAFF, UserRole.CONSULTANT_STAFF, UserRole.DELIVERY_STAFF]
+        },
         status: {
           $ne: Status.DELETED
         },
@@ -104,14 +127,17 @@ export class StaffService {
     return result
   }
 
-  public async getStaffDetails(filter: FilterQuery<Staff>) {
-    const provider = await this.providerRepository.findOne({
-      conditions: {}
+  public async getStaffDetails(filter: FilterQuery<Staff>, adminId: string) {
+    const { providerId } = await this.staffRepository.findOne({
+      conditions: { _id: adminId }
     })
 
     const staff = await this.staffRepository.findOne({
       conditions: {
-        providerId: provider._id,
+        providerId,
+        role: {
+          $in: [UserRole.STAFF, UserRole.CONSULTANT_STAFF, UserRole.DELIVERY_STAFF]
+        },
         status: {
           $ne: Status.DELETED
         },
@@ -124,9 +150,14 @@ export class StaffService {
     return staff
   }
 
-  public async deactivateStaff(filter: FilterQuery<Staff>) {
+  public async deactivateStaff(filter: FilterQuery<Staff>, adminId: string) {
+    const { providerId } = await this.staffRepository.findOne({
+      conditions: { _id: adminId }
+    })
+
     const staff = await this.staffRepository.findOneAndUpdate(
       {
+        providerId,
         status: Status.ACTIVE,
         role: {
           $in: [UserRole.STAFF, UserRole.CONSULTANT_STAFF, UserRole.DELIVERY_STAFF]
