@@ -16,6 +16,7 @@ export class CreateOrderItemDto {
 
   @Prop()
   @ApiProperty({ example: 'EF20241212' })
+  @IsNotEmpty()
   sku: string
 }
 
