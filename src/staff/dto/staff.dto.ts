@@ -1,6 +1,6 @@
-import { ApiProperty, PartialType, PickType } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger'
 import { DataResponse, PaginateResponse } from '@src/common/contracts/openapi-builder'
-import { IsEmail, IsEnum, IsNotEmpty, IsPhoneNumber, IsUrl, MaxLength } from 'class-validator'
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsUrl, MaxLength } from 'class-validator'
 import { StaffRole } from '@src/common/contracts/constant'
 import { Staff } from '@staff/schemas/staff.schema'
 import { Types } from 'mongoose'
@@ -58,3 +58,12 @@ export class StaffPaginateResponseDto extends DataResponse(
 ) {}
 
 export class StaffResponseDto extends DataResponse(Staff) {}
+
+export class FilterStaffDto {
+  @ApiPropertyOptional({
+    enum: StaffRole,
+  })
+  @IsOptional()
+  @IsEnum(StaffRole)
+  role: StaffRole;
+}

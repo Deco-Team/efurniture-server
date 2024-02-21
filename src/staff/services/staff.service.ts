@@ -127,6 +127,20 @@ export class StaffService {
     return result
   }
 
+  public async getConsultantList(filter: FilterQuery<Staff>, paginationParams: PaginationParams) {
+    const result = await this.staffRepository.paginate(
+      {
+        role: UserRole.CONSULTANT_STAFF,
+        status: {
+          $ne: Status.DELETED
+        },
+        ...filter
+      },
+      { projection: '-password', ...paginationParams }
+    )
+    return result
+  }
+
   public async getStaffDetails(filter: FilterQuery<Staff>, adminId: string) {
     const { providerId } = await this.staffRepository.findOne({
       conditions: { _id: adminId }
