@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Order } from '@order/schemas/order.schema'
 import { Priority, TaskStatus, TaskType } from '@src/common/contracts/constant'
 import { StaffDto } from '@staff/dto/staff.dto'
 import { Transform } from 'class-transformer'
