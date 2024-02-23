@@ -20,6 +20,7 @@ import { CategoryModule } from '@category/category.module'
 import { OrderModule } from '@order/order.module'
 import { ProviderModule } from '@provider/provider.module'
 import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.module'
+import { TaskModule } from '@task/task.module'
 
 @Module({
   imports: [
@@ -109,7 +110,8 @@ import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.modu
     CategoryModule,
     OrderModule,
     ProviderModule,
-    VisitShowroomBookingModule
+    VisitShowroomBookingModule,
+    TaskModule
   ],
   controllers: [AppController],
   providers: [AppService]
