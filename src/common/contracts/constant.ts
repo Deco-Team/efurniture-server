@@ -44,7 +44,7 @@ export enum UserRole {
 export enum StaffRole {
   STAFF = 'STAFF',
   DELIVERY_STAFF = 'DELIVERY_STAFF',
-  CONSULTANT_STAFF = 'CONSULTANT_STAFF',
+  CONSULTANT_STAFF = 'CONSULTANT_STAFF'
 }
 
 export enum Gender {
@@ -64,5 +64,24 @@ export enum BookingStatus {
   ACCEPTED = 'ACCEPTED',
   COMPLETED = 'COMPLETED',
   CANCELED = 'CANCELED',
+  DELETED = 'DELETED'
+}
+
+export enum Priority {
+  HIGH = 'HIGH',
+  MEDIUM = 'MEDIUM',
+  LOW = 'LOW'
+}
+
+export enum TaskType {
+  SHIPPING = 'SHIPPING',
+  CONSULTANT = 'CONSULTANT',
+  CHORE = 'CHORE'
+}
+
+export enum TaskStatus {
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
   DELETED = 'DELETED'
 }

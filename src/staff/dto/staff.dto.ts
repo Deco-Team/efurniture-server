@@ -1,7 +1,7 @@
 import { ApiProperty, PartialType, PickType } from '@nestjs/swagger'
 import { DataResponse, PaginateResponse } from '@src/common/contracts/openapi-builder'
 import { IsEmail, IsEnum, IsNotEmpty, IsPhoneNumber, IsUrl, MaxLength } from 'class-validator'
-import { StaffRole } from '@src/common/contracts/constant'
+import { StaffRole, Status, UserRole } from '@src/common/contracts/constant'
 import { Staff } from '@staff/schemas/staff.schema'
 import { Types } from 'mongoose'
 
@@ -52,6 +52,41 @@ export class UpdateStaffDto extends PickType(PartialType(CreateStaffDto), [
   'phone',
   'avatar'
 ]) {}
+
+export class StaffDto {
+  @ApiProperty()
+  _id: string
+
+  @ApiProperty()
+  firstName: string
+
+  @ApiProperty()
+  lastName: string
+
+  @ApiProperty()
+  email: string
+
+  @ApiProperty()
+  staffCode: string
+
+  @ApiProperty()
+  phone: string
+
+  @ApiProperty()
+  avatar: string
+
+  @ApiProperty()
+  role: UserRole
+
+  @ApiProperty()
+  status: Status
+
+  @ApiProperty()
+  providerId: string
+
+  @ApiProperty()
+  createdBy: string
+}
 
 export class StaffPaginateResponseDto extends DataResponse(
   class StaffPaginateResponse extends PaginateResponse(Staff) {}

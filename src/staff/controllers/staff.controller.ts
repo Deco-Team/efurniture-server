@@ -60,7 +60,7 @@ export class StaffController {
   @ApiQuery({ type: PaginationQuery })
   getListStaff(@Req() req, @Pagination() paginationParams: PaginationParams) {
     const { _id: adminId } = _.get(req, 'user')
-    return this.staffService.getStaffList({}, paginationParams, adminId)
+    return this.staffService.paginate({}, paginationParams, adminId)
   }
 
   @Get(':staffId')
@@ -72,7 +72,7 @@ export class StaffController {
   @ApiOkResponse({ type: StaffResponseDto })
   getStaffDetail(@Req() req, @Param('staffId', ParseObjectIdPipe) staffId: string) {
     const { _id: adminId } = _.get(req, 'user')
-    return this.staffService.getStaffDetails({ _id: staffId }, adminId)
+    return this.staffService.getOne({ _id: staffId }, adminId)
   }
 
   @Delete(':staffId/deactivate')
