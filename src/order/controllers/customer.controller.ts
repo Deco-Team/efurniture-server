@@ -7,7 +7,7 @@ import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
 import { Roles } from '@auth/decorators/roles.decorator'
-import { CreateOrderDto, OrderDto, PublicOrderHistoryDto } from '@order/dto/order.dto'
+import { CreateOrderDto, OrderDto, OrderPaginateResponseDto, PublicOrderHistoryDto } from '@order/dto/order.dto'
 import { OrderService } from '@order/services/order.service'
 import { OrderHistoryDto } from '@order/schemas/order.schema'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
@@ -39,6 +39,8 @@ export class OrderCustomerController {
   @ApiOperation({
     summary: 'Get customer order list'
   })
+  @ApiOkResponse({ type: OrderPaginateResponseDto })
+  @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiQuery({ type: PaginationQuery })
   async getPurchaseHistory(@Req() req, @Pagination() paginationParams: PaginationParams) {
     const customerId = _.get(req, 'user._id')

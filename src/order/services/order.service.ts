@@ -29,7 +29,10 @@ export class OrderService {
           $ne: OrderStatus.DELETED
         }
       },
-      { ...paginationParams }
+      {
+        projection: '+items',
+        ...paginationParams
+      }
     )
     return result
   }
