@@ -21,7 +21,7 @@ export class TaskController {
 
   @Post('shipping')
   @ApiOperation({
-    summary: 'Create new shipping task'
+    summary: 'Change order status to DELIVERING and Create new shipping task'
   })
   @Roles(UserRole.ADMIN, UserRole.STAFF)
   @UseGuards(RolesGuard)
