@@ -106,7 +106,7 @@ export class StaffService {
     return new SuccessResponse(true)
   }
 
-  public async getStaffList(filter: FilterQuery<Staff>, paginationParams: PaginationParams, adminId: string) {
+  public async paginate(filter: FilterQuery<Staff>, paginationParams: PaginationParams, adminId: string) {
     const { providerId } = await this.staffRepository.findOne({
       conditions: { _id: adminId }
     })
@@ -141,7 +141,7 @@ export class StaffService {
     return result
   }
 
-  public async getStaffDetails(filter: FilterQuery<Staff>, adminId: string) {
+  public async getOne(filter: FilterQuery<Staff>, adminId: string) {
     const { providerId } = await this.staffRepository.findOne({
       conditions: { _id: adminId }
     })
@@ -187,5 +187,12 @@ export class StaffService {
     // TODO: send mail for information
 
     return new SuccessResponse(true)
+  }
+
+  async getProviderId(staffId: string) {
+    const { providerId } = await this.staffRepository.findOne({
+      conditions: { _id: staffId },
+    })
+    return providerId
   }
 }
