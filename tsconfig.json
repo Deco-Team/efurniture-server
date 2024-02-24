@@ -34,6 +34,7 @@
       "@task/*": ["src/task/*"],
       "@provider/*": ["src/provider/*"],
       "@visit-showroom-booking/*": ["src/visit-showroom-booking/*"],
+      "@consultant-booking/*": ["src/consultant-booking/*"],
       "@src/*": ["src/*"]
     }
   }

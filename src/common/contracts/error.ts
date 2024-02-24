@@ -83,7 +83,12 @@ export const Errors: Record<string, ErrorResponse> = {
   },
   STAFF_NOT_FOUND: {
     error: 'STAFF_NOT_FOUND',
-    message: 'Không tìm thấy nhân viên',
+    message: 'Không tìm thấy nhân viên.',
+    httpStatus: HttpStatus.BAD_REQUEST
+  },
+  CONSULTANT_STAFF_NOT_FOUND: {
+    error: 'CONSULTANT_STAFF_NOT_FOUND',
+    message: 'Không tìm thấy nhân viên tư vấn. Vui lòng thử lại',
     httpStatus: HttpStatus.BAD_REQUEST
   },
   DELIVERY_STAFF_NOT_FOUND: {

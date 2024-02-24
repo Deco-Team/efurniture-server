@@ -20,6 +20,7 @@ import { CategoryModule } from '@category/category.module'
 import { OrderModule } from '@order/order.module'
 import { ProviderModule } from '@provider/provider.module'
 import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.module'
+import { ConsultantBookingModule } from '@consultant-booking/booking.module'
 import { TaskModule } from '@task/task.module'
 
 @Module({
@@ -99,6 +100,10 @@ import { TaskModule } from '@task/task.module'
       {
         path: 'visit-showroom-bookings',
         module: VisitShowroomBookingModule
+      },
+      {
+        path: 'consultant-bookings',
+        module: ConsultantBookingModule
       }
     ]),
     CommonModule,
@@ -111,6 +116,7 @@ import { TaskModule } from '@task/task.module'
     OrderModule,
     ProviderModule,
     VisitShowroomBookingModule,
+    ConsultantBookingModule,
     TaskModule
   ],
   controllers: [AppController],
