@@ -3,7 +3,7 @@ import { OrderRepository } from '@order/repositories/order.repository'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
 import { CancelOrderDto, CreateOrderDto } from '@order/dto/order.dto'
-import { Connection, FilterQuery } from 'mongoose'
+import { ClientSession, Connection, FilterQuery } from 'mongoose'
 import { Order, OrderHistoryDto } from '@order/schemas/order.schema'
 import { IDResponse, SuccessResponse } from '@common/contracts/dto'
 import { AppException } from '@src/common/exceptions/app.exception'
@@ -29,7 +29,10 @@ export class OrderService {
           $ne: OrderStatus.DELETED
         }
       },
-      { ...paginationParams }
+      {
+        projection: '+items',
+        ...paginationParams
+      }
     )
     return result
   }
@@ -189,6 +192,27 @@ export class OrderService {
 
     // 2. Send email/notification to customer
     return new SuccessResponse(true)
+  }
+
+  public async deliveryOrder(orderId: string, userId: string, role: UserRole, session?: ClientSession) {
+    // 1. Update order status and order history
+    const orderHistory = new OrderHistoryDto(OrderStatus.DELIVERING, TransactionStatus.CAPTURED, userId, role)
+    const order = await this.orderRepository.findOneAndUpdate(
+      {
+        _id: orderId,
+        orderStatus: OrderStatus.CONFIRMED
+        // transactionStatus: TransactionStatus.CAPTURED
+      },
+      {
+        $set: { orderStatus: OrderStatus.DELIVERING },
+        $push: { orderHistory },
+      }, {
+        session
+      }
+    )
+    if (!order) throw new AppException(Errors.ORDER_STATUS_INVALID)
+
+    return order
   }
 
   public async cancelOrder(cancelOrderDto: CancelOrderDto) {

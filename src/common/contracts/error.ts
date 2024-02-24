@@ -91,4 +91,9 @@ export const Errors: Record<string, ErrorResponse> = {
     message: 'Không tìm thấy nhân viên tư vấn. Vui lòng thử lại',
     httpStatus: HttpStatus.BAD_REQUEST
   },
+  DELIVERY_STAFF_NOT_FOUND: {
+    error: 'DELIVERY_STAFF_NOT_FOUND',
+    message: 'Không tìm thấy nhân viên giao hàng',
+    httpStatus: HttpStatus.BAD_REQUEST
+  },
 }

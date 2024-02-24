@@ -1,7 +1,7 @@
 {
   "name": "efurniture-api",
   "version": "0.0.1",
-  "description": "",
+  "description": "efurniture API",
   "author": "Deco-Team",
   "license": "UNLICENSED",
   "scripts": {
@@ -27,6 +27,8 @@
     "@nestjs/mongoose": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.2.0",
+    "@nestjs/jwt": "^10.2.0",
+    "@nestjs/passport": "^10.0.3",
     "axios": "^1.6.5",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
@@ -44,12 +46,12 @@
     "nodemailer": "^6.9.9",
     "passport-custom": "^1.1.1",
     "reflect-metadata": "^0.1.14",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
-    "@nestjs/jwt": "^10.2.0",
-    "@nestjs/passport": "^10.0.3",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/bcrypt": "^5.0.2",
@@ -67,8 +69,6 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "^29.5.0",
-    "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1",
     "prettier": "^2.8.8",
     "source-map-support": "^0.5.21",
     "supertest": "^6.3.3",

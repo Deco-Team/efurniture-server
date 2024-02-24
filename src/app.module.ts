@@ -21,6 +21,7 @@ import { OrderModule } from '@order/order.module'
 import { ProviderModule } from '@provider/provider.module'
 import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.module'
 import { ConsultantBookingModule } from '@consultant-booking/booking.module'
+import { TaskModule } from '@task/task.module'
 
 @Module({
   imports: [
@@ -115,7 +116,8 @@ import { ConsultantBookingModule } from '@consultant-booking/booking.module'
     OrderModule,
     ProviderModule,
     VisitShowroomBookingModule,
-    ConsultantBookingModule
+    ConsultantBookingModule,
+    TaskModule
   ],
   controllers: [AppController],
   providers: [AppService]

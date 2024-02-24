@@ -28,6 +28,7 @@ export class AuthService {
   public async login(loginReqDto: LoginReqDto, side: UserSide): Promise<TokenResDto> {
     let user: Customer | Staff
     let userRole: UserRole
+    let providerId: string
 
     if (side === UserSide.CUSTOMER) {
       user = await this.customerRepository.findOne({
@@ -47,6 +48,7 @@ export class AuthService {
       })
 
       userRole = user?.role
+      providerId = user?.providerId.toString()
     }
 
     if (!user) throw new BadRequestException(Errors.WRONG_EMAIL_OR_PASSWORD.message)
@@ -57,7 +59,7 @@ export class AuthService {
 
     if (!isPasswordMatch) throw new BadRequestException(Errors.WRONG_EMAIL_OR_PASSWORD.message)
 
-    const accessTokenPayload: AccessTokenPayload = { name: user.firstName, sub: user._id, role: userRole }
+    const accessTokenPayload: AccessTokenPayload = { name: user.firstName, sub: user._id, role: userRole, providerId }
 
     const refreshTokenPayload: RefreshTokenPayload = { sub: user._id, role: userRole }
 
