@@ -1,4 +1,4 @@
-name: Release NestJS CI/CD on Kubernetes
+name: NestJS CI/CD on Kubernetes
 
 on:
   push:
@@ -11,14 +11,16 @@ jobs:
     environment: develop
     env:
       ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-      #IMAGE_TAG: "pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}"
-      IMAGE_TAG: "v0.3"
 
     steps:
     - name: Cancel Previous Runs               
       uses: styfle/cancel-workflow-action@0.4.1
       with:                                    
         access_token: ${{ github.token }} 
+
+    - name: Set short git commit SHA
+      id: commit
+      uses: prompt/actions-commit-hash@v2
 
     - name: Checkout
       uses: actions/checkout@v2
@@ -49,6 +51,7 @@ jobs:
     - name: Build & Push Image                                                                                      
       env:                                                                                                          
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
 
       run: |
         echo ${{ env.ECR_REGISTRY }}
@@ -89,6 +92,7 @@ jobs:
     - name: Deploy to EKS
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
         sed -i.bak "s|DOCKER_IMAGE|${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}|g" k8s/deployment.yaml && \
         kubectl apply -f k8s/deployment.yaml
