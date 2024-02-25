@@ -28,22 +28,22 @@ jobs:
     - name: Make .env file
       uses: SpicyPizza/create-envfile@v2.0
       with:
-        NODE_ENV: ${{ vars.NODE_ENV }}
-        PORT: ${{ vars.PORT }}
-        MONGODB_CONNECTION_STRING: ${{ secrets.MONGODB_CONNECTION_STRING }}
-        CORS_VALID_ORIGINS: ${{ vars.CORS_VALID_ORIGINS }}
+        envkey_NODE_ENV: ${{ vars.NODE_ENV }}
+        envkey_PORT: ${{ vars.PORT }}
+        envkey_MONGODB_CONNECTION_STRING: ${{ secrets.MONGODB_CONNECTION_STRING }}
+        envkey_CORS_VALID_ORIGINS: ${{ vars.CORS_VALID_ORIGINS }}
 
-        JWT_ACCESS_SECRET: ${{ vars.JWT_ACCESS_SECRET }}
-        JWT_ACCESS_EXPIRATION: ${{ vars.JWT_ACCESS_EXPIRATION }}
-        JWT_REFRESH_SECRET: ${{ vars.JWT_REFRESH_SECRET }}
-        JWT_REFRESH_EXPIRATION: ${{ vars.JWT_REFRESH_EXPIRATION }}    
+        envkey_JWT_ACCESS_SECRET: ${{ vars.JWT_ACCESS_SECRET }}
+        envkey_JWT_ACCESS_EXPIRATION: ${{ vars.JWT_ACCESS_EXPIRATION }}
+        envkey_JWT_REFRESH_SECRET: ${{ vars.JWT_REFRESH_SECRET }}
+        envkey_JWT_REFRESH_EXPIRATION: ${{ vars.JWT_REFRESH_EXPIRATION }}    
 
-        SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}    
-        SMTP_HOST: ${{ vars.SMTP_HOST }}
-        SMTP_PORT: ${{ vars.SMTP_PORT }}
-        SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL }}
-        SMTP_FROM_NAME: ${{ vars.SMTP_FROM_NAME }}    
+        envkey_SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+        envkey_SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}    
+        envkey_SMTP_HOST: ${{ vars.SMTP_HOST }}
+        envkey_SMTP_PORT: ${{ vars.SMTP_PORT }}
+        envkey_SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL }}
+        envkey_SMTP_FROM_NAME: ${{ vars.SMTP_FROM_NAME }}   
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
