@@ -25,6 +25,26 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Make .env file
+      uses: SpicyPizza/create-envfile@v2.0
+      with:
+        NODE_ENV: ${{ vars.NODE_ENV }}
+        PORT: ${{ vars.PORT }}
+        MONGODB_CONNECTION_STRING: ${{ secrets.MONGODB_CONNECTION_STRING }}
+        CORS_VALID_ORIGINS: ${{ vars.CORS_VALID_ORIGINS }}
+
+        JWT_ACCESS_SECRET: ${{ vars.JWT_ACCESS_SECRET }}
+        JWT_ACCESS_EXPIRATION: ${{ vars.JWT_ACCESS_EXPIRATION }}
+        JWT_REFRESH_SECRET: ${{ vars.JWT_REFRESH_SECRET }}
+        JWT_REFRESH_EXPIRATION: ${{ vars.JWT_REFRESH_EXPIRATION }}    
+
+        SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}    
+        SMTP_HOST: ${{ vars.SMTP_HOST }}
+        SMTP_PORT: ${{ vars.SMTP_PORT }}
+        SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL }}
+        SMTP_FROM_NAME: ${{ vars.SMTP_FROM_NAME }}    
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -54,17 +74,6 @@ jobs:
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
 
       run: |
-        touch .env
-        for var in NODE_ENV PORT CORS_VALID_ORIGINS JWT_ACCESS_SECRET JWT_ACCESS_EXPIRATION JWT_REFRESH_SECRET JWT_REFRESH_EXPIRATION SMTP_HOST SMTP_PORT SMTP_FROM_EMAIL SMTP_FROM_NAME
-        do
-           echo $var=${{ vars[$var] }} >> .env
-        done
-
-        for var in MONGODB_CONNECTION_STRING SMTP_USERNAME SMTP_PASSWORD
-        do
-           echo $var=${{ secrets[$var] }} >> .env
-        done
-
         docker buildx create --use
 
         docker buildx build \
