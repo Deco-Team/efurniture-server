@@ -11,7 +11,6 @@ spec:
       port: 5000
       targetPort: 5000
 
-
 ---
 
 apiVersion: apps/v1
@@ -38,7 +37,6 @@ spec:
     spec:
       containers:
       - name: api
-        # image: public.ecr.aws/s5q4d9h5/furnique:0.1
         image: DOCKER_IMAGE
         resources:
           requests:
@@ -49,14 +47,5 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 5000
-        # readinessProbe:
-        #   tcpSocket:
-        #     port: 5000
-        #   initialDelaySeconds: 5
-        #   periodSeconds: 5
-        # livenessProbe:
-        #   httpGet:
-        #     path: /health
-        #     port: 3000
         imagePullPolicy: Always
       serviceAccountName: default
