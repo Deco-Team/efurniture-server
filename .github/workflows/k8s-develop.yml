@@ -2,7 +2,7 @@ name: NestJS CI/CD on Kubernetes
 
 on:
   push:
-    branches: [ "k8s" ]
+    branches: [ "develop" ]
 
 jobs:
   build:
