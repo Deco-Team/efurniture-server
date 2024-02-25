@@ -4,26 +4,22 @@ on:
   push:
     branches: [ "k8s" ]
 
-env:
-  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-  EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
-  AWS_REGION: ${{ vars.AWS_REGION }}
-  IMAGE_TAG: "pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}"
-
 jobs:
   build:
     name: Deployment
     runs-on: ubuntu-latest
     environment: develop
+    env:
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+      EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      IMAGE_TAG: "pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}"
+
     steps:
     - name: Cancel Previous Runs               
       uses: styfle/cancel-workflow-action@0.4.1
       with:                                    
         access_token: ${{ github.token }} 
-
-    - name: Set short git commit SHA
-      id: commit
-      uses: prompt/actions-commit-hash@v2
 
     - name: Checkout
       uses: actions/checkout@v2
