@@ -38,7 +38,8 @@ spec:
     spec:
       containers:
       - name: api
-        image: public.ecr.aws/s5q4d9h5/furnique:0.1
+        # image: public.ecr.aws/s5q4d9h5/furnique:0.1
+        image: DOCKER_IMAGE
         resources:
           requests:
             memory: "64Mi"
