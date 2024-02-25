@@ -11,7 +11,8 @@ jobs:
     environment: develop
     env:
       ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-      IMAGE_TAG: "pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}"
+      #IMAGE_TAG: "pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}"
+      IMAGE_TAG: "v0.2"
 
     steps:
     - name: Cancel Previous Runs               
@@ -29,11 +30,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ vars.AWS_REGION }}
 
-    - name: Login to Amazon ECR Public
-      id: login-ecr-public
+    - name: Login to Amazon ECR
+      id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
-      with:
-          registry-type: public
 
     - name: Set up Docker Buildx                             
       id: buildx                                             
@@ -49,7 +48,7 @@ jobs:
 
     - name: Build & Push Image                                                                                      
       env:                                                                                                          
-        ECR_REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
       run: |
         echo ${{ env.ECR_REGISTRY }}
