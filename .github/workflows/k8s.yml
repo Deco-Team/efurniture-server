@@ -12,7 +12,7 @@ jobs:
     env:
       ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
       #IMAGE_TAG: "pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}"
-      IMAGE_TAG: "v0.2"
+      IMAGE_TAG: "v0.3"
 
     steps:
     - name: Cancel Previous Runs               
