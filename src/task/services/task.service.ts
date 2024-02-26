@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { StaffRepository } from '@staff/repositories/staff.repository'
-import { IDResponse } from '@common/contracts/dto'
+import { IDResponse, SuccessResponse } from '@common/contracts/dto'
 import * as _ from 'lodash'
 import { InjectConnection } from '@nestjs/mongoose'
 import { Connection, FilterQuery } from 'mongoose'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
-import { Status, TaskType, UserRole } from '@common/contracts/constant'
+import { Status, TaskStatus, TaskType, UserRole } from '@common/contracts/constant'
 import { AppException } from '@common/exceptions/app.exception'
 import { Errors } from '@common/contracts/error'
 import { Task } from '@task/schemas/task.schema'
@@ -22,7 +22,7 @@ export class TaskService {
     private readonly orderService: OrderService
   ) {}
 
-  public async create(createShippingTaskDto: CreateShippingTaskDto) {
+  public async createShippingTask(createShippingTaskDto: CreateShippingTaskDto) {
     // Execute in transaction
     const session = await this.connection.startSession()
     session.startTransaction()
@@ -49,27 +49,18 @@ export class TaskService {
         throw new AppException(Errors.DELIVERY_STAFF_NOT_FOUND)
       }
 
-      // 2. Update order status to DELIVERING
-      await this.orderService.deliveryOrder(
-        createShippingTaskDto.orderId,
-        assignee._id.toString(),
-        UserRole.DELIVERY_STAFF,
-        session
-      )
-
-      // 3. Create shipping task
+      // 2. Create shipping task
       const task = await this.taskRepository.create(
         {
           ...createShippingTaskDto,
           type: TaskType.SHIPPING,
           reporter,
-          assignee,
+          assignee
         },
         { session }
       )
 
-      // 4. Send email/notification to customer
-      // 5. Send notification to staff
+      // 3. Send notification to staff
 
       await session.commitTransaction()
       return new IDResponse(task._id)
@@ -91,5 +82,84 @@ export class TaskService {
       { ...paginationParams }
     )
     return result
+  }
+
+  public async progressShippingTask(orderId: string, userId: string) {
+    // Execute in transaction
+    const session = await this.connection.startSession()
+    session.startTransaction()
+    try {
+      // 1. Update shipping task to IN_PROGRESS
+      const task = await this.taskRepository.findOneAndUpdate(
+        {
+          orderId
+        },
+        {
+          status: TaskStatus.IN_PROGRESS
+        },
+        { session }
+      )
+      if (
+        !task ||
+        task.status !== TaskStatus.PENDING ||
+        task.type !== TaskType.SHIPPING ||
+        task.assignee?._id.toString() !== userId
+      ) {
+        throw new AppException(Errors.SHIPPING_TASK_INVALID)
+      }
+
+      // 2. Update order status to DELIVERING
+      await this.orderService.deliveryOrder(orderId, userId, UserRole.DELIVERY_STAFF, session)
+
+      // 3. Send email/notification to customer
+      // 4. Send notification to staff
+
+      await session.commitTransaction()
+      return new SuccessResponse(true)
+    } catch (error) {
+      await session.abortTransaction()
+      console.error(error)
+      throw error
+    }
+  }
+
+  public async completeShippingTask(orderId: string, userId: string) {
+    // Execute in transaction
+    const session = await this.connection.startSession()
+    session.startTransaction()
+    try {
+      // 1. Update shipping task to COMPLETED
+      const task = await this.taskRepository.findOneAndUpdate(
+        {
+          orderId
+        },
+        {
+          status: TaskStatus.COMPLETED,
+          completionDate: new Date()
+        },
+        { session }
+      )
+      if (
+        !task ||
+        task.status !== TaskStatus.IN_PROGRESS ||
+        task.type !== TaskType.SHIPPING ||
+        task.assignee?._id.toString() !== userId
+      ) {
+        throw new AppException(Errors.SHIPPING_TASK_INVALID)
+      }
+
+      // 2. Update order status to COMPLETED
+      await this.orderService.completeOrder(orderId, userId, UserRole.DELIVERY_STAFF, session)
+
+      // 3. Send email/notification to customer
+      // 4. Send notification to staff
+
+      await session.commitTransaction()
+      return new SuccessResponse(true)
+    } catch (error) {
+      await session.abortTransaction()
+      console.error(error)
+      throw error
+    }
   }
 }
