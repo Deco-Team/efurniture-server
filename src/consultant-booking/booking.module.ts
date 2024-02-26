@@ -7,6 +7,7 @@ import { ConsultantBooking, ConsultantBookingSchema } from '@consultant-booking/
 import { ConsultantBookingCustomerController } from '@consultant-booking/controllers/customer.controller'
 import { ConsultantBookingService } from '@consultant-booking/services/booking.service'
 import { ConsultantBookingRepository } from '@consultant-booking/repositories/booking.repository'
+import { ConsultantBookingProviderController } from '@consultant-booking/controllers/provider.controller'
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { ConsultantBookingRepository } from '@consultant-booking/repositories/bo
     CategoryModule,
     StaffModule
   ],
-  controllers: [ConsultantBookingCustomerController],
+  controllers: [ConsultantBookingCustomerController, ConsultantBookingProviderController],
   providers: [ConsultantBookingService, ConsultantBookingRepository],
   exports: [ConsultantBookingService]
 })

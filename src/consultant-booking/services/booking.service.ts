@@ -72,4 +72,18 @@ export class ConsultantBookingService {
     )
     return result
   }
+
+  public async getOne(filter: FilterQuery<ConsultantBooking>) {
+    const booking = await this.consultantBookingRepository.findOne({
+      conditions: {
+        ...filter,
+        status: {
+          $ne: BookingStatus.DELETED
+        }
+      },
+    })
+    if (!booking) throw new AppException(Errors.CONSULTANT_BOOKING_NOT_FOUND)
+
+    return booking
+  }
 }

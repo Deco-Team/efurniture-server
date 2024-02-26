@@ -86,6 +86,11 @@ export const Errors: Record<string, ErrorResponse> = {
     message: 'Không tìm thấy nhân viên.',
     httpStatus: HttpStatus.BAD_REQUEST
   },
+  CONSULTANT_BOOKING_NOT_FOUND: {
+    error: 'CONSULTANT_BOOKING_NOT_FOUND',
+    message: 'Không tìm thấy lịch đặt tư vấn. Vui lòng thử lại',
+    httpStatus: HttpStatus.BAD_REQUEST
+  },
   CONSULTANT_STAFF_NOT_FOUND: {
     error: 'CONSULTANT_STAFF_NOT_FOUND',
     message: 'Không tìm thấy nhân viên tư vấn. Vui lòng thử lại',

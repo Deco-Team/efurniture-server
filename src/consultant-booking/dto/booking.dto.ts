@@ -62,3 +62,5 @@ export class ConsultantBookingDto {
 export class ConsultantBookingPaginateResponseDto extends DataResponse(
   class ConsultantBookingPaginateResponse extends PaginateResponse(ConsultantBookingDto) {}
 ) {}
+
+export class ConsultantBookingResponseDto extends DataResponse(ConsultantBookingDto) {}
