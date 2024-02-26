@@ -204,7 +204,7 @@ export class OrderService {
         // transactionStatus: TransactionStatus.CAPTURED
       },
       {
-        $set: { orderStatus: OrderStatus.DELIVERING },
+        $set: { orderStatus: OrderStatus.DELIVERING, deliveryDate: new Date() },
         $push: { orderHistory },
       }, {
         session
@@ -265,5 +265,26 @@ export class OrderService {
       console.error(error)
       throw error
     }
+  }
+
+  public async completeOrder(orderId: string, userId: string, role: UserRole, session?: ClientSession) {
+    // 1. Update order status and order history
+    const orderHistory = new OrderHistoryDto(OrderStatus.COMPLETED, TransactionStatus.CAPTURED, userId, role)
+    const order = await this.orderRepository.findOneAndUpdate(
+      {
+        _id: orderId,
+        orderStatus: OrderStatus.DELIVERING
+        // transactionStatus: TransactionStatus.CAPTURED
+      },
+      {
+        $set: { orderStatus: OrderStatus.COMPLETED, completeDate: new Date() },
+        $push: { orderHistory },
+      }, {
+        session
+      }
+    )
+    if (!order) throw new AppException(Errors.ORDER_STATUS_INVALID)
+
+    return order
   }
 }

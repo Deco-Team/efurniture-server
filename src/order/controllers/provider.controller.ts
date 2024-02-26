@@ -14,8 +14,7 @@ import { OrderHistoryDto } from '@order/schemas/order.schema'
 
 @ApiTags('Order - Provider')
 @ApiBearerAuth()
-@Roles(UserRole.ADMIN, UserRole.STAFF)
-@UseGuards(JwtAuthGuard.ACCESS_TOKEN, RolesGuard)
+@UseGuards(JwtAuthGuard.ACCESS_TOKEN)
 @Controller('provider')
 export class OrderProviderController {
   constructor(private readonly orderService: OrderService) {}
@@ -24,6 +23,8 @@ export class OrderProviderController {
   @ApiOperation({
     summary: 'Paginate list order'
   })
+  @Roles(UserRole.ADMIN, UserRole.STAFF)
+  @UseGuards(RolesGuard)
   @ApiOkResponse({ type: OrderPaginateResponseDto })
   @ApiQuery({ type: PaginationQuery })
   async getListOrder(@Pagination() paginationParams: PaginationParams) {
@@ -34,6 +35,8 @@ export class OrderProviderController {
   @ApiOperation({
     summary: 'View order detail'
   })
+  @Roles(UserRole.ADMIN, UserRole.STAFF)
+  @UseGuards(RolesGuard)
   @ApiOkResponse({ type: OrderResponseDto })
   getOrderDetail(@Param('orderId') orderId: string) {
     return this.orderService.getOrderDetails({ _id: orderId })
@@ -43,6 +46,8 @@ export class OrderProviderController {
   @ApiOperation({
     summary: 'Confirm order'
   })
+  @Roles(UserRole.ADMIN, UserRole.STAFF)
+  @UseGuards(RolesGuard)
   @ApiOkResponse({ type: SuccessDataResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async confirmOrder(@Req() req, @Param('orderId') orderId: string) {
@@ -55,6 +60,8 @@ export class OrderProviderController {
   @ApiOperation({
     summary: 'Cancel order (new field: cancel reason)'
   })
+  @Roles(UserRole.ADMIN, UserRole.STAFF)
+  @UseGuards(RolesGuard)
   @ApiOkResponse({ type: SuccessDataResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async cancelOrder(@Req() req, @Param('orderId') orderId: string, @Body() cancelOrderDto: CancelOrderDto) {
@@ -68,5 +75,16 @@ export class OrderProviderController {
     )
     const result = await this.orderService.cancelOrder(cancelOrderDto)
     return result
+  }
+
+  @Get(':orderId/shipping')
+  @ApiOperation({
+    summary: '(Delivery Staff) View shipping order detail'
+  })
+  @Roles(UserRole.DELIVERY_STAFF)
+  @UseGuards(RolesGuard)
+  @ApiOkResponse({ type: OrderResponseDto })
+  getShippingOrderDetail(@Param('orderId') orderId: string) {
+    return this.orderService.getOrderDetails({ _id: orderId })
   }
 }
