@@ -8,11 +8,12 @@ import { OrderRepository } from '@order/repositories/order.repository'
 import { CartModule } from '@cart/cart.module'
 import { ProductModule } from '@product/product.module'
 import { OrderProviderController } from '@order/controllers/provider.controller'
+import { PaymentModule } from '@payment/payment.module'
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]), CartModule, ProductModule],
   controllers: [OrderCustomerController, OrderProviderController],
   providers: [OrderService, OrderRepository],
-  exports: [OrderService]
+  exports: [OrderService, OrderRepository]
 })
 export class OrderModule {}
