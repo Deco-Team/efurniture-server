@@ -1,11 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { DataResponse, PaginateResponse } from '@src/common/contracts/openapi-builder'
-import { ArrayMinSize, IsMongoId, IsNotEmpty, MaxLength, MinLength, ValidateNested } from 'class-validator'
+import { ArrayMinSize, IsEnum, IsMongoId, IsNotEmpty, MaxLength, MinLength, ValidateNested } from 'class-validator'
 import { CustomerOrderDto, OrderHistoryDto, OrderItemDto } from '@order/schemas/order.schema'
 import { Prop } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
 import { Type } from 'class-transformer'
 import { OrderStatus, TransactionStatus } from '@src/common/contracts/constant'
+import { PaymentMethod } from '@payment/contracts/constant'
 
 export class CreateOrderItemDto {
   @Prop({ type: Types.ObjectId, ref: 'Product' })
@@ -34,6 +35,11 @@ export class CreateOrderDto {
   @Type(() => CreateOrderItemDto)
   items: CreateOrderItemDto[]
 
+  @ApiProperty({ enum: PaymentMethod })
+  // @IsNotEmpty()
+  // @IsEnum(PaymentMethod)
+  paymentMethod?: PaymentMethod
+
   @ApiPropertyOptional()
   @MaxLength(256)
   notes?: string
@@ -44,6 +50,9 @@ export class CreateOrderDto {
 export class OrderDto {
   @ApiProperty()
   _id: string
+
+  @ApiProperty()
+  orderId: string
 
   @ApiProperty({ type: () => CustomerOrderDto })
   customer: CustomerOrderDto

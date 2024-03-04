@@ -49,7 +49,7 @@ export class TaskController {
 
   @Patch('shipping/:orderId/complete')
   @ApiOperation({
-    summary: '(Delivery Staff) Change order status to COMPLETED and order status to COMPLETED'
+    summary: '(Delivery Staff) Change task status to COMPLETED and order status to COMPLETED'
   })
   @Roles(UserRole.DELIVERY_STAFF)
   @UseGuards(RolesGuard)

@@ -12,12 +12,28 @@ export default () => ({
     SMTP_SECURE: process.env.SMTP_SECURE !== 'false',
     SMTP_FROM_NAME: process.env.SMTP_FROM_NAME || 'SMTP_FROM_NAME'
   },
+  payment: {
+    momo: {
+      partnerCode: process.env.MOMO_PARTNER_CODE,
+      accessKey: process.env.MOMO_ACCESS_KEY,
+      secretKey: process.env.MOMO_SECRET_KEY,
+      endpoint: process.env.MOMO_ENDPOINT
+    },
+    zalopay: {
+      app_id: process.env.ZALOPAY_APP_ID,
+      key1: process.env.ZALOPAY_KEY1,
+      key2: process.env.ZALOPAY_KEY2,
+      endpoint: process.env.ZALOPAY_ENDPOINT
+    }
+  },
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET || 'accessSecret',
   JWT_ACCESS_EXPIRATION: process.env.JWT_ACCESS_EXPIRATION || 864000, // seconds
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'refreshSecret',
   JWT_REFRESH_EXPIRATION: Number(process.env.JWT_REFRESH_EXPIRATION) || 90, // 90 days
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  WEB_URL: process.env.WEB_URL || 'https://www.furnique.tech',
+  SERVER_URL: process.env.SERVER_URL || 'https://api.furnique.tech'
 })
 
 export const AuthRoles = {
