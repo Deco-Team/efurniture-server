@@ -129,7 +129,7 @@ export class OrderService {
           const createMomoPaymentDto: CreateMomoPaymentDto = {
             partnerName: 'FURNIQUE',
             orderInfo: `Furnique - Thanh toán đơn hàng #${orderId}`,
-            redirectUrl: `${this.configService.get('WEB_URL')}`,
+            redirectUrl: `${this.configService.get('WEB_URL')}/customer/orders`,
             ipnUrl: `${this.configService.get('SERVER_URL')}/payment/webhook`,
             requestType: 'payWithMethod',
             amount: totalAmount,
