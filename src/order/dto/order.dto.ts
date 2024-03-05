@@ -7,6 +7,7 @@ import { Types } from 'mongoose'
 import { Type } from 'class-transformer'
 import { OrderStatus, TransactionStatus } from '@src/common/contracts/constant'
 import { PaymentMethod } from '@payment/contracts/constant'
+import { PaymentDto } from '@payment/dto/payment.dto'
 
 export class CreateOrderItemDto {
   @Prop({ type: Types.ObjectId, ref: 'Product' })
@@ -71,6 +72,9 @@ export class OrderDto {
 
   @ApiProperty({ enum: TransactionStatus })
   transactionStatus: TransactionStatus
+
+  @ApiProperty()
+  payment: PaymentDto
 
   @ApiProperty()
   deliveryDate: Date

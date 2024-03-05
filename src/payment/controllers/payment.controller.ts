@@ -28,54 +28,15 @@ export class PaymentController {
   ) {}
 
   @ApiOperation({
-    summary: 'Webhook for Instant Payment Notification(MOMO)'
+    summary: 'Webhook Handler for Instant Payment Notification (MOMO)'
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('webhook')
-  async webhook(@Body() momoPaymentResponseDto: MomoPaymentResponseDto) {
+  async webhook(@Body() momoPaymentResponseDto) {
     // TODO: 1. Validate signature with other data => implement later
     console.log('Handling webhook', momoPaymentResponseDto)
-    // Handling webhook {
-    //   partnerCode: 'MOMO',
-    //   orderId: 'MOMO1709553563870',
-    //   requestId: 'MOMO1709553563870',
-    //   amount: 123456,
-    //   orderInfo: 'Furnique - Thanh toán đơn hàng',
-    //   orderType: 'momo_wallet',
-    //   transId: 3996000196,
-    //   resultCode: 0,
-    //   message: 'Thành công.',
-    //   payType: 'credit',
-    //   responseTime: 1709553637504,
-    //   extraData: '',
-    //   signature: 'aba7d5aa556e62ecb180b5b06ff3cd3407be40f2e436101bc642181716072c7a'
-    // }
     return this.paymentService.processWebhook(momoPaymentResponseDto)
   }
-
-  // @ApiOperation({
-  //   summary: 'Create payment order'
-  // })
-  // @Post('create')
-  // @ApiBadRequestResponse({ type: ErrorResponse })
-  // @ApiOkResponse({ type: CustomerResponseDto })
-  // create(@Req() req) {
-  //   this.paymentService.setStrategy(this.momoPaymentStrategy)
-  //   const createMomoPaymentDto: CreateMomoPaymentDto = {
-  //     partnerName: 'FURNIQUE',
-  //     orderInfo: 'Furnique - Thanh toán đơn hàng',
-  //     redirectUrl: 'https://5753-104-28-237-72.ngrok-free.app',
-  //     ipnUrl: 'https://5753-104-28-237-72.ngrok-free.app/payment/webhook',
-  //     requestType: 'payWithMethod',
-  //     amount: 123456,
-  //     orderId: 'MOMO' + new Date().getTime(),
-  //     requestId: 'MOMO' + new Date().getTime(),
-  //     extraData: '',
-  //     autoCapture: true,
-  //     lang: 'vi'
-  //   }
-  //   return this.paymentService.createTransaction(createMomoPaymentDto)
-  // }
 
   // @ApiOperation({
   //   summary: 'Query payment order'
@@ -142,32 +103,6 @@ export class PaymentController {
   //   //   "resultCode": 0,
   //   //   "message": "Thành công.",
   //   //   "responseTime": 1709556185927
-  //   // }
-  // }
-
-  // @ApiOperation({
-  //   summary: 'Query payment order'
-  // })
-  // @Post('refund/query')
-  // @ApiBadRequestResponse({ type: ErrorResponse })
-  // @ApiOkResponse({ type: CustomerResponseDto })
-  // queryRefund(@Req() req) {
-  //   this.paymentService.setStrategy(this.momoPaymentStrategy)
-  //   const queryMomoPaymentDto: QueryMomoPaymentDto = {
-  //     orderId: 'MOMO1709556182884',
-  //     requestId: 'MOMO1709556182884',
-  //     lang: 'vi'
-  //   }
-  //   return this.paymentService.getRefundTransaction(queryMomoPaymentDto)
-  //   // {
-  //   //   "partnerCode": "MOMO",
-  //   //   "orderId": "MOMO1709556182884",
-  //   //   "requestId": "MOMO1709556182884",
-  //   //   "resultCode": 0,
-  //   //   "message": "Thành công.",
-  //   //   "responseTime": 1709556603781,
-  //   //   "refundTrans": [],
-  //   //   "items": []
   //   // }
   // }
 }
