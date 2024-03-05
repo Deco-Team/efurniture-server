@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/comm
 import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiQuery } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
-import { ErrorResponse, IDDataResponse, PaginationQuery } from '@common/contracts/dto'
+import { ErrorResponse, PaginationQuery } from '@common/contracts/dto'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
