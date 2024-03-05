@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { DataResponse, PaginateResponse } from '@src/common/contracts/openapi-builder'
-import { ArrayMinSize, IsEnum, IsMongoId, IsNotEmpty, MaxLength, MinLength, ValidateNested } from 'class-validator'
+import { ArrayMinSize, IsMongoId, IsNotEmpty, MaxLength, MinLength, ValidateNested } from 'class-validator'
 import { CustomerOrderDto, OrderHistoryDto, OrderItemDto } from '@order/schemas/order.schema'
 import { Prop } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
