@@ -1,26 +1,9 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common'
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
-
-import { ErrorResponse } from '@common/contracts/dto'
-import { Roles } from '@auth/decorators/roles.decorator'
-import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
-import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
-import { RolesGuard } from '@auth/guards/roles.guard'
-import { CustomerResponseDto } from '@customer/dto/customer.dto'
 import { PaymentService } from '@payment/services/payment.service'
-import { MomoPaymentStrategy } from '@payment/strategies/momo.strategy'
-import {
-  CreateMomoPaymentDto,
-  MomoPaymentResponseDto,
-  QueryMomoPaymentDto,
-  RefundMomoPaymentDto
-} from '@payment/dto/momo-payment.dto'
 
 @ApiTags('Payment')
-// @ApiBearerAuth()
-// @Roles(UserRole.CUSTOMER)
-// @UseGuards(JwtAuthGuard.ACCESS_TOKEN, RolesGuard)
 @Controller('payment')
 export class PaymentController {
   constructor(
@@ -32,7 +15,7 @@ export class PaymentController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('webhook')
-  async webhook(@Body() momoPaymentResponseDto) {
+  webhook(@Body() momoPaymentResponseDto) {
     // TODO: 1. Validate signature with other data => implement later
     console.log('Handling webhook', momoPaymentResponseDto)
     return this.paymentService.processWebhook(momoPaymentResponseDto)

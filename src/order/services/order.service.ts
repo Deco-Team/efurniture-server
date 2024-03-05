@@ -89,7 +89,7 @@ export class OrderService {
       // 1. Fetch product in cart items
       const { items } = await this.cartService.getCart(createOrderDto.customer?._id)
       if (items.length === 0) throw new AppException(Errors.CART_EMPTY)
-      let cartItems = items
+      const cartItems = items
 
       let totalAmount = 0
       let orderItems = createOrderDto.items
@@ -119,7 +119,7 @@ export class OrderService {
 
       // 4. Process transaction
       let createMomoPaymentResponse: CreateMomoPaymentResponse
-      const orderId = 'FUR' + new Date().getTime() + Math.floor(Math.random() * 100)
+      const orderId = `FUR${new Date().getTime()}${Math.floor(Math.random() * 100)}`
       switch (createOrderDto.paymentMethod) {
         case PaymentMethod.ZALO_PAY:
         // implement later
@@ -133,7 +133,7 @@ export class OrderService {
             ipnUrl: `${this.configService.get('SERVER_URL')}/payment/webhook`,
             requestType: 'payWithMethod',
             amount: totalAmount,
-            orderId: orderId,
+            orderId,
             requestId: orderId,
             extraData: '',
             autoCapture: true,
