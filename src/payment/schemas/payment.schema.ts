@@ -4,7 +4,6 @@ import * as paginate from 'mongoose-paginate-v2'
 import { Transform } from 'class-transformer'
 import { TransactionStatus } from '@common/contracts/constant'
 import { PaymentMethod } from '@payment/contracts/constant'
-import { MomoPaymentResponseDto } from '@payment/dto/momo-payment.dto'
 
 export type PaymentDocument = HydratedDocument<Payment>
 
@@ -30,7 +29,7 @@ export class Payment {
   @Prop({ type: Object })
   transaction: Object
 
-  @Prop({ type: [Object]})
+  @Prop({ type: [Object] })
   transactionHistory: Object[]
 
   @Prop({

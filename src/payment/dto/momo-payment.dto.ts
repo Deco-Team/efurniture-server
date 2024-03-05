@@ -39,6 +39,9 @@ export class CreateMomoPaymentDto {
   lang: 'vi' | 'en'
 
   @ApiProperty()
+  orderExpireTime?: number
+
+  @ApiProperty()
   signature?: string
 }
 export class CreateMomoPaymentResponse {
@@ -113,8 +116,13 @@ export class MomoPaymentResponseDto {
   @ApiProperty()
   responseTime: number
 
+  @ApiProperty()
   orderInfo?: string
+
+  @ApiProperty()
   orderType?: string
+  
+  @ApiProperty()
   signature?: string
 }
 

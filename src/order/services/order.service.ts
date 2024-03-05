@@ -26,7 +26,7 @@ export class OrderService {
     private readonly paymentRepository: PaymentRepository,
     private readonly cartService: CartService,
     private readonly productRepository: ProductRepository,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   public async getOrderList(filter: FilterQuery<Order>, paginationParams: PaginationParams) {
@@ -137,7 +137,8 @@ export class OrderService {
             requestId: orderId,
             extraData: '',
             autoCapture: true,
-            lang: 'vi'
+            lang: 'vi',
+            orderExpireTime: 15
           }
           createMomoPaymentResponse = this.paymentService.createTransaction(createMomoPaymentDto)
           break

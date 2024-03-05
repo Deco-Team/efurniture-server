@@ -125,6 +125,7 @@ export class Order {
   })
   transactionStatus: TransactionStatus
 
+  @ApiProperty()
   @Prop({ type: Payment })
   payment: Payment
 
