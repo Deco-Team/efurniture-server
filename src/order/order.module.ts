@@ -13,6 +13,6 @@ import { OrderProviderController } from '@order/controllers/provider.controller'
   imports: [MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]), CartModule, ProductModule],
   controllers: [OrderCustomerController, OrderProviderController],
   providers: [OrderService, OrderRepository],
-  exports: [OrderService]
+  exports: [OrderService, OrderRepository]
 })
 export class OrderModule {}

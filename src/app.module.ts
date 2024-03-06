@@ -22,6 +22,7 @@ import { ProviderModule } from '@provider/provider.module'
 import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.module'
 import { ConsultantBookingModule } from '@consultant-booking/booking.module'
 import { TaskModule } from '@task/task.module'
+import { DashboardModule } from '@dashboard/dashboard.module'
 
 @Module({
   imports: [
@@ -117,7 +118,8 @@ import { TaskModule } from '@task/task.module'
     ProviderModule,
     VisitShowroomBookingModule,
     ConsultantBookingModule,
-    TaskModule
+    TaskModule,
+    DashboardModule
   ],
   controllers: [AppController],
   providers: [AppService]
