@@ -106,9 +106,9 @@ export class StaffService {
     return new SuccessResponse(true)
   }
 
-  public async paginate(filter: FilterQuery<Staff>, paginationParams: PaginationParams, adminId: string) {
+  public async paginate(filter: FilterQuery<Staff>, paginationParams: PaginationParams, staffId: string) {
     const { providerId } = await this.staffRepository.findOne({
-      conditions: { _id: adminId }
+      conditions: { _id: staffId }
     })
 
     const result = await this.staffRepository.paginate(
@@ -141,9 +141,9 @@ export class StaffService {
     return result
   }
 
-  public async getOne(filter: FilterQuery<Staff>, adminId: string) {
+  public async getOne(filter: FilterQuery<Staff>, staffId: string) {
     const { providerId } = await this.staffRepository.findOne({
-      conditions: { _id: adminId }
+      conditions: { _id: staffId }
     })
 
     const staff = await this.staffRepository.findOne({

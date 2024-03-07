@@ -60,13 +60,13 @@ export class StaffController {
   @ApiOperation({
     summary: 'Paginate list staff'
   })
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.STAFF)
   @UseGuards(RolesGuard)
   @ApiOkResponse({ type: StaffPaginateResponseDto })
   @ApiQuery({ type: PaginationQuery })
   getListStaff(@Req() req, @Pagination() paginationParams: PaginationParams, @Query() filterStaffDto: FilterStaffDto) {
-    const { _id: adminId } = _.get(req, 'user')
-    return this.staffService.paginate(filterStaffDto, paginationParams, adminId)
+    const { _id } = _.get(req, 'user')
+    return this.staffService.paginate(filterStaffDto, paginationParams, _id)
   }
 
   @Get('consultant')
@@ -85,12 +85,12 @@ export class StaffController {
   @ApiOperation({
     summary: 'View staff detail'
   })
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.STAFF)
   @UseGuards(RolesGuard)
   @ApiOkResponse({ type: StaffResponseDto })
   getStaffDetail(@Req() req, @Param('staffId', ParseObjectIdPipe) staffId: string) {
-    const { _id: adminId } = _.get(req, 'user')
-    return this.staffService.getOne({ _id: staffId }, adminId)
+    const { _id } = _.get(req, 'user')
+    return this.staffService.getOne({ _id: staffId }, _id)
   }
 
   @Delete(':staffId/deactivate')
