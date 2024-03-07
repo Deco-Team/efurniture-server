@@ -25,7 +25,8 @@ export enum TransactionStatus {
   CAPTURED = 'CAPTURED',
   ERROR = 'ERROR',
   CANCELED = 'CANCELED',
-  DELETED = 'DELETED'
+  DELETED = 'DELETED',
+  REFUNDED = 'REFUNDED'
 }
 
 export enum UserSide {

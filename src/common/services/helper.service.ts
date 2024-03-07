@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/mongoose'
+import { createHmac } from 'crypto'
 import { Connection, ClientSession } from 'mongoose'
 
 @Injectable()
@@ -16,5 +17,10 @@ export class HelperService {
       result = await fn(session, data)
     })
     return result
+  }
+
+  createSignature(rawData: string, key: string) {
+    const signature = createHmac('sha256', key).update(rawData).digest('hex')
+    return signature
   }
 }

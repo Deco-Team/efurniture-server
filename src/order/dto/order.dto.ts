@@ -6,6 +6,8 @@ import { Prop } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
 import { Type } from 'class-transformer'
 import { OrderStatus, TransactionStatus } from '@src/common/contracts/constant'
+import { PaymentMethod } from '@payment/contracts/constant'
+import { PaymentDto } from '@payment/dto/payment.dto'
 
 export class CreateOrderItemDto {
   @Prop({ type: Types.ObjectId, ref: 'Product' })
@@ -34,6 +36,11 @@ export class CreateOrderDto {
   @Type(() => CreateOrderItemDto)
   items: CreateOrderItemDto[]
 
+  @ApiProperty({ enum: PaymentMethod })
+  // @IsNotEmpty()
+  // @IsEnum(PaymentMethod)
+  paymentMethod?: PaymentMethod
+
   @ApiPropertyOptional()
   @MaxLength(256)
   notes?: string
@@ -44,6 +51,9 @@ export class CreateOrderDto {
 export class OrderDto {
   @ApiProperty()
   _id: string
+
+  @ApiProperty()
+  orderId: string
 
   @ApiProperty({ type: () => CustomerOrderDto })
   customer: CustomerOrderDto
@@ -62,6 +72,9 @@ export class OrderDto {
 
   @ApiProperty({ enum: TransactionStatus })
   transactionStatus: TransactionStatus
+
+  @ApiProperty()
+  payment: PaymentDto
 
   @ApiProperty()
   deliveryDate: Date

@@ -7,6 +7,7 @@ import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/cons
 import { IsEmail, IsNotEmpty, IsPhoneNumber, MaxLength, ValidateNested } from 'class-validator'
 import { Product } from '@product/schemas/product.schema'
 import { CreateOrderItemDto } from '@order/dto/order.dto'
+import { Payment } from '@payment/schemas/payment.schema'
 
 export class CustomerOrderDto {
   _id?: string
@@ -89,6 +90,10 @@ export class Order {
   @Transform(({ value }) => value?.toString())
   _id: string
 
+  @ApiProperty()
+  @Prop({ type: String })
+  orderId: string
+
   @ApiProperty({ type: CustomerOrderDto })
   @Prop({ type: CustomerOrderDto, required: true })
   customer: CustomerOrderDto
@@ -119,6 +124,10 @@ export class Order {
     default: TransactionStatus.DRAFT
   })
   transactionStatus: TransactionStatus
+
+  @ApiProperty()
+  @Prop({ type: Payment })
+  payment: Payment
 
   @Prop({ type: [OrderHistoryDto], select: false })
   orderHistory: OrderHistoryDto[]

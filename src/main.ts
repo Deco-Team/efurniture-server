@@ -41,7 +41,11 @@ async function bootstrap() {
       })
       .build()
     const document = SwaggerModule.createDocument(app, config)
-    SwaggerModule.setup('api-docs', app, document)
+    SwaggerModule.setup('api-docs', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+    })
   }
 
   // Example: process.env.CORS_VALID_ORIGINS=localhost,ngrok-free => parse to [ /localhost/, /ngrok-free/ ]

@@ -42,6 +42,20 @@ jobs:
         echo SMTP_PORT=${{ vars.SMTP_PORT }} >> .env
         echo SMTP_FROM_EMAIL=${{ vars.SMTP_FROM_EMAIL }} >> .env
         echo SMTP_FROM_NAME=${{ vars.SMTP_FROM_NAME }} >> .env
+
+        echo WEB_URL=${{ vars.WEB_URL }} >> .env
+        echo SERVER_URL=${{ vars.SERVER_URL }} >> .env
+
+        echo MOMO_PARTNER_CODE=${{ secrets.MOMO_PARTNER_CODE }} >> .env
+        echo MOMO_ACCESS_KEY=${{ secrets.MOMO_ACCESS_KEY }} >> .env
+        echo MOMO_SECRET_KEY=${{ secrets.MOMO_SECRET_KEY }} >> .env
+        echo MOMO_ENDPOINT=${{ vars.MOMO_ENDPOINT }} >> .env
+
+        echo ZALOPAY_APP_ID=${{ secrets.ZALOPAY_APP_ID }} >> .env
+        echo ZALOPAY_KEY1=${{ secrets.ZALOPAY_KEY1 }} >> .env
+        echo ZALOPAY_KEY2=${{ secrets.ZALOPAY_KEY2 }} >> .env
+        echo ZALOPAY_ENDPOINT=${{ vars.ZALOPAY_ENDPOINT }} >> .env
+
     - name: Deploy
       run: pm2 restart efurniture-api
   

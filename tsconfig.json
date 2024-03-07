@@ -36,6 +36,7 @@
       "@visit-showroom-booking/*": ["src/visit-showroom-booking/*"],
       "@consultant-booking/*": ["src/consultant-booking/*"],
       "@dashboard/*": ["src/dashboard/*"],
+      "@payment/*": ["src/payment/*"],
       "@src/*": ["src/*"]
     }
   }

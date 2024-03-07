@@ -5,20 +5,28 @@ import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/cons
 import { CancelOrderDto, CreateOrderDto } from '@order/dto/order.dto'
 import { ClientSession, Connection, FilterQuery } from 'mongoose'
 import { Order, OrderHistoryDto } from '@order/schemas/order.schema'
-import { IDResponse, SuccessResponse } from '@common/contracts/dto'
+import { SuccessResponse } from '@common/contracts/dto'
 import { AppException } from '@src/common/exceptions/app.exception'
 import { Errors } from '@src/common/contracts/error'
 import { CartService } from '@cart/services/cart.service'
 import { InjectConnection } from '@nestjs/mongoose'
 import { ProductRepository } from '@product/repositories/product.repository'
+import { PaymentRepository } from '@payment/repositories/payment.repository'
+import { PaymentMethod } from '@payment/contracts/constant'
+import { PaymentService } from '@payment/services/payment.service'
+import { CreateMomoPaymentDto, CreateMomoPaymentResponse } from '@payment/dto/momo-payment.dto'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectConnection() readonly connection: Connection,
     private readonly orderRepository: OrderRepository,
+    private readonly paymentService: PaymentService,
+    private readonly paymentRepository: PaymentRepository,
     private readonly cartService: CartService,
-    private readonly productRepository: ProductRepository
+    private readonly productRepository: ProductRepository,
+    private readonly configService: ConfigService
   ) {}
 
   public async getOrderList(filter: FilterQuery<Order>, paginationParams: PaginationParams) {
@@ -79,19 +87,12 @@ export class OrderService {
     session.startTransaction()
     try {
       // 1. Fetch product in cart items
-      const {
-        _id: cartId,
-        items,
-        totalAmount: cartTotalAmount
-      } = await this.cartService.getCart(createOrderDto.customer?._id)
+      const { items } = await this.cartService.getCart(createOrderDto.customer?._id)
       if (items.length === 0) throw new AppException(Errors.CART_EMPTY)
-      let cartItems = items
+      const cartItems = items
 
       let totalAmount = 0
       let orderItems = createOrderDto.items
-
-      // array to process bulk update
-      const operations = []
 
       orderItems = orderItems.map((orderItem) => {
         // 2. Check valid dto with cartItems
@@ -105,21 +106,9 @@ export class OrderService {
         if (!variant) throw new AppException(Errors.ORDER_ITEMS_INVALID)
 
         // 3. Check remain quantity in inventory
-        const { sku, quantity: remainQuantity, price } = variant
+        const { quantity: remainQuantity, price } = variant
         if (quantity > remainQuantity) throw new AppException(Errors.ORDER_ITEMS_INVALID)
         totalAmount += price * quantity
-
-        // 4. Subtract items in cart
-        cartItems.splice(index, 1)
-
-        // 5. Push update quantity in product.variants to operation to execute later
-        operations.push({
-          updateOne: {
-            filter: { 'variants.sku': sku },
-            update: { $set: { 'variants.$.quantity': remainQuantity - quantity } },
-            session
-          }
-        })
 
         return {
           ...orderItem,
@@ -128,45 +117,61 @@ export class OrderService {
         }
       })
 
-      // 5. Update new cart
-      cartItems = cartItems.map((item) => {
-        delete item.product // remove product populate before update
-        return item
-      })
-      await this.cartService.cartRepository.findOneAndUpdate(
+      // 4. Process transaction
+      let createMomoPaymentResponse: CreateMomoPaymentResponse
+      const orderId = `FUR${new Date().getTime()}${Math.floor(Math.random() * 100)}`
+      switch (createOrderDto.paymentMethod) {
+        case PaymentMethod.ZALO_PAY:
+        // implement later
+        case PaymentMethod.MOMO:
+        default:
+          this.paymentService.setStrategy(this.paymentService.momoPaymentStrategy)
+          const createMomoPaymentDto: CreateMomoPaymentDto = {
+            partnerName: 'FURNIQUE',
+            orderInfo: `Furnique - Thanh toán đơn hàng #${orderId}`,
+            redirectUrl: `${this.configService.get('WEB_URL')}/customer/orders`,
+            ipnUrl: `${this.configService.get('SERVER_URL')}/payment/webhook`,
+            requestType: 'payWithMethod',
+            amount: totalAmount,
+            orderId,
+            requestId: orderId,
+            extraData: '',
+            autoCapture: true,
+            lang: 'vi',
+            orderExpireTime: 15
+          }
+          createMomoPaymentResponse = this.paymentService.createTransaction(createMomoPaymentDto)
+          break
+      }
+
+      // 5. Create payment
+      const payment = await this.paymentRepository.create(
         {
-          _id: cartId
-        },
-        {
-          items: cartItems,
-          totalAmount: cartTotalAmount - totalAmount
+          transactionStatus: TransactionStatus.DRAFT,
+          transaction: createMomoPaymentResponse,
+          paymentMethod: createOrderDto.paymentMethod,
+          amount: totalAmount
         },
         {
           session
         }
       )
 
-      // 6. Bulk write Update quantity in product.variants
-      await this.productRepository.model.bulkWrite(operations)
-
-      // 7. Create order
-      const order = await this.orderRepository.create(
+      // 6. Create order
+      await this.orderRepository.create(
         {
           ...createOrderDto,
+          orderId,
           items: orderItems,
-          totalAmount
+          totalAmount,
+          payment
         },
         {
           session
         }
       )
-
-      // 8. Process payment
-      // 9. Send email/notification to customer
-      // 10. Send notification to staff
-
       await session.commitTransaction()
-      return new IDResponse(order._id)
+      return createMomoPaymentResponse
     } catch (error) {
       await session.abortTransaction()
       console.error(error)
@@ -205,8 +210,9 @@ export class OrderService {
       },
       {
         $set: { orderStatus: OrderStatus.DELIVERING, deliveryDate: new Date() },
-        $push: { orderHistory },
-      }, {
+        $push: { orderHistory }
+      },
+      {
         session
       }
     )
@@ -278,8 +284,9 @@ export class OrderService {
       },
       {
         $set: { orderStatus: OrderStatus.COMPLETED, completeDate: new Date() },
-        $push: { orderHistory },
-      }, {
+        $push: { orderHistory }
+      },
+      {
         session
       }
     )

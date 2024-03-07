@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/comm
 import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiQuery } from '@nestjs/swagger'
 import * as _ from 'lodash'
 
-import { ErrorResponse, IDDataResponse, PaginationQuery } from '@common/contracts/dto'
+import { ErrorResponse, PaginationQuery } from '@common/contracts/dto'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
@@ -12,6 +12,7 @@ import { OrderService } from '@order/services/order.service'
 import { OrderHistoryDto } from '@order/schemas/order.schema'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
 import { DataResponse } from '@common/contracts/openapi-builder'
+import { CreateMomoPaymentResponseDto } from '@payment/dto/momo-payment.dto'
 
 @ApiTags('Order - Customer')
 @ApiBearerAuth()
@@ -23,9 +24,9 @@ export class OrderCustomerController {
 
   @Post()
   @ApiOperation({
-    summary: 'Create new order'
+    summary: 'Create new order(orderStatus: PENDING, transactionStatus: DRAFT)'
   })
-  @ApiOkResponse({ type: IDDataResponse })
+  @ApiOkResponse({ type: CreateMomoPaymentResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async createOrder(@Req() req, @Body() createOrderDto: CreateOrderDto) {
     const { _id, role } = _.get(req, 'user')
