@@ -22,7 +22,7 @@ import { ProviderModule } from '@provider/provider.module'
 import { VisitShowroomBookingModule } from '@visit-showroom-booking/booking.module'
 import { ConsultantBookingModule } from '@consultant-booking/booking.module'
 import { TaskModule } from '@task/task.module'
-import { DashboardModule } from '@dashboard/dashboard.module'
+import { AnalyticModule } from '@analytic/analytic.module'
 import { PaymentModule } from '@payment/payment.module'
 
 @Module({
@@ -120,7 +120,7 @@ import { PaymentModule } from '@payment/payment.module'
     VisitShowroomBookingModule,
     ConsultantBookingModule,
     TaskModule,
-    DashboardModule,
+    AnalyticModule,
     PaymentModule
   ],
   controllers: [AppController],
