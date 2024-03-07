@@ -20,7 +20,7 @@ export class DashboardService {
 
   public async getOrderCount(filter: FilterQuery<Order>) {
     const count = await this.orderRepository.model.countDocuments(filter)
-    return { count }
+    return count
   }
 
   // public async getSalesSum(filter: FilterQuery<Order>) {
@@ -29,11 +29,11 @@ export class DashboardService {
 
   public async getProductCount(filter: FilterQuery<Product>) {
     const count = await this.productRepository.model.countDocuments(filter)
-    return { count }
+    return count
   }
 
   public async getCustomerCount(filter: FilterQuery<Customer>) {
     const count = await this.customerRepository.model.countDocuments(filter)
-    return { count }
+    return count
   }
 }

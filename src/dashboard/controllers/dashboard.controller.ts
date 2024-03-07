@@ -1,4 +1,4 @@
-import {  Controller, Get, UseGuards } from '@nestjs/common'
+import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
@@ -7,6 +7,7 @@ import { OrderStatus, ProductStatus, Status, UserRole } from '@common/contracts/
 import { Roles } from '@auth/decorators/roles.decorator'
 import { DashboardService } from '@dashboard/services/dashboard.service'
 import { AnalyticResponseDto } from '@dashboard/dto/dashboard.dto'
+import * as moment from 'moment'
 
 @ApiTags('Dashboard - Provider')
 @ApiBearerAuth()
@@ -21,15 +22,29 @@ export class DashboardController {
     summary: 'View order count'
   })
   @ApiOkResponse({ type: AnalyticResponseDto })
-  getOrderCount() {
-    return this.dashboardService.getOrderCount({
+  async getOrderCount() {
+    const startOfCurrentMonth = moment().startOf('month')
+    const startOfPreviousMonth = moment().subtract(1, 'months').startOf('month')
+    const count = await this.dashboardService.getOrderCount({
       orderStatus: {
         $in: [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.DELIVERING, OrderStatus.COMPLETED]
       },
       // transactionStatus: {
-      //   $in: [TransactionStatus.DRAFT, TransactionStatus.CAPTURED, TransactionStatus.ERROR]
-      // }
+      //   $in: [TransactionStatus.CAPTURED]
+      // },
+      createdAt: { $lte: moment(), $gte: startOfCurrentMonth }
     })
+    const previousCount = await this.dashboardService.getOrderCount({
+      orderStatus: {
+        $in: [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.DELIVERING, OrderStatus.COMPLETED]
+      },
+      // transactionStatus: {
+      //   $in: [TransactionStatus.CAPTURED]
+      // },
+      createdAt: { $lt: startOfCurrentMonth, $gte: startOfPreviousMonth }
+    })
+    const percent = Math.round(((count - previousCount) / previousCount) * 100 * 100) / 100
+    return { count, previousCount, percent }
   }
 
   @Get('sales')
@@ -47,10 +62,19 @@ export class DashboardController {
     summary: 'View product count'
   })
   @ApiOkResponse({ type: AnalyticResponseDto })
-  getProductCount() {
-    return this.dashboardService.getProductCount({
-      status: { $ne: ProductStatus.DELETED }
+  async getProductCount() {
+    const startOfCurrentMonth = moment().startOf('month')
+    const startOfPreviousMonth = moment().subtract(1, 'months').startOf('month')
+    const count = await this.dashboardService.getProductCount({
+      status: { $ne: ProductStatus.DELETED },
+      createdAt: { $lte: moment(), $gte: startOfCurrentMonth }
     })
+    const previousCount = await this.dashboardService.getProductCount({
+      status: { $ne: ProductStatus.DELETED },
+      createdAt: { $lt: startOfCurrentMonth, $gte: startOfPreviousMonth }
+    })
+    const percent = Math.round(((count - previousCount) / previousCount) * 100 * 100) / 100
+    return { count, previousCount, percent }
   }
 
   @Get('customers')
@@ -58,9 +82,18 @@ export class DashboardController {
     summary: 'View customer count'
   })
   @ApiOkResponse({ type: AnalyticResponseDto })
-  getCustomerCount() {
-    return this.dashboardService.getCustomerCount({
-      status: { $ne: Status.DELETED }
+  async getCustomerCount() {
+    const startOfCurrentMonth = moment().startOf('month')
+    const startOfPreviousMonth = moment().subtract(1, 'months').startOf('month')
+    const count = await this.dashboardService.getCustomerCount({
+      status: { $ne: Status.DELETED },
+      createdAt: { $lte: moment(), $gte: startOfCurrentMonth }
     })
+    const previousCount = await this.dashboardService.getCustomerCount({
+      status: { $ne: Status.DELETED },
+      createdAt: { $lt: startOfCurrentMonth, $gte: startOfPreviousMonth }
+    })
+    const percent = Math.round(((count - previousCount) / previousCount) * 100 * 100) / 100
+    return { count, previousCount, percent }
   }
 }
