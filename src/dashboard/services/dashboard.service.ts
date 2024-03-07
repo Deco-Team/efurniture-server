@@ -9,13 +9,16 @@ import { ProductRepository } from '@product/repositories/product.repository'
 import { CustomerRepository } from '@customer/repositories/customer.repository'
 import { Product } from '@product/schemas/product.schema'
 import { Customer } from '@customer/schemas/customer.schema'
+import { PaymentRepository } from '@payment/repositories/payment.repository'
+import { Payment } from '@payment/schemas/payment.schema'
 
 @Injectable()
 export class DashboardService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly productRepository: ProductRepository,
-    private readonly customerRepository: CustomerRepository
+    private readonly customerRepository: CustomerRepository,
+    private readonly paymentRepository: PaymentRepository
   ) {}
 
   public async getOrderCount(filter: FilterQuery<Order>) {
@@ -23,9 +26,15 @@ export class DashboardService {
     return count
   }
 
-  // public async getSalesSum(filter: FilterQuery<Order>) {
-
-  // }
+  public async getSalesSum(filter: FilterQuery<Payment>) {
+    const sum = await this.paymentRepository.model.aggregate([
+      { $match: filter },
+      {
+        $group: { _id: null, amount: { $sum: '$amount' } }
+      }
+    ])
+    return sum
+  }
 
   public async getProductCount(filter: FilterQuery<Product>) {
     const count = await this.productRepository.model.countDocuments(filter)
