@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { OrderRepository } from '@order/repositories/order.repository'
-import { OrderStatus } from '@common/contracts/constant'
+import { OrderStatus, TransactionStatus } from '@common/contracts/constant'
 import { FilterQuery } from 'mongoose'
 import { Order } from '@order/schemas/order.schema'
 import { AppException } from '@src/common/exceptions/app.exception'
@@ -33,7 +33,7 @@ export class DashboardService {
         $group: { _id: null, amount: { $sum: '$amount' } }
       }
     ])
-    return sum
+    return sum[0].amount || 0
   }
 
   public async getProductCount(filter: FilterQuery<Product>) {

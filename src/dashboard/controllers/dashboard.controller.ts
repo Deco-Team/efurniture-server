@@ -56,19 +56,15 @@ export class DashboardController {
     const startOfCurrentMonth = moment().startOf('month')
     const startOfPreviousMonth = moment().subtract(1, 'months').startOf('month')
     const count = await this.dashboardService.getSalesSum({
-      transactionStatus: {
-        $in: [TransactionStatus.CAPTURED]
-      },
-      createdAt: { $lte: moment(), $gte: startOfCurrentMonth }
+      transactionStatus: TransactionStatus.CAPTURED,
+      createdAt: { $lte: moment().toDate(), $gte: startOfCurrentMonth.toDate() }
     })
     const previousCount = await this.dashboardService.getSalesSum({
-      transactionStatus: {
-        $in: [TransactionStatus.CAPTURED]
-      },
-      createdAt: { $lt: startOfCurrentMonth, $gte: startOfPreviousMonth }
+      transactionStatus: TransactionStatus.CAPTURED,
+      createdAt: { $lt: startOfCurrentMonth.toDate(), $gte: startOfPreviousMonth.toDate() }
     })
-    //const percent = previousCount !== 0 ? Math.round(((count - previousCount) / previousCount) * 100 * 100) / 100 : 0
-    return { count, previousCount }
+    const percent = previousCount !== 0 ? Math.round(((count - previousCount) / previousCount) * 100 * 100) / 100 : 0
+    return { count, previousCount, percent }
   }
 
   @Get('products')
