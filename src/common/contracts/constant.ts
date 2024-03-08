@@ -86,3 +86,9 @@ export enum TaskStatus {
   COMPLETED = 'COMPLETED',
   DELETED = 'DELETED'
 }
+
+export enum AnalyticPeriod {
+  DAY = 'DAY',
+  MONTH = 'MONTH',
+  YEAR = 'YEAR',
+}
