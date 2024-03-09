@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -12,7 +12,7 @@ import { ProductService } from '@product/services/product.service'
 import { Product } from '@product/schemas/product.schema'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
 import { ErrorResponse, PaginationQuery, SuccessDataResponse } from '@common/contracts/dto'
-import { CreateProductDto, ProductDetailDto, ProductPaginateDto, UpdateProductDto } from '@product/dto/product.dto'
+import { CreateProductDto, FilterProductDto, ProductDetailDto, ProductPaginateDto, UpdateProductDto } from '@product/dto/product.dto'
 import { Roles } from '@auth/decorators/roles.decorator'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 import { RolesGuard } from '@auth/guards/roles.guard'
@@ -31,8 +31,24 @@ export class ProviderProductController {
   @Get()
   @ApiOkResponse({ type: ProductPaginateDto })
   @ApiQuery({ type: PaginationQuery })
-  getAllProducts(@Pagination() paginationParams: PaginationParams) {
-    return this.productService.getAllProducts(paginationParams)
+  getAllProducts(@Pagination() paginationParams: PaginationParams, @Query() filterProductDto: FilterProductDto) {
+    const condition = {}
+    if (filterProductDto.categories) {
+      condition['categories'] = {
+        $in: filterProductDto.categories
+      }
+    }
+    if (filterProductDto.name) {
+      condition['$text'] = {
+        $search: filterProductDto.name
+      }
+    }
+    if (filterProductDto.fromPrice && filterProductDto.toPrice) {
+      condition['variants'] = {
+        $elemMatch: { price: { $gte: filterProductDto.fromPrice, $lte: filterProductDto.toPrice } }
+      }
+    }
+    return this.productService.getAllProducts(condition, paginationParams)
   }
 
   @Post()

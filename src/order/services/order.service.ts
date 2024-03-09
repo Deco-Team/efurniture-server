@@ -33,6 +33,9 @@ export class OrderService {
     const result = await this.orderRepository.paginate(
       {
         ...filter,
+        transactionStatus: {
+          $ne: TransactionStatus.DRAFT
+        },
         status: {
           $ne: OrderStatus.DELETED
         }
@@ -49,6 +52,9 @@ export class OrderService {
     const order = await this.orderRepository.findOne({
       conditions: {
         ...filter,
+        transactionStatus: {
+          $ne: TransactionStatus.DRAFT
+        },
         status: {
           $ne: OrderStatus.DELETED
         }
@@ -185,8 +191,8 @@ export class OrderService {
     const order = await this.orderRepository.findOneAndUpdate(
       {
         _id: orderId,
-        orderStatus: OrderStatus.PENDING
-        // transactionStatus: TransactionStatus.CAPTURED
+        orderStatus: OrderStatus.PENDING,
+        transactionStatus: TransactionStatus.CAPTURED
       },
       {
         $set: { orderStatus: OrderStatus.CONFIRMED },
@@ -205,8 +211,8 @@ export class OrderService {
     const order = await this.orderRepository.findOneAndUpdate(
       {
         _id: orderId,
-        orderStatus: OrderStatus.CONFIRMED
-        // transactionStatus: TransactionStatus.CAPTURED
+        orderStatus: OrderStatus.CONFIRMED,
+        transactionStatus: TransactionStatus.CAPTURED
       },
       {
         $set: { orderStatus: OrderStatus.DELIVERING, deliveryDate: new Date() },
@@ -231,8 +237,8 @@ export class OrderService {
       const order = await this.orderRepository.findOneAndUpdate(
         {
           _id: orderId,
-          orderStatus: OrderStatus.PENDING
-          // transactionStatus: TransactionStatus.CAPTURED
+          orderStatus: OrderStatus.PENDING,
+          transactionStatus: TransactionStatus.CAPTURED
         },
         {
           $set: { orderStatus: OrderStatus.CANCELED, transactionStatus: TransactionStatus.CANCELED, reason },

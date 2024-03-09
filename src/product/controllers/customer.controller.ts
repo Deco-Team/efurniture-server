@@ -1,10 +1,10 @@
-import { Controller, Get, Param, UseInterceptors } from '@nestjs/common'
+import { Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common'
 import { ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { ProductService } from '@product/services/product.service'
 import { PaginationQuery } from '@src/common/contracts/dto'
 import { DataResponse } from '@src/common/contracts/openapi-builder'
 import { Pagination, PaginationParams } from '@src/common/decorators/pagination.decorator'
-import { ProductDetailDto, PublicProductPaginateDto } from '@product/dto/product.dto'
+import { FilterProductDto, ProductDetailDto, PublicProductPaginateDto } from '@product/dto/product.dto'
 
 @ApiTags('Product - Public')
 @Controller('public')
@@ -14,8 +14,24 @@ export class PublicProductController {
   @Get()
   @ApiOkResponse({ type: PublicProductPaginateDto })
   @ApiQuery({ type: PaginationQuery })
-  getAllProducts(@Pagination() paginationParams: PaginationParams) {
-    return this.productService.getAllPublicProducts(paginationParams)
+  getAllProducts(@Pagination() paginationParams: PaginationParams, @Query() filterProductDto: FilterProductDto) {
+    const condition = {}
+    if (filterProductDto.categories) {
+      condition['categories'] = {
+        $in: filterProductDto.categories
+      }
+    }
+    if (filterProductDto.name) {
+      condition['$text'] = {
+        $search: filterProductDto.name
+      }
+    }
+    if (filterProductDto.fromPrice && filterProductDto.toPrice) {
+      condition['variants'] = {
+        $elemMatch: { price: { $gte: filterProductDto.fromPrice, $lte: filterProductDto.toPrice } }
+      }
+    }
+    return this.productService.getAllPublicProducts(condition, paginationParams)
   }
 
   @Get(':id')

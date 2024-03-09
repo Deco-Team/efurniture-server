@@ -1,15 +1,19 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Product, Variant } from '@product/schemas/product.schema'
 import { Category } from '@src/category/schemas/category.schema'
 import { DataResponse, PaginateResponse } from '@src/common/contracts/openapi-builder'
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import {
   ArrayMaxSize,
   ArrayMinSize,
   IsArray,
+  IsInt,
   IsNotEmpty,
+  IsOptional,
   IsUrl,
+  Max,
   MaxLength,
+  Min,
   ValidateNested
 } from 'class-validator'
 import { Types } from 'mongoose'
@@ -44,9 +48,7 @@ export class PublicProductPaginateDto extends DataResponse(
   class PublicProductPaginate extends PaginateResponse(PublicProductDto) {}
 ) {}
 
-export class ProductPaginateDto extends DataResponse(
-  class ProductPaginate extends PaginateResponse(Product) {}
-) {}
+export class ProductPaginateDto extends DataResponse(class ProductPaginate extends PaginateResponse(Product) {}) {}
 
 export class CreateProductDto {
   @ApiProperty({
@@ -161,4 +163,32 @@ export class ProductDetailDto {
 
   @ApiProperty({ type: Category, isArray: true })
   categories: Category[]
+}
+
+export class FilterProductDto {
+  @ApiPropertyOptional({ type: [String] })
+  @IsOptional()
+  @Transform(({ value }) => (Array.isArray(value) ? value : Array(value)))
+  @IsArray()
+  categories: string[]
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  name: string
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(999_999_999)
+  fromPrice: number
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(999_999_999)
+  toPrice: number
 }
