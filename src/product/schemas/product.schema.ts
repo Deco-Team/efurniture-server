@@ -141,5 +141,8 @@ ProductSchema.index(
     }
   }
 )
+ProductSchema.index(
+  { 'name': 'text' },
+)
 ProductSchema.plugin(paginate)
 ProductSchema.plugin(slug)

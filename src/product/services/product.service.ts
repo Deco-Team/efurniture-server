@@ -29,12 +29,13 @@ export class ProductService {
     }
   }
 
-  public async getAllProducts(paginationParams: PaginationParams) {
+  public async getAllProducts(filter: FilterQuery<Product>, paginationParams: PaginationParams) {
     return await this.productRepository.paginate(
       {
         status: {
           $ne: ProductStatus.DELETED
-        }
+        },
+        ...filter
       },
       {
         ...paginationParams,
@@ -43,12 +44,13 @@ export class ProductService {
     )
   }
 
-  public async getAllPublicProducts(paginationParams: PaginationParams) {
+  public async getAllPublicProducts(filter: FilterQuery<Product>, paginationParams: PaginationParams) {
     const result = await this.productRepository.paginate(
       {
         status: {
           $in: [ProductStatus.ACTIVE]
-        }
+        },
+        ...filter
       },
       {
         ...paginationParams,
