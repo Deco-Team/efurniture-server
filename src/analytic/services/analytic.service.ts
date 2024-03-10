@@ -23,7 +23,12 @@ export class AnalyticService {
         $in: [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.DELIVERING, OrderStatus.COMPLETED]
       },
       transactionStatus: {
-        $in: [TransactionStatus.CAPTURED, TransactionStatus.DRAFT, TransactionStatus.ERROR]
+        $in: [
+          TransactionStatus.CAPTURED,
+          TransactionStatus.ERROR,
+          TransactionStatus.CANCELED,
+          TransactionStatus.REFUNDED
+        ]
       }
     }
     const [total, previousTotal] = await Promise.all([
