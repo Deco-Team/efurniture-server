@@ -34,7 +34,12 @@ export class OrderService {
       {
         ...filter,
         transactionStatus: {
-          $ne: TransactionStatus.DRAFT
+          $in: [
+            TransactionStatus.CAPTURED,
+            TransactionStatus.ERROR,
+            TransactionStatus.CANCELED,
+            TransactionStatus.REFUNDED
+          ]
         },
         status: {
           $ne: OrderStatus.DELETED
@@ -53,7 +58,12 @@ export class OrderService {
       conditions: {
         ...filter,
         transactionStatus: {
-          $ne: TransactionStatus.DRAFT
+          $in: [
+            TransactionStatus.CAPTURED,
+            TransactionStatus.ERROR,
+            TransactionStatus.CANCELED,
+            TransactionStatus.REFUNDED
+          ]
         },
         status: {
           $ne: OrderStatus.DELETED
@@ -285,8 +295,8 @@ export class OrderService {
     const order = await this.orderRepository.findOneAndUpdate(
       {
         _id: orderId,
-        orderStatus: OrderStatus.DELIVERING
-        // transactionStatus: TransactionStatus.CAPTURED
+        orderStatus: OrderStatus.DELIVERING,
+        transactionStatus: TransactionStatus.CAPTURED
       },
       {
         $set: { orderStatus: OrderStatus.COMPLETED, completeDate: new Date() },
