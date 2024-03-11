@@ -144,6 +144,10 @@ export class Order {
   @Prop({ type: String })
   notes?: string
 
+  @ApiPropertyOptional()
+  @Prop({ type: Boolean })
+  isDeliveryAssigned?: boolean
+
   @Prop({ type: String })
   reason?: string
 }

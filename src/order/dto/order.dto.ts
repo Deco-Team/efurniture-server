@@ -84,6 +84,9 @@ export class OrderDto {
 
   @ApiPropertyOptional()
   notes?: string
+  
+  @ApiPropertyOptional()
+  isDeliveryAssigned?: boolean
 }
 
 export class OrderPaginateResponseDto extends DataResponse(

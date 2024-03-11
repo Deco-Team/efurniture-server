@@ -101,6 +101,11 @@ export const Errors: Record<string, ErrorResponse> = {
     message: 'Không tìm thấy nhân viên giao hàng',
     httpStatus: HttpStatus.BAD_REQUEST
   },
+  ORDER_HAS_ASSIGNED_DELIVERY: {
+    error: 'ORDER_HAS_ASSIGNED_DELIVERY',
+    message: 'Đơn hàng đã được giao cho người vận chuyển',
+    httpStatus: HttpStatus.BAD_REQUEST
+  },
   SHIPPING_TASK_INVALID: {
     error: 'SHIPPING_TASK_INVALID',
     message: 'Công việc được chọn không hợp lệ',
