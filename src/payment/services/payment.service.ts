@@ -8,7 +8,7 @@ import {
 } from '@payment/dto/momo-payment.dto'
 import { MomoPaymentStrategy } from '@payment/strategies/momo.strategy'
 import { InjectConnection } from '@nestjs/mongoose'
-import { Connection } from 'mongoose'
+import { Connection, FilterQuery } from 'mongoose'
 import { OrderRepository } from '@order/repositories/order.repository'
 import { CartService } from '@cart/services/cart.service'
 import { ProductRepository } from '@product/repositories/product.repository'
@@ -18,6 +18,8 @@ import { Errors } from '@common/contracts/error'
 import { OrderHistoryDto } from '@order/schemas/order.schema'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
 import { MomoResultCode } from '@payment/contracts/constant'
+import { PaginationParams } from '@common/decorators/pagination.decorator'
+import { Payment } from '@payment/schemas/payment.schema'
 
 @Injectable()
 export class PaymentService {
@@ -50,6 +52,25 @@ export class PaymentService {
 
   public getRefundTransaction(queryPaymentDto: QueryMomoPaymentDto) {
     return this.strategy.getRefundTransaction(queryPaymentDto)
+  }
+
+  public async getPaymentList(filter: FilterQuery<Payment>, paginationParams: PaginationParams) {
+    const result = await this.paymentRepository.paginate(
+      {
+        ...filter,
+        transactionStatus: {
+          $in: [
+            TransactionStatus.CAPTURED,
+            TransactionStatus.REFUNDED
+          ]
+        },
+      },
+      {
+        projection: '-transactionHistory',
+        ...paginationParams
+      }
+    )
+    return result
   }
 
   public async processWebhook(momoPaymentResponseDto: MomoPaymentResponseDto) {

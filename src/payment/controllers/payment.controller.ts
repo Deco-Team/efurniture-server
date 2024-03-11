@@ -1,14 +1,35 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common'
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import * as _ from 'lodash'
 import { PaymentService } from '@payment/services/payment.service'
+import { Roles } from '@auth/decorators/roles.decorator'
+import { UserRole } from '@common/contracts/constant'
+import { PaginationQuery } from '@common/contracts/dto'
+import { RolesGuard } from '@auth/guards/roles.guard'
+import { PaymentPaginateResponseDto } from '@payment/dto/payment.dto'
+import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 
 @ApiTags('Payment')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard.ACCESS_TOKEN)
 @Controller('payment')
 export class PaymentController {
   constructor(
     private readonly paymentService: PaymentService,
   ) {}
+
+  @ApiOperation({
+    summary: 'Get transaction list of payment'
+  })
+  @Get()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  @ApiOkResponse({ type: PaymentPaginateResponseDto })
+  @ApiQuery({ type: PaginationQuery })
+  paginate(@Pagination() paginationParams: PaginationParams) {
+    return this.paymentService.getPaymentList({}, paginationParams)
+  }
 
   @ApiOperation({
     summary: 'Webhook Handler for Instant Payment Notification (MOMO)'
