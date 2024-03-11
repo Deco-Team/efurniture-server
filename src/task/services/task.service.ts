@@ -49,7 +49,17 @@ export class TaskService {
         throw new AppException(Errors.DELIVERY_STAFF_NOT_FOUND)
       }
 
-      // 2. Create shipping task
+      // 2. Check shipping task is already created by orderId
+      const shippingTask = await this.taskRepository.findOne({
+        conditions: {
+          orderId: createShippingTaskDto.orderId
+        }
+      })
+      if (shippingTask) {
+        throw new AppException(Errors.ORDER_HAS_ASSIGNED_DELIVERY)
+      }
+
+      // 3. Create shipping task
       const task = await this.taskRepository.create(
         {
           ...createShippingTaskDto,
@@ -60,7 +70,10 @@ export class TaskService {
         { session }
       )
 
-      // 3. Send notification to staff
+      // 4. Update isDeliveryAssigned to order
+      await this.orderService.assignDeliveryToOrder(createShippingTaskDto.orderId, session)
+
+      // 5. Send notification to staff
 
       await session.commitTransaction()
       return new IDResponse(task._id)

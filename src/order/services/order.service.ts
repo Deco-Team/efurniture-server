@@ -215,6 +215,26 @@ export class OrderService {
     return new SuccessResponse(true)
   }
 
+  public async assignDeliveryToOrder(orderId: string, session?: ClientSession) {
+    // 1. Update isDeliveryAssigned
+    const order = await this.orderRepository.findOneAndUpdate(
+      {
+        _id: orderId,
+        orderStatus: OrderStatus.CONFIRMED,
+        transactionStatus: TransactionStatus.CAPTURED
+      },
+      {
+        $set: { isDeliveryAssigned: true }
+      },
+      {
+        session
+      }
+    )
+    if (!order) throw new AppException(Errors.ORDER_STATUS_INVALID)
+
+    return order
+  }
+
   public async deliveryOrder(orderId: string, userId: string, role: UserRole, session?: ClientSession) {
     // 1. Update order status and order history
     const orderHistory = new OrderHistoryDto(OrderStatus.DELIVERING, TransactionStatus.CAPTURED, userId, role)
