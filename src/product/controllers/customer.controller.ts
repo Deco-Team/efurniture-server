@@ -26,7 +26,7 @@ export class PublicProductController {
         $search: filterProductDto.name
       }
     }
-    if (filterProductDto.fromPrice && filterProductDto.toPrice) {
+    if (filterProductDto.fromPrice !== undefined && filterProductDto.toPrice !== undefined) {
       condition['variants'] = {
         $elemMatch: { price: { $gte: filterProductDto.fromPrice, $lte: filterProductDto.toPrice } }
       }
