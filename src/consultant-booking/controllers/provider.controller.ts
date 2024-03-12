@@ -29,7 +29,12 @@ export class ConsultantBookingProviderController {
   @ApiQuery({ type: PaginationQuery })
   @ApiOkResponse({ type: ConsultantBookingPaginateResponseDto })
   async paginate(@Req() req, @Pagination() paginationParams: PaginationParams) {
-    const staffId = _.get(req, 'user._id')
+    const { _id, role } = _.get(req, 'user')
+    if ([UserRole.ADMIN, UserRole.STAFF].includes(role)) {
+      return await this.consultantBookingService.paginate({}, paginationParams)
+    }
+
+    const staffId = _id
     return await this.consultantBookingService.paginate(
       { 'consultant._id': new Types.ObjectId(staffId) },
       paginationParams
@@ -45,7 +50,12 @@ export class ConsultantBookingProviderController {
   @ApiOkResponse({ type: ConsultantBookingResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponse })
   async getOne(@Req() req, @Param('bookingId', ParseObjectIdPipe) bookingId: string) {
-    const staffId = _.get(req, 'user._id')
+    const { _id, role } = _.get(req, 'user')
+    if ([UserRole.ADMIN, UserRole.STAFF].includes(role)) {
+      return await this.consultantBookingService.getOne({ _id: bookingId })
+    }
+
+    const staffId = _id
     return await this.consultantBookingService.getOne({ 'consultant._id': new Types.ObjectId(staffId), _id: bookingId })
   }
 }
