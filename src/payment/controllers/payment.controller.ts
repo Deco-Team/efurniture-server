@@ -12,19 +12,16 @@ import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
 
 @ApiTags('Payment')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard.ACCESS_TOKEN)
 @Controller('payment')
 export class PaymentController {
-  constructor(
-    private readonly paymentService: PaymentService,
-  ) {}
+  constructor(private readonly paymentService: PaymentService) {}
 
   @ApiOperation({
     summary: 'Get transaction list of payment'
   })
   @Get()
   @Roles(UserRole.ADMIN)
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard.ACCESS_TOKEN, RolesGuard)
   @ApiOkResponse({ type: PaymentPaginateResponseDto })
   @ApiQuery({ type: PaginationQuery })
   paginate(@Pagination() paginationParams: PaginationParams) {
