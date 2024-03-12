@@ -24,7 +24,7 @@ export class ConsultantBookingProviderController {
   @ApiOperation({
     summary: "Get consultant's bookings list"
   })
-  @Roles(UserRole.CONSULTANT_STAFF)
+  @Roles(UserRole.CONSULTANT_STAFF, UserRole.ADMIN, UserRole.STAFF)
   @UseGuards(RolesGuard)
   @ApiQuery({ type: PaginationQuery })
   @ApiOkResponse({ type: ConsultantBookingPaginateResponseDto })
@@ -40,7 +40,7 @@ export class ConsultantBookingProviderController {
   @ApiOperation({
     summary: 'Get consultant booking details'
   })
-  @Roles(UserRole.CONSULTANT_STAFF)
+  @Roles(UserRole.CONSULTANT_STAFF, UserRole.ADMIN, UserRole.STAFF)
   @UseGuards(RolesGuard)
   @ApiOkResponse({ type: ConsultantBookingResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponse })
