@@ -60,7 +60,7 @@ export class StaffService {
       try {
         await this.mailerService.sendMail({
           to: createStaffDto.email,
-          subject: '[eFurniture] Thông tin đăng nhập hệ thống',
+          subject: '[Furnique] Thông tin đăng nhập hệ thống',
           template: 'invite-staff',
           context: {
             name: `${createStaffDto.firstName} ${createStaffDto.lastName}`,
