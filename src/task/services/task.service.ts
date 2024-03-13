@@ -12,6 +12,7 @@ import { Task } from '@task/schemas/task.schema'
 import { TaskRepository } from '@task/repositories/task.repository'
 import { CreateShippingTaskDto } from '@task/dto/task.dto'
 import { OrderService } from '@order/services/order.service'
+import { MailerService } from '@nestjs-modules/mailer'
 
 @Injectable()
 export class TaskService {
@@ -19,7 +20,8 @@ export class TaskService {
     @InjectConnection() readonly connection: Connection,
     private readonly staffRepository: StaffRepository,
     private readonly taskRepository: TaskRepository,
-    private readonly orderService: OrderService
+    private readonly orderService: OrderService,
+    private readonly mailerService: MailerService
   ) {}
 
   public async createShippingTask(createShippingTaskDto: CreateShippingTaskDto) {
@@ -162,9 +164,15 @@ export class TaskService {
       }
 
       // 2. Update order status to COMPLETED
-      await this.orderService.completeOrder(orderId, userId, UserRole.DELIVERY_STAFF, session)
+      const order = await this.orderService.completeOrder(orderId, userId, UserRole.DELIVERY_STAFF, session)
 
       // 3. Send email/notification to customer
+      this.mailerService.sendMail({
+        to: order.customer.email,
+        subject: `[Furnique] Đơn hàng #${order.orderId} đã được giao thành công`,
+        template: 'order-completed',
+        context: order
+      })
       // 4. Send notification to staff
 
       await session.commitTransaction()

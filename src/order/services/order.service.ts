@@ -321,6 +321,7 @@ export class OrderService {
         $push: { orderHistory }
       },
       {
+        projection: '+items',
         session
       }
     )

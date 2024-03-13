@@ -20,6 +20,7 @@ import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/cons
 import { MomoResultCode } from '@payment/contracts/constant'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
 import { Payment } from '@payment/schemas/payment.schema'
+import { MailerService } from '@nestjs-modules/mailer'
 
 @Injectable()
 export class PaymentService {
@@ -31,7 +32,8 @@ export class PaymentService {
     private readonly cartService: CartService,
     private readonly productRepository: ProductRepository,
     private readonly paymentRepository: PaymentRepository,
-    readonly momoPaymentStrategy: MomoPaymentStrategy
+    readonly momoPaymentStrategy: MomoPaymentStrategy,
+    private readonly mailerService: MailerService
   ) {}
 
   public setStrategy(strategy: IPaymentStrategy) {
@@ -59,11 +61,8 @@ export class PaymentService {
       {
         ...filter,
         transactionStatus: {
-          $in: [
-            TransactionStatus.CAPTURED,
-            TransactionStatus.REFUNDED
-          ]
-        },
+          $in: [TransactionStatus.CAPTURED, TransactionStatus.REFUNDED]
+        }
       },
       {
         projection: '-transactionHistory',
@@ -199,6 +198,12 @@ export class PaymentService {
           }
         )
         // 9. Send email/notification to customer
+        this.mailerService.sendMail({
+          to: order.customer.email,
+          subject: `[Furnique] Đã nhận đơn hàng #${order.orderId}`,
+          template: 'order-created',
+          context: order
+        })
         // 10. Send notification to staff
       } else {
         // Payment failed
