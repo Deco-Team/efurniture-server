@@ -26,14 +26,14 @@ Chi tiết đơn hàng:
           <tr>
             <td style="border: 1px solid #ddd; padding: 8px;"><%= item.product.name %></td>
             <td style="border: 1px solid #ddd; padding: 8px;"><%= item.quantity %></td>
-            <td style="border: 1px solid #ddd; padding: 8px;"><%= item.product.variants.find(variant => variant.sku == item.sku).price %></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">&#8363;<%= item.product.variant.price %></td>
           </tr>
         <% }); %>
       </tbody>
     </table>
-  Tổng Cộng: <b><%= totalAmount %></b>
+Tổng tiền: <b>&#8363;<%= totalAmount %></b>
 <div align="center" style="padding-top:10px">
-    <a href="https://www.furnique.tech/customer/orders/<%= _id %>" target="_blank">
+    <a href="https://www.furnique.tech/customer/orders/<%= _id %>" target="_blank" style="text-decoration: none;">
         <img src="https://ci3.googleusercontent.com/meips/ADKq_NYVaPakFqAiVY0nV0ofSouvN9L1z5IPXEMnXGI7cDC2QzODNqWZbtxPiVtknKQTDcngkmkS0VgcnEczKmq2VcvjA7rxWbMeLU19p7LjY9ScARIX6-0xLQ=s0-d-e1-ft#https://img.alicdn.com/tfs/TB178CsJeH2gK0jSZFEXXcqMpXa-300-50.jpg" style="max-width:300px" border="0" class="CToWUd" data-bit="iit">
     </a>
 </div>
