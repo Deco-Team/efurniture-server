@@ -202,7 +202,23 @@ export class PaymentService {
           to: order.customer.email,
           subject: `[Furnique] Đã nhận đơn hàng #${order.orderId}`,
           template: 'order-created',
-          context: order
+          context: {
+            customer: order.customer,
+            items: order.items.map((item) => {
+              const variant = item.product.variants.find((variant) => variant.sku === item.sku)
+              return {
+                ...item,
+                product: {
+                  ...item.product,
+                  variant: {
+                    ...variant,
+                    price: Intl.NumberFormat('en-DE').format(variant.price)
+                  }
+                }
+              }
+            }),
+            totalAmount: Intl.NumberFormat('en-DE').format(order.totalAmount)
+          }
         })
         // 10. Send notification to staff
       } else {
