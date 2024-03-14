@@ -36,7 +36,6 @@ export class OrderService {
         transactionStatus: {
           $in: [
             TransactionStatus.CAPTURED,
-            TransactionStatus.ERROR,
             TransactionStatus.CANCELED,
             TransactionStatus.REFUNDED
           ]
@@ -60,7 +59,6 @@ export class OrderService {
         transactionStatus: {
           $in: [
             TransactionStatus.CAPTURED,
-            TransactionStatus.ERROR,
             TransactionStatus.CANCELED,
             TransactionStatus.REFUNDED
           ]
