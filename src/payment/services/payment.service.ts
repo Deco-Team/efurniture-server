@@ -203,6 +203,7 @@ export class PaymentService {
           subject: `[Furnique] Đã nhận đơn hàng #${order.orderId}`,
           template: 'order-created',
           context: {
+            ...order,
             customer: order.customer,
             items: order.items.map((item) => {
               const variant = item.product.variants.find((variant) => variant.sku === item.sku)

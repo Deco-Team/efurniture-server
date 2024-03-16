@@ -172,6 +172,7 @@ export class TaskService {
         subject: `[Furnique] Đơn hàng #${order.orderId} đã được giao thành công`,
         template: 'order-completed',
         context: {
+          ...order,
           customer: order.customer,
           items: order.items.map((item) => {
             const variant = item.product.variants.find((variant) => variant.sku === item.sku)
