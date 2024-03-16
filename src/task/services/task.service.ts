@@ -173,6 +173,8 @@ export class TaskService {
         template: 'order-completed',
         context: {
           ...order,
+          _id: order._id,
+          orderId: order.orderId,
           customer: order.customer,
           items: order.items.map((item) => {
             const variant = item.product.variants.find((variant) => variant.sku === item.sku)
