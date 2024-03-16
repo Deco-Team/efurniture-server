@@ -14,7 +14,12 @@ import { ProductRepository } from '@product/repositories/product.repository'
 import { PaymentRepository } from '@payment/repositories/payment.repository'
 import { PaymentMethod } from '@payment/contracts/constant'
 import { PaymentService } from '@payment/services/payment.service'
-import { CreateMomoPaymentDto, CreateMomoPaymentResponse } from '@payment/dto/momo-payment.dto'
+import {
+  CreateMomoPaymentDto,
+  CreateMomoPaymentResponse,
+  QueryMomoPaymentDto,
+  RefundMomoPaymentDto
+} from '@payment/dto/momo-payment.dto'
 import { ConfigService } from '@nestjs/config'
 
 @Injectable()
@@ -34,11 +39,7 @@ export class OrderService {
       {
         ...filter,
         transactionStatus: {
-          $in: [
-            TransactionStatus.CAPTURED,
-            TransactionStatus.CANCELED,
-            TransactionStatus.REFUNDED
-          ]
+          $in: [TransactionStatus.CAPTURED, TransactionStatus.CANCELED, TransactionStatus.REFUNDED]
         },
         status: {
           $ne: OrderStatus.DELETED
@@ -57,11 +58,7 @@ export class OrderService {
       conditions: {
         ...filter,
         transactionStatus: {
-          $in: [
-            TransactionStatus.CAPTURED,
-            TransactionStatus.CANCELED,
-            TransactionStatus.REFUNDED
-          ]
+          $in: [TransactionStatus.CAPTURED, TransactionStatus.CANCELED, TransactionStatus.REFUNDED]
         },
         status: {
           $ne: OrderStatus.DELETED
@@ -154,7 +151,7 @@ export class OrderService {
             lang: 'vi',
             orderExpireTime: 15
           }
-          createMomoPaymentResponse = this.paymentService.createTransaction(createMomoPaymentDto)
+          createMomoPaymentResponse = await this.paymentService.createTransaction(createMomoPaymentDto)
           break
       }
 
@@ -262,10 +259,11 @@ export class OrderService {
     try {
       const { orderId, orderHistoryItem, reason } = cancelOrderDto
       // 1. Update order status, reason and order history
+      console.log(`1. Update order status, reason and order history`)
       const order = await this.orderRepository.findOneAndUpdate(
         {
           _id: orderId,
-          orderStatus: OrderStatus.PENDING,
+          orderStatus: { $in: [OrderStatus.PENDING, OrderStatus.CONFIRMED] },
           transactionStatus: TransactionStatus.CAPTURED
         },
         {
@@ -279,6 +277,7 @@ export class OrderService {
       )
       if (!order) throw new AppException(Errors.ORDER_STATUS_INVALID)
 
+      console.log(`2. Push update quantity in product.variants to operation to execute later`)
       // 2. Push update quantity in product.variants to operation to execute later
       // array to process bulk update
       const operations = []
@@ -294,10 +293,107 @@ export class OrderService {
       })
       await this.productRepository.model.bulkWrite(operations)
 
-      // 3. Send email/notification to customer
+      // 3. Refund payment via MOMO
+      console.log(`3. Refund payment via MOMO::`)
+      console.log(JSON.stringify(order.payment))
+      const refundOrderId = `FUR${new Date().getTime()}${Math.floor(Math.random() * 100)}`
+      this.paymentService.setStrategy(this.paymentService.momoPaymentStrategy)
+      const refundMomoPaymentDto: RefundMomoPaymentDto = {
+        orderId: refundOrderId,
+        requestId: refundOrderId,
+        amount: order.payment?.amount,
+        transId: order.payment?.transaction['transId'],
+        lang: 'vi',
+        description: `Furnique - Hoàn tiền đơn hàng #${orderId}`
+      }
+      const refundedTransaction = await this.paymentService.refundTransaction(refundMomoPaymentDto)
+      console.log(JSON.stringify(refundedTransaction))
+      
+      // 4. Save refunded payment
+      console.log(`4. Save refunded payment`)
+      await this.paymentRepository.create(
+        {
+          transactionStatus: TransactionStatus.REFUNDED,
+          transaction: refundedTransaction,
+          paymentMethod: order.payment?.paymentMethod,
+          amount: refundedTransaction.amount
+        },
+        {
+          session
+        }
+      )
 
-      // 4. Refund payment
+      // 5. Fetch newest transaction of order
+      console.log(`5. Fetch newest transaction of order`)
+      const queryMomoPaymentDto: QueryMomoPaymentDto = {
+        orderId: order.orderId,
+        requestId: order.orderId,
+        lang: 'vi'
+      }
+      const transaction = await this.paymentService.getTransaction(queryMomoPaymentDto)
+      console.log(JSON.stringify(transaction))
 
+      // 6. Update payment transactionStatus, transaction
+      console.log(`6. Update payment transactionStatus, transaction`)
+      const payment = await this.paymentRepository.findOneAndUpdate(
+        {
+          _id: order.payment._id
+        },
+        {
+          $set: {
+            transactionStatus: TransactionStatus.REFUNDED,
+            transaction: transaction
+          },
+          $push: { transactionHistory: transaction }
+        },
+        {
+          session,
+          new: true
+        }
+      )
+      // 7. Update order transactionStatus, payment
+      console.log(`7. Update order transactionStatus, payment`)
+      await this.orderRepository.findOneAndUpdate(
+        {
+          _id: order._id
+        },
+        {
+          $set: {
+            transactionStatus: TransactionStatus.REFUNDED,
+            payment: payment
+          }
+        },
+        {
+          session
+        }
+      )
+
+      // 8. Send email/notification to customer
+      // console.log(`8. Send email/notification to customer`)
+      // this.mailerService.sendMail({
+      // to: order.customer.email,
+      // subject: `[Furnique] Hoàn tiền đơn hàng #${order.orderId}`,
+      // template: 'order-refunded',
+      // context: {
+      //   ...order,
+      //   _id: order._id,
+      //   orderId: order.orderId,
+      //   customer: order.customer,
+      //   items: order.items.map((item) => {
+      //     const variant = item.product.variants.find((variant) => variant.sku === item.sku)
+      //     return {
+      //       ...item,
+      //       product: {
+      //         ...item.product,
+      //         variant: {
+      //           ...variant,
+      //           price: Intl.NumberFormat('en-DE').format(variant.price)
+      //         }
+      //       }
+      //     }
+      //   }),
+      //   totalAmount: Intl.NumberFormat('en-DE').format(order.totalAmount)
+      // }
       await session.commitTransaction()
       return new SuccessResponse(true)
     } catch (error) {
