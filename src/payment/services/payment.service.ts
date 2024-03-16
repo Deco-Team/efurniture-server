@@ -198,12 +198,14 @@ export class PaymentService {
           }
         )
         // 9. Send email/notification to customer
+        console.log(JSON.stringify(order))
         this.mailerService.sendMail({
           to: order.customer.email,
           subject: `[Furnique] Đã nhận đơn hàng #${order.orderId}`,
           template: 'order-created',
           context: {
             ...order,
+            orderId: order.orderId,
             customer: order.customer,
             items: order.items.map((item) => {
               const variant = item.product.variants.find((variant) => variant.sku === item.sku)
