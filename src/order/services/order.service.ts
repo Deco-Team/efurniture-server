@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { OrderRepository } from '@order/repositories/order.repository'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
 import { OrderStatus, TransactionStatus, UserRole } from '@common/contracts/constant'
@@ -21,9 +21,11 @@ import {
   RefundMomoPaymentDto
 } from '@payment/dto/momo-payment.dto'
 import { ConfigService } from '@nestjs/config'
+import { MailerService } from '@nestjs-modules/mailer'
 
 @Injectable()
 export class OrderService {
+  private readonly logger = new Logger(OrderService.name)
   constructor(
     @InjectConnection() readonly connection: Connection,
     private readonly orderRepository: OrderRepository,
@@ -31,7 +33,8 @@ export class OrderService {
     private readonly paymentRepository: PaymentRepository,
     private readonly cartService: CartService,
     private readonly productRepository: ProductRepository,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly mailerService: MailerService
   ) {}
 
   public async getOrderList(filter: FilterQuery<Order>, paginationParams: PaginationParams) {
@@ -259,7 +262,7 @@ export class OrderService {
     try {
       const { orderId, orderHistoryItem, reason } = cancelOrderDto
       // 1. Update order status, reason and order history
-      console.log(`1. Update order status, reason and order history`)
+      this.logger.log(`1. Update order status, reason and order history`)
       const order = await this.orderRepository.findOneAndUpdate(
         {
           _id: orderId,
@@ -277,7 +280,7 @@ export class OrderService {
       )
       if (!order) throw new AppException(Errors.ORDER_STATUS_INVALID)
 
-      console.log(`2. Push update quantity in product.variants to operation to execute later`)
+      this.logger.log(`2. Push update quantity in product.variants to operation to execute later`)
       // 2. Push update quantity in product.variants to operation to execute later
       // array to process bulk update
       const operations = []
@@ -294,8 +297,7 @@ export class OrderService {
       await this.productRepository.model.bulkWrite(operations)
 
       // 3. Refund payment via MOMO
-      console.log(`3. Refund payment via MOMO::`)
-      console.log(JSON.stringify(order.payment))
+      this.logger.log(`3. Refund payment via MOMO::`)
       const refundOrderId = `FUR${new Date().getTime()}${Math.floor(Math.random() * 100)}`
       this.paymentService.setStrategy(this.paymentService.momoPaymentStrategy)
       const refundMomoPaymentDto: RefundMomoPaymentDto = {
@@ -307,34 +309,20 @@ export class OrderService {
         description: `Furnique - Hoàn tiền đơn hàng #${orderId}`
       }
       const refundedTransaction = await this.paymentService.refundTransaction(refundMomoPaymentDto)
-      console.log(JSON.stringify(refundedTransaction))
-      
-      // 4. Save refunded payment
-      console.log(`4. Save refunded payment`)
-      await this.paymentRepository.create(
-        {
-          transactionStatus: TransactionStatus.REFUNDED,
-          transaction: refundedTransaction,
-          paymentMethod: order.payment?.paymentMethod,
-          amount: refundedTransaction.amount
-        },
-        {
-          session
-        }
-      )
+      this.logger.log(JSON.stringify(refundedTransaction))
 
-      // 5. Fetch newest transaction of order
-      console.log(`5. Fetch newest transaction of order`)
+      // 4. Fetch newest transaction of order
+      this.logger.log(`4. Fetch newest transaction of order`)
       const queryMomoPaymentDto: QueryMomoPaymentDto = {
         orderId: order.orderId,
         requestId: order.orderId,
         lang: 'vi'
       }
       const transaction = await this.paymentService.getTransaction(queryMomoPaymentDto)
-      console.log(JSON.stringify(transaction))
+      this.logger.log(JSON.stringify(transaction))
 
-      // 6. Update payment transactionStatus, transaction
-      console.log(`6. Update payment transactionStatus, transaction`)
+      // 5. Update payment transactionStatus, transaction
+      this.logger.log(`5. Update payment transactionStatus, transaction`)
       const payment = await this.paymentRepository.findOneAndUpdate(
         {
           _id: order.payment._id
@@ -351,8 +339,8 @@ export class OrderService {
           new: true
         }
       )
-      // 7. Update order transactionStatus, payment
-      console.log(`7. Update order transactionStatus, payment`)
+      // 6. Update order transactionStatus, payment
+      this.logger.log(`6. Update order transactionStatus, payment`)
       await this.orderRepository.findOneAndUpdate(
         {
           _id: order._id
@@ -368,32 +356,33 @@ export class OrderService {
         }
       )
 
-      // 8. Send email/notification to customer
-      // console.log(`8. Send email/notification to customer`)
-      // this.mailerService.sendMail({
-      // to: order.customer.email,
-      // subject: `[Furnique] Hoàn tiền đơn hàng #${order.orderId}`,
-      // template: 'order-refunded',
-      // context: {
-      //   ...order,
-      //   _id: order._id,
-      //   orderId: order.orderId,
-      //   customer: order.customer,
-      //   items: order.items.map((item) => {
-      //     const variant = item.product.variants.find((variant) => variant.sku === item.sku)
-      //     return {
-      //       ...item,
-      //       product: {
-      //         ...item.product,
-      //         variant: {
-      //           ...variant,
-      //           price: Intl.NumberFormat('en-DE').format(variant.price)
-      //         }
-      //       }
-      //     }
-      //   }),
-      //   totalAmount: Intl.NumberFormat('en-DE').format(order.totalAmount)
-      // }
+      // 7. Send email/notification to customer
+      this.logger.log(`7. Send email/notification to customer`)
+      this.mailerService.sendMail({
+        to: order.customer.email,
+        subject: `[Furnique] Thông báo hủy đơn hàng #${order.orderId}`,
+        template: 'order-canceled',
+        context: {
+          ...order,
+          _id: order._id,
+          orderId: order.orderId,
+          customer: order.customer,
+          items: order.items.map((item) => {
+            const variant = item.product.variants.find((variant) => variant.sku === item.sku)
+            return {
+              ...item,
+              product: {
+                ...item.product,
+                variant: {
+                  ...variant,
+                  price: Intl.NumberFormat('en-DE').format(variant.price)
+                }
+              }
+            }
+          }),
+          totalAmount: Intl.NumberFormat('en-DE').format(order.totalAmount)
+        }
+      })
       await session.commitTransaction()
       return new SuccessResponse(true)
     } catch (error) {
