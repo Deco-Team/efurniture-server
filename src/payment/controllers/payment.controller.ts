@@ -9,12 +9,21 @@ import { RolesGuard } from '@auth/guards/roles.guard'
 import { PaymentPaginateResponseDto } from '@payment/dto/payment.dto'
 import { Pagination, PaginationParams } from '@common/decorators/pagination.decorator'
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard'
+import { HelperService } from '@common/services/helper.service'
+import { ConfigService } from '@nestjs/config'
 
 @ApiTags('Payment')
 @ApiBearerAuth()
 @Controller('payment')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  private config
+  constructor(
+    private readonly paymentService: PaymentService,
+    private readonly helperService: HelperService,
+    private readonly configService: ConfigService
+  ) {
+    this.config = this.configService.get('payment.momo')
+  }
 
   @ApiOperation({
     summary: 'Get transaction list of payment'
@@ -34,8 +43,17 @@ export class PaymentController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('webhook')
   webhook(@Body() momoPaymentResponseDto) {
+    console.log('Handling webhook', JSON.stringify(momoPaymentResponseDto))
+
     // TODO: 1. Validate signature with other data => implement later
-    console.log('Handling webhook', momoPaymentResponseDto)
+    const { partnerCode, amount, extraData, message, orderId, orderInfo, orderType, requestId, payType, responseTime, resultCode, transId } =
+      momoPaymentResponseDto
+    const rawSignature = `accessKey=${this.config.accessKey}&amount=${amount}&extraData=${extraData}&message=${message}&orderId=${orderId}&orderInfo=${orderInfo}&orderType=${orderType}&partnerCode=${partnerCode}&payType=${payType}&requestId=${requestId}&responseTime=${responseTime}&resultCode=${resultCode}&transId=${transId}`
+    const signature = this.helperService.createSignature(rawSignature, this.config.secretKey)
+
+    console.log(1 + momoPaymentResponseDto.signature)
+    console.log(2 + signature)
+    console.log(momoPaymentResponseDto.signature === signature)
     return this.paymentService.processWebhook(momoPaymentResponseDto)
   }
 
