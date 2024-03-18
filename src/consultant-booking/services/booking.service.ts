@@ -10,13 +10,16 @@ import { CreateConsultantBookingDto } from '@consultant-booking/dto/booking.dto'
 import { StaffRepository } from '@staff/repositories/staff.repository'
 import { PaginationParams } from '@common/decorators/pagination.decorator'
 import { FilterQuery } from 'mongoose'
+import { MailerService } from '@nestjs-modules/mailer'
+import * as moment from 'moment'
 
 @Injectable()
 export class ConsultantBookingService {
   constructor(
     private readonly consultantBookingRepository: ConsultantBookingRepository,
     private readonly staffRepository: StaffRepository,
-    private readonly categoryRepository: CategoryRepository
+    private readonly categoryRepository: CategoryRepository,
+    private readonly mailerService: MailerService
   ) {}
 
   public async createBooking(createConsultantBookingDto: CreateConsultantBookingDto) {
@@ -55,6 +58,16 @@ export class ConsultantBookingService {
     })
 
     // 4. Send email/notification to customer
+    await this.mailerService.sendMail({
+      to: booking.customer.email,
+      subject: `[Furnique] Xác nhận đặt lịch tư vấn viên`,
+      template: 'consultant-booking-created',
+      context: {
+        ...booking.toJSON(),
+        bookingDate: moment(booking.bookingDate).format('YYYY-MM-DD HH:mm'),
+        notes: booking.notes ?? 'Không'
+      }
+    })
     // 5. Send notification to staff
 
     return new IDResponse(booking._id)
@@ -80,7 +93,7 @@ export class ConsultantBookingService {
         status: {
           $ne: BookingStatus.DELETED
         }
-      },
+      }
     })
     if (!booking) throw new AppException(Errors.CONSULTANT_BOOKING_NOT_FOUND)
 

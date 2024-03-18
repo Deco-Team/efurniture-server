@@ -167,7 +167,7 @@ export class TaskService {
       const order = await this.orderService.completeOrder(orderId, userId, UserRole.DELIVERY_STAFF, session)
 
       // 3. Send email/notification to customer
-      this.mailerService.sendMail({
+      await this.mailerService.sendMail({
         to: order.customer.email,
         subject: `[Furnique] Đơn hàng #${order.orderId} đã được giao thành công`,
         template: 'order-completed',
