@@ -8,13 +8,16 @@ import { CategoryRepository } from '@category/repositories/category.repository'
 import { VisitShowroomBookingRepository } from '@visit-showroom-booking/repositories/booking.repository'
 import { BookingHistoryDto } from '@visit-showroom-booking/schemas/booking.schema'
 import { CustomerRepository } from '@customer/repositories/customer.repository'
+import { MailerService } from '@nestjs-modules/mailer'
+import * as moment from 'moment'
 
 @Injectable()
 export class VisitShowroomBookingService {
   constructor(
     private readonly visitShowroomBookingRepository: VisitShowroomBookingRepository,
     private readonly customerRepository: CustomerRepository,
-    private readonly categoryRepository: CategoryRepository
+    private readonly categoryRepository: CategoryRepository,
+    private readonly mailerService: MailerService
   ) {}
 
   public async createBooking(createVisitShowroomBookingDto: CreateVisitShowroomBookingDto) {
@@ -54,6 +57,16 @@ export class VisitShowroomBookingService {
     })
 
     // 4. Send email/notification to customer
+    await this.mailerService.sendMail({
+      to: booking.customer.email,
+      subject: `[Furnique] Xác nhận hẹn tham quan showroom`,
+      template: 'visit-showroom-booking-created',
+      context: {
+        ...booking.toJSON(),
+        bookingDate: moment(booking.bookingDate).format('YYYY-MM-DD HH:mm'),
+        notes: booking.notes ?? 'Không'
+      }
+    })
     // 5. Send notification to staff
 
     return new IDResponse(booking._id)

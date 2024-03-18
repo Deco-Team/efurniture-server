@@ -358,12 +358,12 @@ export class OrderService {
 
       // 7. Send email/notification to customer
       this.logger.log(`7. Send email/notification to customer`)
-      this.mailerService.sendMail({
+      await this.mailerService.sendMail({
         to: order.customer.email,
         subject: `[Furnique] Thông báo hủy đơn hàng #${order.orderId}`,
         template: 'order-canceled',
         context: {
-          ...order,
+          ...order.toJSON(),
           _id: order._id,
           orderId: order.orderId,
           customer: order.customer,
