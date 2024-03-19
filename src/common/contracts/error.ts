@@ -111,4 +111,9 @@ export const Errors: Record<string, ErrorResponse> = {
     message: 'Công việc được chọn không hợp lệ',
     httpStatus: HttpStatus.BAD_REQUEST
   },
+  VISIT_SHOWROOM_BOOKING_NOT_FOUND: {
+    error: 'VISIT_SHOWROOM_BOOKING_NOT_FOUND',
+    message: 'Không tìm thấy lịch tham quan showroom. Vui lòng thử lại',
+    httpStatus: HttpStatus.BAD_REQUEST
+  }
 }

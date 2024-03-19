@@ -6,10 +6,12 @@ import { Errors } from '@src/common/contracts/error'
 import { CreateVisitShowroomBookingDto } from '@visit-showroom-booking/dto/booking.dto'
 import { CategoryRepository } from '@category/repositories/category.repository'
 import { VisitShowroomBookingRepository } from '@visit-showroom-booking/repositories/booking.repository'
-import { BookingHistoryDto } from '@visit-showroom-booking/schemas/booking.schema'
+import { BookingHistoryDto, VisitShowroomBooking } from '@visit-showroom-booking/schemas/booking.schema'
 import { CustomerRepository } from '@customer/repositories/customer.repository'
 import { MailerService } from '@nestjs-modules/mailer'
 import * as moment from 'moment'
+import { FilterQuery } from 'mongoose'
+import { PaginationParams } from '@common/decorators/pagination.decorator'
 
 @Injectable()
 export class VisitShowroomBookingService {
@@ -70,5 +72,32 @@ export class VisitShowroomBookingService {
     // 5. Send notification to staff
 
     return new IDResponse(booking._id)
+  }
+
+  public async paginate(filter: FilterQuery<VisitShowroomBooking>, paginationParams: PaginationParams) {
+    const result = await this.visitShowroomBookingRepository.paginate(
+      {
+        ...filter,
+        status: {
+          $ne: BookingStatus.DELETED
+        }
+      },
+      { ...paginationParams }
+    )
+    return result
+  }
+
+  public async getOne(filter: FilterQuery<VisitShowroomBooking>) {
+    const booking = await this.visitShowroomBookingRepository.findOne({
+      conditions: {
+        ...filter,
+        status: {
+          $ne: BookingStatus.DELETED
+        }
+      }
+    })
+    if (!booking) throw new AppException(Errors.VISIT_SHOWROOM_BOOKING_NOT_FOUND)
+
+    return booking
   }
 }
