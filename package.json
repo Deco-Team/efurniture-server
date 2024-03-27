@@ -27,7 +27,7 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/mongoose": "^10.0.2",
     "@nestjs/passport": "^10.0.3",
-    "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/platform-express": "^10.3.6",
     "@nestjs/swagger": "^7.2.0",
     "@types/moment": "^2.13.0",
     "axios": "^1.6.5",
